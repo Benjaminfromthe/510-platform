@@ -1,0 +1,7 @@
+// This file serves as an entry point for the UI components in the application.
+// You can export your UI components from here.
+
+export { default as Button } from './Button';
+export { default as Card } from './Card';
+export { default as Modal } from './Modal';
+// Add more exports as you create additional UI components.

@@ -1,0 +1,44 @@
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: 'CUSTOMER' | 'ADMIN' | 'STAFF';
+}
+
+interface Service {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  duration: number; // duration in minutes
+  category: 'ELECTRONICS' | 'FURNITURE' | 'OTHER';
+  imageUrl: string;
+}
+
+interface Booking {
+  id: string;
+  userId: string;
+  serviceId: string;
+  scheduledDate: Date;
+  scheduledTime: string; // e.g., '14:00'
+  status: 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  address: string;
+  notes?: string; // optional
+  totalPrice: number;
+  createdAt: Date;
+}
+
+interface Staff {
+  id: string;
+  userId: string;
+  bookings: Booking[]; // relation to bookings
+}
+
+interface Payment {
+  id: string;
+  bookingId: string;
+  amount: number;
+  status: string; // e.g., 'PAID', 'PENDING'
+  method: string; // e.g., 'CREDIT_CARD', 'PAYPAL'
+}

@@ -9,45 +9,46 @@ export async function POST(request: Request) {
   try {
     const { messages = [] } = await request.json();
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
 
     if (!apiKey) {
       return NextResponse.json(
         {
           reply:
-            "I’m ready to help, but the Anthropic API key is not configured yet. In the meantime, I can still recommend Electronics Cleaning (RWF 15,000), Furniture Cleaning (RWF 20,000), or Deep Clean Package (RWF 35,000).",
+            "I’m ready to help, but the Groq API key is not configured yet. In the meantime, I can still recommend Electronics Cleaning (RWF 15,000), Furniture Cleaning (RWF 20,000), or Deep Clean Package (RWF 35,000).",
         },
         { status: 200 }
       );
     }
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
-        "content-type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "claude-3-haiku-20240307",
-        max_tokens: 250,
-        system: SYSTEM_PROMPT,
-        messages: Array.isArray(messages)
-          ? messages.map((message: { role?: string; content?: string }) => ({
-              role: message.role === "assistant" ? "assistant" : "user",
-              content: String(message.content || ""),
-            }))
-          : [],
+        model: "llama-3.3-70b-versatile",
+        temperature: 0.7,
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          ...(Array.isArray(messages)
+            ? messages.map((message: { role?: string; content?: string }) => ({
+                role: message.role === "assistant" ? "assistant" : "user",
+                content: String(message.content || ""),
+              }))
+            : []),
+        ],
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(errorText || "Anthropic request failed.");
+      throw new Error(errorText || "Groq request failed.");
     }
 
     const data = await response.json();
-    const reply = data?.content?.[0]?.text || "I can help recommend the right cleaning package.";
+    const reply = data?.choices?.[0]?.message?.content || "I can help recommend the right cleaning package.";
 
     return NextResponse.json({ reply }, { status: 200 });
   } catch (error) {

@@ -41,38 +41,19 @@ function toBookingDate(date: string, time: string) {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const parsed = bookingSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: parsed.error.issues[0]?.message || "Invalid booking data." },
-        { status: 400 }
-      );
-    }
-
     const { userId } = auth();
     if (!userId) {
       return NextResponse.json({ error: "Authentication required." }, { status: 401 });
     }
 
-    const scheduledDateTime = toBookingDate(parsed.data.scheduledDate, parsed.data.scheduledTime);
+    const body = await request.json();
+    const parsed = bookingSchema.safeParse(body);
 
-    const conflict = await prisma.booking.findFirst({
-      where: {
-        serviceId: parsed.data.serviceId,
-        scheduledDate: scheduledDateTime,
-        scheduledTime: scheduledDateTime,
-        status: { notIn: ["CANCELLED"] },
-      },
-    });
-
-    if (conflict) {
-      return NextResponse.json(
-        { error: "That time slot is already booked for this service." },
-        { status: 409 }
-      );
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.issues[0]?.message || "Invalid booking data." }, { status: 400 });
     }
+
+    const bookingDate = toBookingDate(parsed.data.scheduledDate, parsed.data.scheduledTime);
 
     const booking = await prisma.booking.create({
       data: {
@@ -83,23 +64,19 @@ export async function POST(request: Request) {
         customerName: parsed.data.customerName,
         phone: parsed.data.phone,
         email: parsed.data.email,
-        scheduledDate: scheduledDateTime,
-        scheduledTime: scheduledDateTime,
+        scheduledDate: bookingDate,
+        scheduledTime: bookingDate,
         status: "PENDING",
         address: parsed.data.address,
         notes: parsed.data.notes || null,
         totalPrice: parsed.data.totalPrice ?? 0,
       },
-      select: { id: true },
     });
 
-    return NextResponse.json({ id: booking.id }, { status: 201 });
+    return NextResponse.json({ bookingId: booking.id }, { status: 201 });
   } catch (error) {
     console.error("Booking POST error:", error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unable to create booking." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Unable to create booking." }, { status: 500 });
   }
 }
 

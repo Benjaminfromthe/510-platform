@@ -1,5 +1,5 @@
 import { ClerkProvider } from '@clerk/nextjs';
-import '../src/app/globals.css';
+import './globals.css';
 import AIAssistant from '../components/AIAssistant';
 
 export default function RootLayout({

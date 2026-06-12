@@ -31,6 +31,7 @@ type StaffRecord = { id: number; userId: number };
 function statusTone(status: string) {
   switch (status) {
     case "PENDING":
+    case "PENDING_QUOTE":
       return "bg-amber-500/10 text-amber-100 border-amber-500/30";
     case "CONFIRMED":
     case "IN_PROGRESS":

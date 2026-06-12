@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
+import { sendBookingConfirmationToCustomer, sendBookingNotificationToAdmin } from "../../../lib/email";
 
 const prisma = new PrismaClient();
 
@@ -16,7 +17,11 @@ const bookingSchema = z.object({
   customerName: z.string().min(2, "Name is required."),
   phone: z.string().min(7, "Phone number is required."),
   email: z.string().email("A valid email is required."),
-  totalPrice: z.coerce.number().nonnegative().optional(),
+  quoteDescription: z.string().min(10, "Please describe the cleaning needs in at least 10 characters."),
+  propertySize: z.string().min(1, "Property size is required."),
+  urgency: z.string().min(1, "Urgency is required."),
+  totalPrice: z.coerce.number().nonnegative().optional().nullable(),
+  quotedPrice: z.coerce.number().nonnegative().optional().nullable(),
 });
 
 function getRole() {
@@ -66,12 +71,21 @@ export async function POST(request: Request) {
         email: parsed.data.email,
         scheduledDate: bookingDate,
         scheduledTime: bookingDate,
-        status: "PENDING",
+        status: "PENDING_QUOTE",
         address: parsed.data.address,
         notes: parsed.data.notes || null,
-        totalPrice: parsed.data.totalPrice ?? 0,
+        quoteDescription: parsed.data.quoteDescription,
+        propertySize: parsed.data.propertySize,
+        urgency: parsed.data.urgency,
+        totalPrice: parsed.data.totalPrice ?? null,
+        quotedPrice: parsed.data.quotedPrice ?? null,
       },
     });
+
+    await Promise.all([
+      sendBookingNotificationToAdmin(booking),
+      sendBookingConfirmationToCustomer(booking, parsed.data.email),
+    ]);
 
     return NextResponse.json({ bookingId: booking.id }, { status: 201 });
   } catch (error) {

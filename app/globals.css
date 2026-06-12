@@ -5,4 +5,25 @@
 html,
 body {
   min-height: 100%;
+  scroll-behavior: smooth;
 }
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes floatPulse {
+  0%, 100% { transform: translateY(0px); opacity: 0.35; }
+  50% { transform: translateY(-10px); opacity: 0.9; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-gradient { animation: gradientShift 16s ease infinite; }
+.animate-float { animation: floatPulse 7s ease-in-out infinite; }
+.animate-fade-up { animation: fadeIn 650ms ease-out both; }

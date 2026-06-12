@@ -18,6 +18,7 @@ function statusClass(status: string) {
     case "IN_PROGRESS":
       return "bg-cyan-500/10 text-cyan-100 border-cyan-500/30";
     case "PENDING":
+    case "PENDING_QUOTE":
       return "bg-amber-500/10 text-amber-100 border-amber-500/30";
     case "CANCELLED":
       return "bg-rose-500/10 text-rose-100 border-rose-500/30";
@@ -47,29 +48,36 @@ export default function DashboardPage() {
   const { user } = useUser();
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
   const [services, setServices] = useState<ServiceRecord[]>([]);
+  const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"bookings" | "subscription">("bookings");
   const [selectedBooking, setSelectedBooking] = useState<BookingRecord | null>(null);
   const [busyBookingId, setBusyBookingId] = useState<number | null>(null);
+  const [busySubscription, setBusySubscription] = useState(false);
 
   const loadBookings = async () => {
     setLoading(true);
     try {
-      const [bookingsResponse, servicesResponse] = await Promise.all([
+      const [bookingsResponse, servicesResponse, subscriptionResponse] = await Promise.all([
         fetch("/api/bookings", { cache: "no-store" }),
         fetch("/api/services", { cache: "no-store" }),
+        fetch("/api/subscriptions", { cache: "no-store" }),
       ]);
 
       const bookingsData = await bookingsResponse.json();
       const servicesData = await servicesResponse.json();
+      const subscriptionData = await subscriptionResponse.json();
 
       if (!bookingsResponse.ok) throw new Error(bookingsData.error || "Failed to load bookings");
 
       setBookings(Array.isArray(bookingsData.bookings) ? bookingsData.bookings : []);
       setServices(Array.isArray(servicesData.services) ? servicesData.services : []);
+      setSubscription(subscriptionResponse.ok ? subscriptionData.subscription : null);
     } catch (error) {
       console.error("Error loading dashboard data", error);
       setBookings([]);
       setServices([]);
+      setSubscription(null);
     } finally {
       setLoading(false);
     }
@@ -92,6 +100,25 @@ export default function DashboardPage() {
       completed: bookings.filter((booking) => booking.status === "COMPLETED").length,
     };
   }, [bookings]);
+
+  const handleSubscriptionStatus = async (status: "PAUSED" | "CANCELLED") => {
+    try {
+      setBusySubscription(true);
+      const response = await fetch("/api/subscriptions", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Unable to update subscription");
+      await loadBookings();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Unable to update subscription");
+    } finally {
+      setBusySubscription(false);
+    }
+  };
 
   const handleCancel = async (bookingId: number) => {
     try {
@@ -138,26 +165,64 @@ export default function DashboardPage() {
 
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-2xl shadow-black/20">
           <div>
-            <h2 className="text-xl font-semibold text-white">Your bookings</h2>
-            <p className="text-sm text-slate-300">Review the latest status updates and open full booking details.</p>
+            <h2 className="text-xl font-semibold text-white">Manage your plan</h2>
+            <p className="text-sm text-slate-300">Switch between bookings and your subscription details in one place.</p>
           </div>
-          <Link
-            href="/services"
-            className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
-          >
-            Book New Service
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => setActiveTab("bookings")} className={`rounded-full px-4 py-2 text-sm font-semibold ${activeTab === "bookings" ? "bg-cyan-400 text-slate-950" : "border border-slate-700 text-slate-200 hover:border-cyan-400 hover:text-white"}`}>Bookings</button>
+            <button type="button" onClick={() => setActiveTab("subscription")} className={`rounded-full px-4 py-2 text-sm font-semibold ${activeTab === "subscription" ? "bg-cyan-400 text-slate-950" : "border border-slate-700 text-slate-200 hover:border-cyan-400 hover:text-white"}`}>My Subscription</button>
+          </div>
         </div>
 
-        {loading ? (
-          <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6 text-slate-300 shadow-2xl shadow-black/20">Loading your bookings…</section>
-        ) : bookings.length === 0 ? (
-          <section className="rounded-3xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-slate-300 shadow-2xl shadow-black/20">
-            You do not have any bookings yet. Start with a new service to get going.
+        {activeTab === "subscription" ? (
+          <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl shadow-black/20">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">My Subscription</p>
+                <h2 className="mt-2 text-2xl font-semibold text-white">{subscription ? subscription.plan.replace("_", " ") : "No active subscription"}</h2>
+                <p className="text-sm text-slate-300">Track your plan status, next cleaning date, and remaining cleanings here.</p>
+              </div>
+              <Link href="/subscriptions" className="rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-cyan-300">View Plans</Link>
+            </div>
+
+            {!subscription ? (
+              <div className="mt-6 rounded-2xl border border-dashed border-slate-700 bg-slate-950/80 p-5 text-slate-300">You do not have an active subscription yet. Choose a plan to get started.</div>
+            ) : (
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4"><p className="text-sm text-slate-300">Plan</p><p className="mt-2 text-xl font-semibold text-white">{subscription.plan}</p></article>
+                <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4"><p className="text-sm text-slate-300">Next cleaning</p><p className="mt-2 text-xl font-semibold text-white">{formatDate(subscription.nextCleaningDate)}</p></article>
+                <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4"><p className="text-sm text-slate-300">Cleanings remaining</p><p className="mt-2 text-xl font-semibold text-white">{Math.max(0, subscription.totalCleanings - subscription.cleaningsUsed)}</p></article>
+              </div>
+            )}
+
+            {subscription && (
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button type="button" onClick={() => void handleSubscriptionStatus("PAUSED")} disabled={busySubscription || subscription.status === "PAUSED"} className="rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-100 disabled:cursor-not-allowed disabled:opacity-50">{subscription.status === "PAUSED" ? "Paused" : "Pause Subscription"}</button>
+                <button type="button" onClick={() => void handleSubscriptionStatus("CANCELLED")} disabled={busySubscription || subscription.status === "CANCELLED"} className="rounded-xl border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm font-semibold text-rose-100 disabled:cursor-not-allowed disabled:opacity-50">{subscription.status === "CANCELLED" ? "Cancelled" : "Cancel Subscription"}</button>
+              </div>
+            )}
           </section>
-        ) : (
+        ) : null}
+
+        {activeTab === "bookings" ? (
           <>
-            <div className="hidden overflow-x-auto rounded-3xl border border-slate-800 bg-slate-900 shadow-2xl shadow-black/20 lg:block">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-2xl shadow-black/20">
+              <div>
+                <h2 className="text-xl font-semibold text-white">Your bookings</h2>
+                <p className="text-sm text-slate-300">Review the latest status updates and open full booking details.</p>
+              </div>
+              <Link href="/services" className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300">Book New Service</Link>
+            </div>
+
+            {loading ? (
+              <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6 text-slate-300 shadow-2xl shadow-black/20">Loading your bookings…</section>
+            ) : bookings.length === 0 ? (
+              <section className="rounded-3xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-slate-300 shadow-2xl shadow-black/20">
+                You do not have any bookings yet. Start with a new service to get going.
+              </section>
+            ) : (
+              <>
+                <div className="hidden overflow-x-auto rounded-3xl border border-slate-800 bg-slate-900 shadow-2xl shadow-black/20 lg:block">
               <table className="min-w-full divide-y divide-slate-800 text-left text-sm text-slate-200">
                 <thead className="bg-slate-950/80 text-slate-300">
                   <tr>
@@ -208,43 +273,45 @@ export default function DashboardPage() {
               </table>
             </div>
 
-            <div className="grid gap-4 lg:hidden">
-              {bookings.map((booking) => (
-                <article key={booking.id} className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-2xl shadow-black/20">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</p>
-                      <p className="mt-1 text-lg font-semibold text-white">{formatDate(booking.scheduledDate)} · {formatTime(booking.scheduledTime)}</p>
-                    </div>
-                    <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] ${statusClass(booking.status)}`}>
-                      {booking.status}
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm text-slate-300">{booking.totalPrice.toLocaleString("en-US")} RWF</p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedBooking(booking)}
-                      className="rounded-full border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-100 hover:border-cyan-400 hover:text-white"
-                    >
-                      View Details
-                    </button>
-                    {booking.status === "PENDING" && (
-                      <button
-                        type="button"
-                        onClick={() => void handleCancel(booking.id)}
-                        disabled={busyBookingId === booking.id}
-                        className="rounded-full border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-100 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        {busyBookingId === booking.id ? "Cancelling..." : "Cancel"}
-                      </button>
-                    )}
-                  </div>
-                </article>
-              ))}
-            </div>
+                <div className="grid gap-4 lg:hidden">
+                  {bookings.map((booking) => (
+                    <article key={booking.id} className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-2xl shadow-black/20">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</p>
+                          <p className="mt-1 text-lg font-semibold text-white">{formatDate(booking.scheduledDate)} · {formatTime(booking.scheduledTime)}</p>
+                        </div>
+                        <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] ${statusClass(booking.status)}`}>
+                          {booking.status}
+                        </span>
+                      </div>
+                      <p className="mt-3 text-sm text-slate-300">{booking.totalPrice.toLocaleString("en-US")} RWF</p>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedBooking(booking)}
+                          className="rounded-full border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-100 hover:border-cyan-400 hover:text-white"
+                        >
+                          View Details
+                        </button>
+                        {booking.status === "PENDING" && (
+                          <button
+                            type="button"
+                            onClick={() => void handleCancel(booking.id)}
+                            disabled={busyBookingId === booking.id}
+                            className="rounded-full border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-100 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {busyBookingId === booking.id ? "Cancelling..." : "Cancel"}
+                          </button>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
+            )}
           </>
-        )}
+        ) : null}
       </section>
 
       <BookingDetailsModal

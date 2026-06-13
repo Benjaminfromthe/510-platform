@@ -76,12 +76,12 @@ export default function HomePage() {
     <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <header className={`sticky top-0 z-30 border-b border-[var(--border-color)] transition-all duration-300 ${scrolled ? "bg-[var(--bg-primary)]/80 shadow-2xl shadow-cyan-500/10 backdrop-blur-md" : "bg-[var(--bg-primary)]/60 backdrop-blur-md"}`}>
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 text-xl font-black tracking-tight text-[var(--text-primary)]">
-            <Sparkles className="h-4 w-4 text-cyan-300" />
-            510
+          <Link href="/" className="flex items-center gap-1.5 text-3xl font-black tracking-tight text-slate-900 dark:text-cyan-300">
+            <span>510</span>
+            <span className="text-base text-cyan-400/80 dark:text-cyan-300/70">·</span>
           </Link>
           <div className="flex items-center gap-2">
-            <div className="hidden items-center gap-2 md:flex">
+            <div className="hidden items-center gap-2 xl:flex">
               <Link href="/services" className={`nav-link rounded-full border border-transparent px-3 py-2 text-sm text-[var(--text-primary)] hover:border-cyan-400/40 hover:text-cyan-100 ${pathname === "/services" ? "active text-cyan-100" : ""}`}>{t("nav.services")}</Link>
               <Link href="/book" className={`nav-link rounded-full border border-transparent px-3 py-2 text-sm text-[var(--text-primary)] hover:border-cyan-400/40 hover:text-cyan-100 ${pathname === "/book" ? "active text-cyan-100" : ""}`}>{t("nav.bookNow")}</Link>
               <Link href="/dashboard" className={`nav-link rounded-full border border-transparent px-3 py-2 text-sm text-[var(--text-primary)] hover:border-cyan-400/40 hover:text-cyan-100 ${pathname === "/dashboard" ? "active text-cyan-100" : ""}`}>{t("nav.myBookings")}</Link>
@@ -95,12 +95,22 @@ export default function HomePage() {
                 </SignUpButton>
               </SignedOut>
               <SignedIn>
-                <UserButton afterSignOutUrl="/" />
+                <UserButton
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-8 h-8",
+                      userButtonPopoverCard: "border border-[var(--border-color)] bg-[var(--bg-card)]",
+                    },
+                  }}
+                />
               </SignedIn>
             </div>
-            <ThemeToggle />
-            <LanguageSwitcher />
-            <button type="button" aria-label="Toggle menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((prev) => !prev)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-primary)] md:hidden">
+            <div className="flex items-center gap-2 shrink-0">
+              <ThemeToggle />
+              <LanguageSwitcher />
+            </div>
+            <button type="button" aria-label="Toggle menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((prev) => !prev)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-primary)] xl:hidden">
               {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>

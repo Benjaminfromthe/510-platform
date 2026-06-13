@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
@@ -18,6 +19,7 @@ export default function AIAssistant() {
     t("quickReplies.coverage"),
   ];
   const [open, setOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -85,25 +87,38 @@ export default function AIAssistant() {
     setInput(reply);
   }
 
-  return (
-    <div className="fixed bottom-4 right-4 z-50">
-      {open ? (
-        <aside className="w-[92vw] max-w-md rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] shadow-2xl shadow-black/30">
-          <div className="flex items-center justify-between border-b border-[var(--border-color)] px-4 py-3">
-            <div>
-              <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{t("title")}</p>
-              <h2 className="text-base font-semibold text-[var(--text-primary)]">{t("subtitle")}</h2>
-            </div>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="rounded-full border border-[var(--border-color)] px-3 py-1 text-sm text-[var(--text-secondary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"
-            >
-              {t("close")}
-            </button>
-          </div>
+  function openChat() {
+    setOpen(true);
+    setHasOpened(true);
+  }
 
-          <div className="max-h-[420px] space-y-3 overflow-y-auto px-4 py-4">
+  return (
+    <>
+      {open ? (
+        <>
+          <button
+            type="button"
+            aria-label={t("close")}
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 z-[55] bg-black/45 backdrop-blur-[1px] md:hidden"
+          />
+          <aside className="animate-fade-up fixed inset-x-0 bottom-0 z-[60] flex h-[60vh] w-full flex-col rounded-t-[28px] border border-[var(--border-color)] bg-[var(--bg-card)] shadow-2xl shadow-black/40 md:bottom-20 md:right-5 md:left-auto md:h-[500px] md:w-[380px] md:rounded-3xl md:shadow-2xl md:shadow-black/30">
+            <div className="flex items-start justify-between border-b border-[var(--border-color)] px-4 py-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{t("title")}</p>
+                <h2 className="text-base font-semibold text-[var(--text-primary)]">{t("subtitle")}</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label={t("close")}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-secondary)] transition hover:border-rose-400 hover:bg-rose-500/10 hover:text-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-400/40"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
             <div className="flex flex-wrap gap-2">
               {quickReplies.map((reply) => (
                 <button
@@ -145,7 +160,7 @@ export default function AIAssistant() {
             <div ref={bottomRef} />
           </div>
 
-          <form onSubmit={handleSend} className="border-t border-[var(--border-color)] p-3">
+            <form onSubmit={handleSend} className="border-t border-[var(--border-color)] p-3">
             <label className="sr-only" htmlFor="ai-message">{t("placeholder")}</label>
             <div className="flex gap-2">
               <input
@@ -165,17 +180,19 @@ export default function AIAssistant() {
             </div>
             <p className="mt-2 text-[11px] text-[var(--text-secondary)]">{input.length}/{MAX_CHARS} {t("characters")}</p>
           </form>
-        </aside>
+          </aside>
+        </>
       ) : null}
 
       <button
         type="button"
-        onClick={() => setOpen((current) => !current)}
-        className="mt-3 flex items-center gap-2 rounded-full bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 shadow-2xl shadow-cyan-400/20 transition hover:bg-cyan-300"
+        onClick={openChat}
+        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 shadow-2xl shadow-cyan-400/20 transition hover:bg-cyan-300 md:right-5 md:bottom-20"
       >
         <span className="text-base">🤖</span>
-        {t("askAi")}
+        <span className="whitespace-nowrap">{t("askAi")}</span>
+        {!hasOpened ? <span className="ml-1 h-2.5 w-2.5 rounded-full bg-rose-400 shadow-[0_0_0_4px_rgba(248,113,113,0.18)]" /> : null}
       </button>
-    </div>
+    </>
   );
 }

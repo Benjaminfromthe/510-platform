@@ -292,9 +292,7 @@ export default function BookForm() {
     scrollToTop();
   }
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-
+  async function submitBooking() {
     if (!validateStep(3)) return;
 
     setSubmitting(true);
@@ -317,6 +315,10 @@ export default function BookForm() {
           quoteDescription,
           propertySize,
           urgency,
+          name: customerName,
+          date: scheduledDate,
+          time: scheduledTime,
+          description: quoteDescription,
         }),
       });
 
@@ -332,6 +334,11 @@ export default function BookForm() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    await submitBooking();
   }
 
   const progress = step === 0 ? 0 : [25, 50, 100][step - 1];
@@ -377,7 +384,18 @@ export default function BookForm() {
           </div>
         </div>
 
-        {errors.form ? <p className="rounded-2xl border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-200">{errors.form}</p> : null}
+        {errors.form ? (
+          <div className="rounded-2xl border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-100">
+            <p className="font-medium">{errors.form}</p>
+            <button
+              type="button"
+              onClick={() => void submitBooking()}
+              className="mt-3 rounded-xl bg-rose-400/90 px-4 py-2 font-semibold text-slate-950 hover:bg-rose-300"
+            >
+              Retry submission
+            </button>
+          </div>
+        ) : null}
 
         {submitted ? (
           <section className="rounded-3xl border border-emerald-400/30 bg-emerald-400/10 p-6 shadow-2xl shadow-black/20">

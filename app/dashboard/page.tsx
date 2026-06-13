@@ -59,9 +59,9 @@ export default function DashboardPage() {
     setLoading(true);
     try {
       const [bookingsResponse, servicesResponse, subscriptionResponse] = await Promise.all([
-        fetch("/api/bookings", { cache: "no-store" }),
-        fetch("/api/services", { cache: "no-store" }),
-        fetch("/api/subscriptions", { cache: "no-store" }),
+        fetch("/api/bookings", { cache: "force-cache" }),
+        fetch("/api/services", { cache: "force-cache" }),
+        fetch("/api/subscriptions", { cache: "force-cache" }),
       ]);
 
       const bookingsData = await bookingsResponse.json();
@@ -150,7 +150,7 @@ export default function DashboardPage() {
           <p className="max-w-2xl text-slate-300">Track your bookings, review upcoming cleanings, and manage your upcoming service requests in one place.</p>
         </header>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
           {[
             { label: "Total Bookings", value: stats.total },
             { label: "Upcoming", value: stats.upcoming },

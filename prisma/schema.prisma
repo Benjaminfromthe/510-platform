@@ -8,21 +8,15 @@ datasource db {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
+  id    Int      @id @default(autoincrement())
   name  String
-  email String @unique
+  email String   @unique
   phone String
   role  UserRole
 }
 
-enum UserRole {
-  CUSTOMER
-  ADMIN
-  STAFF
-}
-
 model Service {
-  id          Int      @id @default(autoincrement())
+  id          Int             @id @default(autoincrement())
   name        String
   description String
   price       Float
@@ -31,43 +25,28 @@ model Service {
   imageUrl    String
 }
 
-enum ServiceCategory {
-  ELECTRONICS
-  FURNITURE
-  OTHER
-}
-
 model Booking {
-  id              Int           @id @default(autoincrement())
-  userId          String?
-  serviceId       Int
-  quantity        Int           @default(1)
-  addOns          Json?
-  customerName    String?
-  phone           String?
-  email           String?
-  staffId         Int?
-  scheduledDate   DateTime
-  scheduledTime   DateTime
-  status          BookingStatus
-  address         String
-  notes           String?
+  id               Int           @id @default(autoincrement())
+  userId           String?
+  serviceId        Int
+  quantity         Int           @default(1)
+  addOns           Json?
+  customerName     String?
+  phone            String?
+  email            String?
+  staffId          Int?
+  scheduledDate    DateTime
+  scheduledTime    DateTime
+  status           BookingStatus
+  address          String
+  notes            String?
+  totalPrice       Float?
+  createdAt        DateTime      @default(now())
+  propertySize     String
   quoteDescription String
-  propertySize    String
-  urgency         String
-  totalPrice      Float?
-  quotedPrice     Float?
-  createdAt       DateTime      @default(now())
-  staff           Staff?        @relation(fields: [staffId], references: [id])
-}
-
-enum BookingStatus {
-  PENDING
-  PENDING_QUOTE
-  CONFIRMED
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
+  quotedPrice      Float?
+  urgency          String
+  staff            Staff?        @relation(fields: [staffId], references: [id])
 }
 
 model Staff {
@@ -76,34 +55,44 @@ model Staff {
   bookings Booking[]
 }
 
-model Subscription {
-  id               Int               @id @default(autoincrement())
-  userId           String
-  plan             SubscriptionPlan
-  status           SubscriptionStatus @default(ACTIVE)
-  startDate        DateTime          @default(now())
-  nextCleaningDate DateTime
-  totalCleanings   Int
-  cleaningsUsed    Int               @default(0)
-  createdAt        DateTime          @default(now())
-}
-
-enum SubscriptionPlan {
-  WEEKLY
-  MONTHLY
-  PREMIUM
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  PAUSED
-  CANCELLED
-}
-
 model Payment {
-  id        Int     @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   bookingId Int
   amount    Float
   status    String
   method    String
+}
+
+model Subscription {
+  id               Int      @id @default(autoincrement())
+  userId           String
+  plan             String
+  status           String   @default("ACTIVE")
+  startDate        DateTime @default(now())
+  nextCleaningDate DateTime
+  totalCleanings   Int      @default(0)
+  cleaningsUsed    Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  STAFF
+}
+
+enum ServiceCategory {
+  ELECTRONICS
+  FURNITURE
+  OTHER
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  PENDING_QUOTE
 }

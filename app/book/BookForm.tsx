@@ -2,9 +2,11 @@
 
 import "react-datepicker/dist/react-datepicker.css";
 
+import { Monitor, Sofa, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import DatePicker from "react-datepicker";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 
 type ServiceCategory = "ELECTRONICS" | "FURNITURE" | "OTHER";
@@ -66,6 +68,12 @@ function isPastDay(date: Date) {
   return date < today;
 }
 
+function serviceIcon(category: ServiceCategory) {
+  if (category === "ELECTRONICS") return Monitor;
+  if (category === "FURNITURE") return Sofa;
+  return Sparkles;
+}
+
 function getBookedSlotsForDate(date: string, count: number) {
   const seed = new Date(`${date}T00:00:00`).getDate() % TIME_SLOTS.length;
   const occupied = new Set<number>();
@@ -78,12 +86,16 @@ function getBookedSlotsForDate(date: string, count: number) {
 }
 
 export default function BookForm() {
+  const t = useTranslations("booking");
+  const router = useRouter();
   const searchParams = useSearchParams();
   const serviceId = Number(searchParams.get("serviceId") || 0);
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(serviceId ? 1 : 0);
   const [service, setService] = useState<Service | null>(null);
+  const [serviceOptions, setServiceOptions] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  const [servicesLoading, setServicesLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [scheduledDate, setScheduledDate] = useState("");
   const [scheduledTime, setScheduledTime] = useState("10:00");
@@ -101,25 +113,41 @@ export default function BookForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const bookingT = useTranslations("booking");
 
   useEffect(() => {
     let isMounted = true;
 
-    async function loadService() {
+    async function loadServices() {
       setLoading(true);
+      setServicesLoading(true);
       try {
-        const response = await fetch("/api/services", { cache: "no-store" });
+        const response = await fetch("/api/services", { cache: "force-cache" });
         const data = await response.json();
-        const selected = data.services?.find((item: Service) => item.id === serviceId) || null;
-        if (isMounted) setService(selected);
+        const services = Array.isArray(data.services) ? data.services : [];
+        const selected = services.find((item: Service) => item.id === serviceId) || null;
+
+        if (isMounted) {
+          setServiceOptions(services);
+          setService(selected);
+          setStep(serviceId && selected ? 1 : 0);
+        }
       } catch (error) {
         console.error(error);
+        if (isMounted) {
+          setServiceOptions([]);
+          setService(null);
+          setStep(0);
+        }
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+          setServicesLoading(false);
+        }
       }
     }
 
-    loadService();
+    void loadServices();
     return () => {
       isMounted = false;
     };
@@ -150,7 +178,7 @@ export default function BookForm() {
       setAvailabilityLoading(true);
       const monthKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}`;
       try {
-        const response = await fetch(`/api/availability?month=${monthKey}`, { cache: "no-store" });
+        const response = await fetch(`/api/availability?month=${monthKey}`, { cache: "force-cache" });
         const data = await response.json();
         if (Array.isArray(data.availability)) setAvailability(data.availability);
       } catch (error) {
@@ -181,6 +209,10 @@ export default function BookForm() {
 
   function validateStep(targetStep: number) {
     const localErrors: Record<string, string> = {};
+
+    if (targetStep === 0) {
+      if (!service) localErrors.service = "Please select a service to continue.";
+    }
 
     if (targetStep === 1) {
       if (!service) localErrors.service = "Please select a valid service.";
@@ -229,6 +261,17 @@ export default function BookForm() {
   }
 
   async function handleNext() {
+    if (step === 0) {
+      if (!service) {
+        setErrors({ service: "Please select a service to continue." });
+        return;
+      }
+
+      setStep(1);
+      setErrors({});
+      return;
+    }
+
     if (validateStep(step)) {
       setStep((prev) => Math.min(prev + 1, 3));
       setErrors({});
@@ -236,7 +279,7 @@ export default function BookForm() {
   }
 
   async function handleBack() {
-    setStep((prev) => Math.max(prev - 1, 1));
+    setStep((prev) => Math.max(prev - 1, 0));
     setErrors({});
   }
 
@@ -280,19 +323,19 @@ export default function BookForm() {
     }
   }
 
-  const progress = [25, 50, 100][step - 1];
+  const progress = step === 0 ? 0 : [25, 50, 100][step - 1];
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
         <header className="space-y-3">
-          <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">Quote request</p>
-          <h1 className="text-4xl font-semibold text-white sm:text-5xl">Smart booking calendar with live availability</h1>
+          <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">{t("title")}</p>
+          <h1 className="text-4xl font-semibold text-white sm:text-5xl">{t("subtitle")}</h1>
         </header>
 
         <div className="rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-2xl shadow-black/20">
           <div className="mb-2 flex items-center justify-between text-sm text-slate-300">
-            <span>Progress</span>
+            <span>{bookingT("progress")}</span>
             <strong>{step} / 3</strong>
           </div>
           <div className="h-2 rounded-full bg-slate-800">
@@ -304,37 +347,82 @@ export default function BookForm() {
         {successMessage ? <p className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-3 text-sm text-emerald-100">{successMessage}</p> : null}
 
         <form onSubmit={handleSubmit} className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-          <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl shadow-black/20">
+          <section className="rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-2xl shadow-black/20 sm:p-6">
+            {step === 0 ? (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-semibold text-white">{t("selectServiceTitle")}</h2>
+                  <p className="text-slate-300">{t("selectServiceText")}</p>
+                </div>
+
+                {servicesLoading ? <p className="text-slate-300">{t("loadingServices")}</p> : null}
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  {serviceOptions.map((item) => {
+                    const isSelected = service?.id === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          setService(item);
+                          router.replace(`/book?serviceId=${item.id}`, { scroll: false });
+                        }}
+                        className={`rounded-3xl border p-5 text-left transition ${isSelected ? "border-cyan-400 bg-cyan-400/10 shadow-lg shadow-cyan-500/10" : "border-slate-800 bg-slate-950 hover:border-cyan-400/70 hover:bg-slate-900"}`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{item.category.toLowerCase()}</p>
+                            <h3 className="mt-2 text-xl font-semibold text-white">{item.name}</h3>
+                            <p className="mt-2 text-sm text-slate-300">{item.description}</p>
+                          </div>
+                          <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">{t("getQuote")}</span>
+                        </div>
+                        <p className="mt-4 text-xs text-slate-400">{item.duration} min • {item.category}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {errors.service ? <p className="text-sm text-rose-300">{errors.service}</p> : null}
+              </div>
+            ) : null}
+
             {step === 1 ? (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-semibold text-white">Step 1 — Service Details</h2>
-                  <p className="text-slate-300">Choose the quantity and confirm the service you want quoted.</p>
+                  <h2 className="text-2xl font-semibold text-white">{t("step1Title")}</h2>
+                  <p className="text-slate-300">{t("step1Text")}</p>
                 </div>
 
-                {loading ? <p className="text-slate-300">Loading selected service…</p> : service ? (
+                {loading ? <p className="text-slate-300">{t("loadingSelectedService")}</p> : service ? (
                   <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4">
-                    <img src={service.imageUrl || "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80"} alt={service.name} className="h-36 w-full rounded-2xl object-cover" />
+                    <div className="flex h-36 items-center justify-center rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+                      {(() => {
+                        const Icon = serviceIcon(service.category);
+                        return <Icon className="h-12 w-12 text-cyan-200" />;
+                      })()}
+                    </div>
                     <div className="mt-4 flex items-start justify-between gap-3">
                       <div>
                         <p className="text-xs uppercase tracking-[0.3em] text-cyan-300">{service.category.toLowerCase()}</p>
                         <h3 className="text-xl font-semibold text-white">{service.name}</h3>
                         <p className="mt-2 text-sm text-slate-300">{service.description}</p>
                       </div>
-                      <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-sm font-semibold text-cyan-200">Free quote</span>
+                      <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-sm font-semibold text-cyan-200">{t("getQuote")}</span>
                     </div>
                   </article>
-                ) : <p className="text-rose-200">No service was selected. Go back and choose a service first.</p>}
+                ) : <p className="text-rose-200">{t("noServiceSelected")}</p>}
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="space-y-1 text-sm text-slate-200">
-                    <span>Quantity</span>
+                    <span>{t("quantity")}</span>
                     <input type="number" min="1" max="10" value={quantity} onChange={(e) => setQuantity(Number(e.target.value) || 1)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
                     {errors.quantity ? <span className="text-rose-300">{errors.quantity}</span> : null}
                   </label>
 
                   <label className="space-y-1 text-sm text-slate-200">
-                    <span>Duration</span>
+                    <span>{t("duration")}</span>
                     <input value={`${service?.duration || 0} minutes`} readOnly className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-300" />
                   </label>
                 </div>
@@ -344,18 +432,18 @@ export default function BookForm() {
             {step === 2 ? (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-semibold text-white">Step 2 — Pick your date and time</h2>
-                  <p className="text-slate-300">Choose a day from the live calendar and lock in the best available slot for your quote.</p>
+                  <h2 className="text-2xl font-semibold text-white">{t("step2Title")}</h2>
+                  <p className="text-slate-300">{t("step2Text")}</p>
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-                  <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4">
+                  <div className="w-full overflow-x-auto rounded-3xl border border-slate-800 bg-slate-950 p-4">
                     <div className="mb-3 flex items-center justify-between">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">Availability</p>
-                        <h3 className="text-xl font-semibold text-white">Interactive calendar</h3>
+                        <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{bookingT("availabilityLabel")}</p>
+                        <h3 className="text-xl font-semibold text-white">{bookingT("interactiveCalendar")}</h3>
                       </div>
-                      <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-100">Live updates</span>
+                      <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-100">{bookingT("liveUpdates")}</span>
                     </div>
 
                     <DatePicker
@@ -379,26 +467,26 @@ export default function BookForm() {
                         return (
                           <span className="flex flex-col items-center gap-1 text-[11px] leading-tight">
                             <span>{day}</span>
-                            {entry?.status === "full" ? <span className="text-[10px] text-rose-200">Full</span> : entry?.bookings ? <span className="text-[10px] text-cyan-200">{entry.bookings} booked</span> : null}
+                            {entry?.status === "full" ? <span className="text-[10px] text-rose-200">{bookingT("fullyBooked")}</span> : entry?.bookings ? <span className="text-[10px] text-cyan-200">{entry.bookings} booked</span> : null}
                           </span>
                         );
                       }}
                     />
 
                     <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950 p-3 text-xs text-slate-300">
-                      <p>• Past dates, Sundays, and public holidays are blocked.</p>
-                      <p>• Cyan highlights show available days with live booking counts.</p>
-                      <p>• Dates with 5+ bookings are marked as fully booked.</p>
+                      <p>• {bookingT("blockedDates")}</p>
+                      <p>• {bookingT("calendarHint")}</p>
+                      <p>• {bookingT("calendarFull")}</p>
                     </div>
                   </div>
 
                   <div className="space-y-4 rounded-3xl border border-slate-800 bg-slate-950 p-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">Time slots</p>
-                      <h3 className="text-xl font-semibold text-white">Choose a time</h3>
+                      <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{bookingT("timeSlotsLabel")}</p>
+                      <h3 className="text-xl font-semibold text-white">{bookingT("chooseTime")}</h3>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {TIME_SLOTS.map((slot, index) => {
                         const occupied = bookedSlots.has(index);
                         const disabled = occupied || (selectedAvailability?.status === "full");
@@ -418,7 +506,7 @@ export default function BookForm() {
                     </div>
 
                     <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-3 text-sm text-amber-100">
-                      {selectedAvailability?.status === "full" ? <p>Fully booked for this date — please select another day.</p> : availableSlotsLeft <= 2 && scheduledDate ? <p>Only {availableSlotsLeft} slots left — book soon to secure your preferred time.</p> : <p>Available slots update with the selected day and current booking demand.</p>}
+                      {selectedAvailability?.status === "full" ? <p>{bookingT("fullyBookedMessage")}</p> : availableSlotsLeft <= 2 && scheduledDate ? <p>{bookingT("slotsLeftMessage", { count: availableSlotsLeft })}</p> : <p>{bookingT("availabilityHint")}</p>}
                     </div>
 
                     {errors.scheduledDate ? <p className="text-sm text-rose-300">{errors.scheduledDate}</p> : null}
@@ -427,22 +515,22 @@ export default function BookForm() {
                 </div>
 
                 <label className="space-y-1 text-sm text-slate-200">
-                  <span>Address</span>
-                  <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="e.g., Kacyiru, Kigali" className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
+                  <span>{bookingT("addressLabel")}</span>
+                  <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder={bookingT("addressPlaceholder")} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
                   {errors.address ? <span className="text-rose-300">{errors.address}</span> : null}
                 </label>
 
                 <label className="space-y-1 text-sm text-slate-200">
-                  <span>Describe your cleaning needs</span>
-                  <textarea value={quoteDescription} onChange={(e) => setQuoteDescription(e.target.value)} rows={4} placeholder="Tell us what needs cleaning, any stains, rooms, or special requests..." className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
+                  <span>{bookingT("descriptionLabel")}</span>
+                  <textarea value={quoteDescription} onChange={(e) => setQuoteDescription(e.target.value)} rows={4} placeholder={bookingT("descriptionPlaceholder")} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
                   {errors.quoteDescription ? <span className="text-rose-300">{errors.quoteDescription}</span> : null}
                 </label>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="space-y-1 text-sm text-slate-200">
-                    <span>Property size</span>
+                    <span>{bookingT("propertySizeLabel")}</span>
                     <select value={propertySize} onChange={(e) => setPropertySize(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">
-                      <option value="">Select size</option>
+                      <option value="">{bookingT("selectSize")}</option>
                       <option value="Small room">Small room</option>
                       <option value="Large room">Large room</option>
                       <option value="Full apartment">Full apartment</option>
@@ -453,9 +541,9 @@ export default function BookForm() {
                   </label>
 
                   <label className="space-y-1 text-sm text-slate-200">
-                    <span>Urgency</span>
+                    <span>{bookingT("urgencyLabel")}</span>
                     <select value={urgency} onChange={(e) => setUrgency(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">
-                      <option value="">Select urgency</option>
+                      <option value="">{bookingT("selectUrgency")}</option>
                       <option value="Flexible">Flexible</option>
                       <option value="This week">This week</option>
                       <option value="Tomorrow">Tomorrow</option>
@@ -466,8 +554,8 @@ export default function BookForm() {
                 </div>
 
                 <label className="space-y-1 text-sm text-slate-200">
-                  <span>Special instructions</span>
-                  <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder="Any special requests?" className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
+                  <span>{bookingT("instructionsLabel")}</span>
+                  <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder={bookingT("instructionsPlaceholder")} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
                   {errors.notes ? <span className="text-rose-300">{errors.notes}</span> : null}
                 </label>
               </div>
@@ -476,25 +564,25 @@ export default function BookForm() {
             {step === 3 ? (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-semibold text-white">Step 3 — Contact details</h2>
-                  <p className="text-slate-300">Provide your contact details so our team can send the quote.</p>
+                  <h2 className="text-2xl font-semibold text-white">{t("step3Title")}</h2>
+                  <p className="text-slate-300">{t("step3Text")}</p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="space-y-1 text-sm text-slate-200">
-                    <span>Full name</span>
+                    <span>{bookingT("fullNameLabel")}</span>
                     <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
                     {errors.customerName ? <span className="text-rose-300">{errors.customerName}</span> : null}
                   </label>
 
                   <label className="space-y-1 text-sm text-slate-200">
-                    <span>Phone</span>
+                    <span>{bookingT("phoneLabel")}</span>
                     <input value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
                     {errors.phone ? <span className="text-rose-300">{errors.phone}</span> : null}
                   </label>
 
                   <label className="space-y-1 text-sm text-slate-200 sm:col-span-2">
-                    <span>Email</span>
+                    <span>{bookingT("emailLabel")}</span>
                     <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
                     {errors.email ? <span className="text-rose-300">{errors.email}</span> : null}
                   </label>
@@ -502,43 +590,45 @@ export default function BookForm() {
               </div>
             ) : null}
 
-            <div className="mt-6 flex items-center justify-between gap-3">
-              <button type="button" onClick={handleBack} disabled={step === 1} className="rounded-xl border border-slate-700 px-4 py-3 text-sm text-slate-200 disabled:cursor-not-allowed disabled:opacity-40">Back</button>
-              {step < 3 ? (
-                <button type="button" onClick={handleNext} className="rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950">Continue</button>
+            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <button type="button" onClick={handleBack} disabled={step === 0 || step === 1 && !serviceId} className="h-11 rounded-xl border border-slate-700 px-4 py-3 text-sm text-slate-200 disabled:cursor-not-allowed disabled:opacity-40">{t("back")}</button>
+              {step === 0 ? (
+                <button type="button" onClick={handleNext} className="h-11 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950">{t("continue")}</button>
+              ) : step < 3 ? (
+                <button type="button" onClick={handleNext} className="h-11 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950">{t("continue")}</button>
               ) : (
-                <button type="submit" disabled={submitting} className="rounded-xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60">{submitting ? "Sending…" : "Send Quote Request"}</button>
+                <button type="submit" disabled={submitting} className="h-11 rounded-xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60">{submitting ? bookingT("sending") : bookingT("sendQuoteButton")}</button>
               )}
             </div>
           </section>
 
-          <aside className="space-y-6 rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl shadow-black/20">
+          <aside className="space-y-6 rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-2xl shadow-black/20 sm:p-6">
             <div>
-              <h2 className="text-xl font-semibold text-white">Live booking summary</h2>
-              <p className="text-sm text-slate-300">Your quote updates instantly as you choose the date, time, and service.</p>
+              <h2 className="text-xl font-semibold text-white">{bookingT("summaryTitle")}</h2>
+              <p className="text-sm text-slate-300">{bookingT("summaryText")}</p>
             </div>
 
             <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-sm text-slate-200">
-              <div className="flex items-center justify-between"><span>Service</span><strong>{service?.name || "Selected service"}</strong></div>
-              <div className="mt-2 flex items-center justify-between"><span>Quantity</span><strong>{quantity}</strong></div>
-              <div className="mt-2 flex items-center justify-between"><span>Duration</span><strong>{service?.duration || 0} min</strong></div>
+              <div className="flex items-center justify-between"><span>{bookingT("summaryService")}</span><strong>{service?.name || bookingT("selectedService")}</strong></div>
+              <div className="mt-2 flex items-center justify-between"><span>{bookingT("summaryQuantity")}</span><strong>{quantity}</strong></div>
+              <div className="mt-2 flex items-center justify-between"><span>{bookingT("summaryDuration")}</span><strong>{service?.duration || 0} min</strong></div>
             </div>
 
             <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-4">
-              <p className="text-sm text-cyan-100">Quote status</p>
-              <p className="mt-1 text-xl font-semibold text-white">Pending quote review</p>
+              <p className="text-sm text-cyan-100">{bookingT("quoteStatus")}</p>
+              <p className="mt-1 text-xl font-semibold text-white">{bookingT("quotePending")}</p>
             </div>
 
             <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-sm text-slate-300 space-y-2">
-              <p><strong>Date:</strong> {scheduledDate || "—"}</p>
-              <p><strong>Time:</strong> {TIME_SLOTS.find((slot) => slot.value === scheduledTime)?.label || scheduledTime || "—"}</p>
-              <p><strong>Availability:</strong> {selectedAvailability?.status === "full" ? "Fully booked" : selectedAvailability?.status === "limited" ? "Limited availability" : "Open"}</p>
-              <p><strong>Address:</strong> {address || "—"}</p>
+              <p><strong>{t("summaryDate")}:</strong> {scheduledDate || "—"}</p>
+              <p><strong>{t("summaryTime")}:</strong> {TIME_SLOTS.find((slot) => slot.value === scheduledTime)?.label || scheduledTime || "—"}</p>
+              <p><strong>{t("summaryAvailability")}:</strong> {selectedAvailability?.status === "full" ? t("fullyBooked") : selectedAvailability?.status === "limited" ? t("limitedAvailability") : t("open")}</p>
+              <p><strong>{t("summaryAddress")}:</strong> {address || "—"}</p>
             </div>
 
             <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-100">
-              <p className="font-semibold">Why this date works</p>
-              <p className="mt-1">{selectedAvailability?.bookings ? `${selectedAvailability.bookings} existing bookings on this date.` : "No bookings have been placed on this date yet."}</p>
+              <p className="font-semibold">{bookingT("whyThisDateWorks")}</p>
+              <p className="mt-1">{selectedAvailability?.bookings ? bookingT("existingBookings", { count: selectedAvailability.bookings }) : bookingT("noExistingBookings")}</p>
             </div>
           </aside>
         </form>

@@ -1,6 +1,8 @@
 "use client";
 
+import { Monitor, Sofa, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 
 type ServiceCategory = "ELECTRONICS" | "FURNITURE" | "OTHER";
 
@@ -20,7 +22,14 @@ function categoryLabel(category: ServiceCategory) {
   return category.charAt(0) + category.slice(1).toLowerCase();
 }
 
+function serviceIcon(category: ServiceCategory) {
+  if (category === "ELECTRONICS") return Monitor;
+  if (category === "FURNITURE") return Sofa;
+  return Sparkles;
+}
+
 export default function ServicesPage() {
+  const t = useTranslations();
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("All");
@@ -32,7 +41,7 @@ export default function ServicesPage() {
       setLoading(true);
 
       try {
-        const response = await fetch("/api/services", { cache: "no-store" });
+        const response = await fetch("/api/services", { cache: "force-cache" });
 
         if (!response.ok) {
           throw new Error("Failed to fetch services");
@@ -75,11 +84,9 @@ export default function ServicesPage() {
     <main className="min-h-screen bg-slate-950 text-slate-100">
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
         <header className="space-y-3">
-          <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">510 Services</p>
-          <h1 className="text-4xl font-semibold text-white sm:text-5xl">Browse our cleaning catalogue</h1>
-          <p className="max-w-2xl text-slate-300">
-            Filter by service type, review pricing, duration, and book the right cleaning package for your home or workspace.
-          </p>
+          <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">{t("servicesPage.eyebrow")}</p>
+          <h1 className="text-4xl font-semibold text-white sm:text-5xl">{t("servicesPage.title")}</h1>
+          <p className="max-w-2xl text-slate-300">{t("servicesPage.subtitle")}</p>
         </header>
 
         <nav className="flex flex-wrap gap-3">
@@ -97,7 +104,7 @@ export default function ServicesPage() {
                     : "border-slate-700 bg-slate-900 text-slate-300 hover:border-cyan-400/70 hover:text-white"
                 }`}
               >
-                {tab === "All" ? "All" : categoryLabel(tab as ServiceCategory)}
+                {tab === "All" ? t("servicesPage.all") : categoryLabel(tab as ServiceCategory)}
               </button>
             );
           })}
@@ -122,7 +129,7 @@ export default function ServicesPage() {
           <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {filteredServices.length === 0 ? (
               <article className="rounded-3xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-slate-300 md:col-span-2 xl:col-span-3">
-                No services are available in this category yet.
+                {t("ui.noServicesAvailable") || "No services are available in this category yet."}
               </article>
             ) : (
               filteredServices.map((service) => (
@@ -130,34 +137,33 @@ export default function ServicesPage() {
                   key={service.id}
                   className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-2xl shadow-black/20"
                 >
-                  <img
-                    src={service.imageUrl || "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80"}
-                    alt={service.name}
-                    className="h-44 w-full object-cover"
-                  />
+                  <div className="flex h-44 items-center justify-center border-b border-slate-800 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+                    {(() => {
+                      const Icon = serviceIcon(service.category);
+                      return <Icon className="h-12 w-12 text-cyan-200" />;
+                    })()}
+                  </div>
                   <div className="flex flex-col gap-4 p-5">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="text-xs uppercase tracking-[0.3em] text-cyan-300">{categoryLabel(service.category)}</p>
                         <h2 className="mt-1 text-xl font-semibold text-white">{service.name}</h2>
                       </div>
-                      <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-sm font-semibold text-emerald-300">
-                        {service.price.toLocaleString("en-US")} RWF
-                      </span>
+                      <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-sm font-semibold text-emerald-300">{t("ui.getQuote")}</span>
                     </div>
 
                     <p className="text-sm text-slate-300">{service.description}</p>
 
                     <div className="flex items-center justify-between text-sm text-slate-300">
-                      <span>Duration: {service.duration} min</span>
-                      <span>Category: {categoryLabel(service.category)}</span>
+                      <span>{t("servicesPage.durationLabel")}: {service.duration} min</span>
+                      <span>{t("servicesPage.categoryLabel")}: {categoryLabel(service.category)}</span>
                     </div>
 
                     <a
                       href={`/book?serviceId=${service.id}`}
                       className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
                     >
-                      Book Now
+                      {t("nav.bookNow")}
                     </a>
                   </div>
                 </article>

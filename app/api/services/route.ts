@@ -1,23 +1,13 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+
+import { prisma } from "../../../lib/prisma";
+import { fallbackServices } from "../../../lib/seedData";
 
 export const dynamic = "force-dynamic";
 
-const globalForPrisma = globalThis as unknown as {
-  prisma?: PrismaClient;
-};
-
-const prisma = process.env.DATABASE_URL
-  ? (globalForPrisma.prisma ?? new PrismaClient())
-  : null;
-
-if (process.env.DATABASE_URL && process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma as PrismaClient;
-}
-
 export async function GET() {
   try {
-    if (!prisma) {
+    if (!process.env.DATABASE_URL) {
       return NextResponse.json({ services: [] }, { status: 200 });
     }
 
@@ -29,6 +19,6 @@ export async function GET() {
   } catch (error) {
     console.error("Failed to fetch services:", error);
 
-    return NextResponse.json({ services: [] }, { status: 200 });
+    return NextResponse.json({ services: fallbackServices }, { status: 200 });
   }
 }

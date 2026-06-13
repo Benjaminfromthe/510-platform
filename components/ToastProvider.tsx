@@ -13,7 +13,7 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
 
   const showToast = (message: string, tone: "info" | "success" | "warning" = "info") => {
     setToast({ message, tone });
-    window.setTimeout(() => setToast(null), 2600);
+    window.setTimeout(() => setToast(null), 2000);
   };
 
   const toneStyles = {

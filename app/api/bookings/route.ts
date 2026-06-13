@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth, currentUser } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import { sendBookingConfirmationToCustomer, sendBookingNotificationToAdmin } from "../../../lib/email";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../../lib/prisma";
 
 const bookingSchema = z.object({
   serviceId: z.coerce.number().int().positive("Service is required."),
@@ -24,18 +21,6 @@ const bookingSchema = z.object({
   quotedPrice: z.coerce.number().nonnegative().optional().nullable(),
 });
 
-function getRole() {
-  const authResult = auth() as { sessionClaims?: any };
-  const sessionClaims = authResult.sessionClaims || {};
-
-  return String(
-    sessionClaims?.metadata?.role ||
-      sessionClaims?.role ||
-      sessionClaims?.publicMetadata?.role ||
-      "CUSTOMER"
-  ).toUpperCase();
-}
-
 function toBookingDate(date: string, time: string) {
   const value = new Date(`${date}T${time}:00`);
   if (Number.isNaN(value.getTime())) {
@@ -46,11 +31,6 @@ function toBookingDate(date: string, time: string) {
 
 export async function POST(request: Request) {
   try {
-    const { userId } = auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
-    }
-
     const body = await request.json();
     const parsed = bookingSchema.safeParse(body);
 
@@ -62,7 +42,7 @@ export async function POST(request: Request) {
 
     const booking = await prisma.booking.create({
       data: {
-        userId,
+        userId: null,
         serviceId: parsed.data.serviceId,
         quantity: parsed.data.quantity,
         addOns: parsed.data.addOns,
@@ -96,28 +76,12 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
-    const { userId } = auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
     const page = Math.max(1, Number(searchParams.get("page") || 1));
     const limit = Math.max(1, Math.min(50, Number(searchParams.get("limit") || 10)));
     const skip = (page - 1) * limit;
 
-    const role = getRole();
-    const clerkUser = await currentUser();
-    const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress || null;
-
-    const where = role === "ADMIN"
-      ? {}
-      : {
-          OR: [
-            { userId },
-            { email: userEmail || undefined },
-          ],
-        };
+    const where = {};
 
     const [bookings, total] = await Promise.all([
       prisma.booking.findMany({

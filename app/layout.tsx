@@ -1,8 +1,39 @@
 import { ClerkProvider } from '@clerk/nextjs';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
+import { ThemeProvider } from 'next-themes';
 import AIAssistant from '../components/AIAssistant';
 import Providers from '../components/Providers';
 import ToastProvider from '../components/ToastProvider';
+import WhatsAppFloat from '../components/WhatsAppFloat';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+export const metadata: Metadata = {
+  title: '510 | Professional Cleaning Services Kigali',
+  description: 'Book professional foam cleaning for electronics and furniture in Kigali, Rwanda. We come to you.',
+  keywords: ['cleaning services kigali', 'foam cleaning', 'electronics cleaning rwanda', 'furniture cleaning'],
+  openGraph: {
+    title: '510 | Professional Cleaning Services Kigali',
+    description: 'Book professional foam cleaning for electronics and furniture in Kigali, Rwanda. We come to you.',
+    url: 'https://510.rw',
+    siteName: '510 Cleaning Services',
+    images: [],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '510 | Professional Cleaning Services Kigali',
+    description: 'Book professional foam cleaning for electronics and furniture in Kigali, Rwanda. We come to you.',
+    images: [],
+  },
+};
 
 export default function RootLayout({
   children,
@@ -10,16 +41,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="bg-slate-950 text-slate-100">
-        <ClerkProvider>
-          <ToastProvider>
-            <Providers>
-              {children}
-              <AIAssistant />
-            </Providers>
-          </ToastProvider>
-        </ClerkProvider>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <body className="bg-background text-foreground antialiased" style={{ fontFamily: 'var(--font-inter), Arial, sans-serif' }}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <ClerkProvider>
+            <ToastProvider>
+              <Providers>
+                {children}
+                <WhatsAppFloat />
+                <AIAssistant />
+              </Providers>
+            </ToastProvider>
+          </ClerkProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

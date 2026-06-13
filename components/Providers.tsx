@@ -26,10 +26,20 @@ export function useLocaleContext() {
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [locale, setLocale] = useState('en');
 
+  const setLocaleWithPersistence = (value: string) => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('510-locale', value);
+      document.cookie = `510-locale=${value}; path=/; max-age=31536000; SameSite=Lax`;
+    }
+    setLocale(value);
+  };
+
   useEffect(() => {
     const savedLocale = typeof window !== 'undefined' ? window.localStorage.getItem('510-locale') : null;
-    if (savedLocale && savedLocale in messagesMap) {
-      setLocale(savedLocale);
+    const cookieLocale = typeof document !== 'undefined' ? document.cookie.match(/(?:^|; )510-locale=([^;]+)/)?.[1] : null;
+    const initialLocale = savedLocale || cookieLocale;
+    if (initialLocale && initialLocale in messagesMap) {
+      setLocale(initialLocale);
       return;
     }
 
@@ -42,13 +52,18 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     document.documentElement.lang = locale;
     window.localStorage.setItem('510-locale', locale);
+    document.cookie = `510-locale=${locale}; path=/; max-age=31536000; SameSite=Lax`;
   }, [locale]);
 
-  const value = useMemo(() => ({ locale, setLocale }), [locale]);
+  const value = useMemo(() => ({ locale, setLocale: setLocaleWithPersistence }), [locale]);
 
   return (
     <LocaleContext.Provider value={value}>
-      <NextIntlClientProvider locale={locale} messages={messagesMap[locale as keyof typeof messagesMap]}>
+      <NextIntlClientProvider
+        locale={locale}
+        messages={messagesMap[locale as keyof typeof messagesMap]}
+        timeZone="Africa/Kigali"
+      >
         {children}
       </NextIntlClientProvider>
     </LocaleContext.Provider>

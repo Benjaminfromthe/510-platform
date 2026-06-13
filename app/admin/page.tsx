@@ -62,6 +62,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [dateFilter, setDateFilter] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   const role = String(user?.publicMetadata?.role || user?.unsafeMetadata?.role || "").toUpperCase();
@@ -78,9 +79,9 @@ export default function AdminPage() {
       setLoading(true);
       try {
         const [bookingsResponse, servicesResponse, staffResponse] = await Promise.all([
-          fetch("/api/bookings", { cache: "no-store" }),
-          fetch("/api/services", { cache: "no-store" }),
-          fetch("/api/staff", { cache: "no-store" }),
+          fetch("/api/bookings", { cache: "force-cache" }),
+          fetch("/api/services", { cache: "force-cache" }),
+          fetch("/api/staff", { cache: "force-cache" }),
         ]);
 
         const bookingsData = await bookingsResponse.json();
@@ -260,7 +261,20 @@ export default function AdminPage() {
               <button type="button" onClick={exportCsv} className="rounded-xl bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-300">Export to CSV</button>
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-3">
+            <div className="mt-4 flex flex-col gap-3 lg:hidden">
+              <button type="button" onClick={() => setFiltersOpen((prev) => !prev)} className="h-11 rounded-xl border border-slate-700 bg-slate-950 px-4 py-2 text-sm font-semibold text-slate-100">{filtersOpen ? "Hide filters" : "Show filters"}</button>
+              {filtersOpen ? (
+                <div className="grid gap-3">
+                  <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100">
+                    <option value="ALL">All statuses</option>
+                    {['PENDING','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED'].map((status) => <option key={status} value={status}>{status}</option>)}
+                  </select>
+                  <input type="date" value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100" />
+                </div>
+              ) : null}
+            </div>
+
+            <div className="mt-4 hidden flex-wrap gap-3 lg:flex">
               <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100">
                 <option value="ALL">All statuses</option>
                 {['PENDING','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED'].map((status) => <option key={status} value={status}>{status}</option>)}
@@ -269,7 +283,7 @@ export default function AdminPage() {
             </div>
 
             <div className="mt-5 overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-800 text-left text-sm text-slate-200">
+              <table className="min-w-[720px] divide-y divide-slate-800 text-left text-sm text-slate-200">
                 <thead className="bg-slate-950/80 text-slate-300">
                   <tr>
                     <th className="px-3 py-3">Customer</th>
@@ -308,7 +322,7 @@ export default function AdminPage() {
           <article className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-2xl shadow-black/20">
             <h2 className="text-xl font-semibold text-white">Weekly revenue</h2>
             <p className="mt-1 text-sm text-slate-300">Revenue trend for the last 7 days.</p>
-            <div className="mt-5 h-72 w-full">
+            <div className="mt-5 h-72 w-full overflow-hidden">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={weeklyRevenue}>
                   <CartesianGrid stroke="#1f2937" vertical={false} />

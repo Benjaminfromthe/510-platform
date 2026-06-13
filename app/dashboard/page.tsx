@@ -1,8 +1,13 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { useUser } from "@clerk/nextjs";
+import { CalendarCheck2, Sparkles } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAuth, useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import BookingDetailsModal, { type BookingRecord } from "./BookingDetailsModal";
 
 type ServiceRecord = {
@@ -23,7 +28,7 @@ function statusClass(status: string) {
     case "CANCELLED":
       return "bg-rose-500/10 text-rose-100 border-rose-500/30";
     default:
-      return "bg-slate-500/10 text-slate-100 border-slate-500/30";
+      return "bg-slate-500/10 text-[var(--text-primary)] border-slate-500/30";
   }
 }
 
@@ -45,30 +50,38 @@ function formatTime(value?: string) {
 }
 
 export default function DashboardPage() {
+  const t = useTranslations("dashboard");
+  const router = useRouter();
   const { user } = useUser();
+  const { userId, isLoaded } = useAuth();
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
   const [services, setServices] = useState<ServiceRecord[]>([]);
   const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const [activeTab, setActiveTab] = useState<"bookings" | "subscription">("bookings");
   const [selectedBooking, setSelectedBooking] = useState<BookingRecord | null>(null);
   const [busyBookingId, setBusyBookingId] = useState<number | null>(null);
   const [busySubscription, setBusySubscription] = useState(false);
 
-  const loadBookings = async () => {
+  const loadDashboardData = useCallback(async () => {
     setLoading(true);
+    setErrorMessage("");
+
     try {
       const [bookingsResponse, servicesResponse, subscriptionResponse] = await Promise.all([
-        fetch("/api/bookings", { cache: "force-cache" }),
-        fetch("/api/services", { cache: "force-cache" }),
-        fetch("/api/subscriptions", { cache: "force-cache" }),
+        fetch("/api/bookings", { cache: "no-store" }),
+        fetch("/api/services", { cache: "no-store" }),
+        fetch("/api/subscriptions", { cache: "no-store" }),
       ]);
 
-      const bookingsData = await bookingsResponse.json();
-      const servicesData = await servicesResponse.json();
-      const subscriptionData = await subscriptionResponse.json();
+      const bookingsData = await bookingsResponse.json().catch(() => ({}));
+      const servicesData = await servicesResponse.json().catch(() => ({}));
+      const subscriptionData = await subscriptionResponse.json().catch(() => ({}));
 
-      if (!bookingsResponse.ok) throw new Error(bookingsData.error || "Failed to load bookings");
+      if (!bookingsResponse.ok) {
+        throw new Error(bookingsData.error || t("errorBookings"));
+      }
 
       setBookings(Array.isArray(bookingsData.bookings) ? bookingsData.bookings : []);
       setServices(Array.isArray(servicesData.services) ? servicesData.services : []);
@@ -78,14 +91,21 @@ export default function DashboardPage() {
       setBookings([]);
       setServices([]);
       setSubscription(null);
+      setErrorMessage(t("errorState"));
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
 
   useEffect(() => {
-    void loadBookings();
-  }, []);
+    if (!isLoaded) return;
+    if (!userId) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    void loadDashboardData();
+  }, [isLoaded, userId, router, loadDashboardData]);
 
   const serviceMap = useMemo(() => {
     return new Map(services.map((service) => [service.id, service.name]));
@@ -96,7 +116,7 @@ export default function DashboardPage() {
 
     return {
       total: bookings.length,
-      upcoming: bookings.filter((booking) => booking.status !== "COMPLETED" && booking.status !== "CANCELLED" && new Date(booking.scheduledDate) >= now).length,
+      pending: bookings.filter((booking) => booking.status === "PENDING" || booking.status === "PENDING_QUOTE").length,
       completed: bookings.filter((booking) => booking.status === "COMPLETED").length,
     };
   }, [bookings]);
@@ -112,7 +132,7 @@ export default function DashboardPage() {
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Unable to update subscription");
-      await loadBookings();
+      await loadDashboardData();
     } catch (error) {
       alert(error instanceof Error ? error.message : "Unable to update subscription");
     } finally {
@@ -132,7 +152,7 @@ export default function DashboardPage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Unable to cancel booking");
 
-      await loadBookings();
+      await loadDashboardData();
     } catch (error) {
       console.error("Cancel booking failed", error);
       alert(error instanceof Error ? error.message : "Unable to cancel booking");
@@ -142,56 +162,56 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+    <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
         <header className="space-y-3">
-          <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">Customer dashboard</p>
-          <h1 className="text-3xl font-semibold text-white sm:text-4xl">Welcome back, {user?.firstName || "there"}.</h1>
-          <p className="max-w-2xl text-slate-300">Track your bookings, review upcoming cleanings, and manage your upcoming service requests in one place.</p>
+          <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">{t("eyebrow")}</p>
+          <h1 className="text-3xl font-semibold text-[var(--text-primary)] sm:text-4xl">{t("welcome", { name: user?.firstName || t("guest") })} 👋</h1>
+          <p className="max-w-2xl text-[var(--text-secondary)]">{t("subtitle")}</p>
         </header>
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
           {[
-            { label: "Total Bookings", value: stats.total },
-            { label: "Upcoming", value: stats.upcoming },
-            { label: "Completed", value: stats.completed },
+            { label: t("statTotal"), value: stats.total },
+            { label: t("statPending"), value: stats.pending },
+            { label: t("statCompleted"), value: stats.completed },
           ].map((item) => (
-            <article key={item.label} className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-2xl shadow-black/20">
-              <p className="text-sm text-slate-300">{item.label}</p>
-              <p className="mt-3 text-3xl font-semibold text-white">{item.value}</p>
+            <article key={item.label} className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-2xl shadow-black/20">
+              <p className="text-sm text-[var(--text-secondary)]">{item.label}</p>
+              <p className="mt-3 text-3xl font-semibold text-[var(--text-primary)]">{item.value}</p>
             </article>
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-2xl shadow-black/20">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-2xl shadow-black/20">
           <div>
-            <h2 className="text-xl font-semibold text-white">Manage your plan</h2>
-            <p className="text-sm text-slate-300">Switch between bookings and your subscription details in one place.</p>
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">Manage your plan</h2>
+            <p className="text-sm text-[var(--text-secondary)]">Switch between bookings and your subscription details in one place.</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={() => setActiveTab("bookings")} className={`rounded-full px-4 py-2 text-sm font-semibold ${activeTab === "bookings" ? "bg-cyan-400 text-slate-950" : "border border-slate-700 text-slate-200 hover:border-cyan-400 hover:text-white"}`}>Bookings</button>
-            <button type="button" onClick={() => setActiveTab("subscription")} className={`rounded-full px-4 py-2 text-sm font-semibold ${activeTab === "subscription" ? "bg-cyan-400 text-slate-950" : "border border-slate-700 text-slate-200 hover:border-cyan-400 hover:text-white"}`}>My Subscription</button>
+            <button type="button" onClick={() => setActiveTab("bookings")} className={`rounded-full px-4 py-2 text-sm font-semibold ${activeTab === "bookings" ? "bg-cyan-400 text-slate-950" : "border border-[var(--border-color)] text-[var(--text-secondary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"}`}>{t("tabBookings")}</button>
+            <button type="button" onClick={() => setActiveTab("subscription")} className={`rounded-full px-4 py-2 text-sm font-semibold ${activeTab === "subscription" ? "bg-cyan-400 text-slate-950" : "border border-[var(--border-color)] text-[var(--text-secondary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"}`}>{t("tabSubscription")}</button>
           </div>
         </div>
 
         {activeTab === "subscription" ? (
-          <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl shadow-black/20">
+          <section className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-6 shadow-2xl shadow-black/20">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">My Subscription</p>
-                <h2 className="mt-2 text-2xl font-semibold text-white">{subscription ? subscription.plan.replace("_", " ") : "No active subscription"}</h2>
-                <p className="text-sm text-slate-300">Track your plan status, next cleaning date, and remaining cleanings here.</p>
+                <h2 className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">{subscription ? subscription.plan.replace("_", " ") : "No active subscription"}</h2>
+                <p className="text-sm text-[var(--text-secondary)]">Track your plan status, next cleaning date, and remaining cleanings here.</p>
               </div>
               <Link href="/subscriptions" className="rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-cyan-300">View Plans</Link>
             </div>
 
             {!subscription ? (
-              <div className="mt-6 rounded-2xl border border-dashed border-slate-700 bg-slate-950/80 p-5 text-slate-300">You do not have an active subscription yet. Choose a plan to get started.</div>
+              <div className="mt-6 rounded-2xl border border-dashed border-[var(--border-color)] bg-[var(--bg-primary)]/80 p-5 text-[var(--text-secondary)]">You do not have an active subscription yet. Choose a plan to get started.</div>
             ) : (
               <div className="mt-6 grid gap-4 md:grid-cols-3">
-                <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4"><p className="text-sm text-slate-300">Plan</p><p className="mt-2 text-xl font-semibold text-white">{subscription.plan}</p></article>
-                <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4"><p className="text-sm text-slate-300">Next cleaning</p><p className="mt-2 text-xl font-semibold text-white">{formatDate(subscription.nextCleaningDate)}</p></article>
-                <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4"><p className="text-sm text-slate-300">Cleanings remaining</p><p className="mt-2 text-xl font-semibold text-white">{Math.max(0, subscription.totalCleanings - subscription.cleaningsUsed)}</p></article>
+                <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4"><p className="text-sm text-[var(--text-secondary)]">Plan</p><p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{subscription.plan}</p></article>
+                <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4"><p className="text-sm text-[var(--text-secondary)]">Next cleaning</p><p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{formatDate(subscription.nextCleaningDate)}</p></article>
+                <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4"><p className="text-sm text-[var(--text-secondary)]">Cleanings remaining</p><p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{Math.max(0, subscription.totalCleanings - subscription.cleaningsUsed)}</p></article>
               </div>
             )}
 
@@ -206,25 +226,36 @@ export default function DashboardPage() {
 
         {activeTab === "bookings" ? (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-2xl shadow-black/20">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-2xl shadow-black/20">
               <div>
-                <h2 className="text-xl font-semibold text-white">Your bookings</h2>
-                <p className="text-sm text-slate-300">Review the latest status updates and open full booking details.</p>
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">Your bookings</h2>
+                <p className="text-sm text-[var(--text-secondary)]">Review the latest status updates and open full booking details.</p>
               </div>
               <Link href="/services" className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300">Book New Service</Link>
             </div>
 
             {loading ? (
-              <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6 text-slate-300 shadow-2xl shadow-black/20">Loading your bookings…</section>
+              <section className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-6 text-[var(--text-secondary)] shadow-2xl shadow-black/20">
+                <div className="space-y-4">
+                  <div className="h-4 w-2/3 rounded bg-[var(--bg-secondary)] animate-pulse" />
+                  <div className="h-4 w-1/2 rounded bg-[var(--bg-secondary)] animate-pulse" />
+                  <div className="h-24 rounded-2xl bg-[var(--bg-secondary)]/80 animate-pulse" />
+                </div>
+              </section>
+            ) : errorMessage ? (
+              <section className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-6 text-[var(--text-secondary)] shadow-2xl shadow-black/20">{errorMessage}</section>
             ) : bookings.length === 0 ? (
-              <section className="rounded-3xl border border-dashed border-slate-700 bg-slate-900/70 p-8 text-slate-300 shadow-2xl shadow-black/20">
-                You do not have any bookings yet. Start with a new service to get going.
+              <section className="rounded-3xl border border-dashed border-[var(--border-color)] bg-[var(--bg-card)]/70 p-8 text-[var(--text-secondary)] shadow-2xl shadow-black/20 text-center">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-100"><CalendarCheck2 className="h-7 w-7" /></div>
+                <h3 className="mt-4 text-xl font-semibold text-[var(--text-primary)]">{t("emptyTitle")}</h3>
+                <p className="mt-2 text-sm text-[var(--text-secondary)]">{t("emptyText")}</p>
+                <Link href="/services" className="mt-5 inline-flex rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950">{t("emptyAction")}</Link>
               </section>
             ) : (
               <>
-                <div className="hidden overflow-x-auto rounded-3xl border border-slate-800 bg-slate-900 shadow-2xl shadow-black/20 lg:block">
-              <table className="min-w-full divide-y divide-slate-800 text-left text-sm text-slate-200">
-                <thead className="bg-slate-950/80 text-slate-300">
+                <div className="hidden overflow-x-auto rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] shadow-2xl shadow-black/20 lg:block">
+              <table className="min-w-full divide-y divide-slate-800 text-left text-sm text-[var(--text-secondary)]">
+                <thead className="bg-[var(--bg-primary)]/80 text-[var(--text-secondary)]">
                   <tr>
                     <th className="px-4 py-3">Service</th>
                     <th className="px-4 py-3">Date</th>
@@ -236,8 +267,8 @@ export default function DashboardPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-800">
                   {bookings.map((booking) => (
-                    <tr key={booking.id} className="hover:bg-slate-800/50">
-                      <td className="px-4 py-4 text-white">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</td>
+                    <tr key={booking.id} className="hover:bg-[var(--bg-secondary)]/50">
+                      <td className="px-4 py-4 text-[var(--text-primary)]">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</td>
                       <td className="px-4 py-4">{formatDate(booking.scheduledDate)}</td>
                       <td className="px-4 py-4">{formatTime(booking.scheduledTime)}</td>
                       <td className="px-4 py-4">
@@ -251,10 +282,13 @@ export default function DashboardPage() {
                           <button
                             type="button"
                             onClick={() => setSelectedBooking(booking)}
-                            className="rounded-full border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-100 hover:border-cyan-400 hover:text-white"
+                            className="rounded-full border border-[var(--border-color)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"
                           >
-                            View Details
+                            {t("viewDetails")}
                           </button>
+                          {booking.status === "COMPLETED" && (
+                            <Link href="/services" className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-100 hover:bg-emerald-400/20">{t("bookAgain")}</Link>
+                          )}
                           {booking.status === "PENDING" && (
                             <button
                               type="button"
@@ -262,7 +296,7 @@ export default function DashboardPage() {
                               disabled={busyBookingId === booking.id}
                               className="rounded-full border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-100 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-60"
                             >
-                              {busyBookingId === booking.id ? "Cancelling..." : "Cancel"}
+                              {busyBookingId === booking.id ? t("cancelling") : t("cancel")}
                             </button>
                           )}
                         </div>
@@ -275,25 +309,28 @@ export default function DashboardPage() {
 
                 <div className="grid gap-4 lg:hidden">
                   {bookings.map((booking) => (
-                    <article key={booking.id} className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-2xl shadow-black/20">
+                    <article key={booking.id} className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-2xl shadow-black/20">
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</p>
-                          <p className="mt-1 text-lg font-semibold text-white">{formatDate(booking.scheduledDate)} · {formatTime(booking.scheduledTime)}</p>
+                          <p className="mt-1 text-lg font-semibold text-[var(--text-primary)]">{formatDate(booking.scheduledDate)} · {formatTime(booking.scheduledTime)}</p>
                         </div>
                         <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] ${statusClass(booking.status)}`}>
                           {booking.status}
                         </span>
                       </div>
-                      <p className="mt-3 text-sm text-slate-300">{booking.totalPrice.toLocaleString("en-US")} RWF</p>
+                      <p className="mt-3 text-sm text-[var(--text-secondary)]">{booking.totalPrice.toLocaleString("en-US")} RWF</p>
                       <div className="mt-4 flex flex-wrap gap-2">
                         <button
                           type="button"
                           onClick={() => setSelectedBooking(booking)}
-                          className="rounded-full border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-100 hover:border-cyan-400 hover:text-white"
+                          className="rounded-full border border-[var(--border-color)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"
                         >
-                          View Details
+                          {t("viewDetails")}
                         </button>
+                        {booking.status === "COMPLETED" && (
+                          <Link href="/services" className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-100 hover:bg-emerald-400/20">{t("bookAgain")}</Link>
+                        )}
                         {booking.status === "PENDING" && (
                           <button
                             type="button"
@@ -301,7 +338,7 @@ export default function DashboardPage() {
                             disabled={busyBookingId === booking.id}
                             className="rounded-full border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-100 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-60"
                           >
-                            {busyBookingId === booking.id ? "Cancelling..." : "Cancel"}
+                            {busyBookingId === booking.id ? t("cancelling") : t("cancel")}
                           </button>
                         )}
                       </div>

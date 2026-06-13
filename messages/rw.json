@@ -66,10 +66,19 @@
   "legal": {
     "copyright": "© 2026 Serivisi z’isuku za 510, Kigali Rwanda | Politiki y’ibanga | Amabwiriza"
   },
+  "category": {
+    "electronics": "Ibikoresho by’amashanyarazi",
+    "furniture": "Ibikoresho by’inzu",
+    "other": "Ibindi"
+  },
   "booking": {
     "title": "Icyifuzo cy'icyegeranyo",
     "subtitle": "Intambwe eshatu zo gusaba icyegeranyo cy'ubusa",
     "progress": "Iterambere ry'ubusabe",
+    "stepCounter": "Intambwe {current} ku {total}",
+    "stepLabelChoose": "Hitamo serivisi",
+    "stepLabelSchedule": "Gahunda",
+    "stepLabelConfirm": "Emeza",
     "step1Title": "Intambwe ya 1 — Ibikenewe by'ubusabe",
     "step1Text": "Hitamo umubare w'ibikenewe kandi ushyireho serivisi ushaka icyegeranyo.",
     "step2Title": "Intambwe ya 2 — Sobanura ibyo ukeneye",
@@ -78,6 +87,10 @@
     "step3Text": "Tanga amakuru yawe yo kuvugana kugira ngo itsinda ryacu rikohereze icyegeranyo.",
     "quantity": "Umubare",
     "duration": "Igihe",
+    "availability": {
+      "open": "Buboneka",
+      "limited": "Igihe gito cyaboneka"
+    },
     "date": "Itariki",
     "time": "Igihe cyo gukora",
     "address": "Aho uherereye",
@@ -118,6 +131,9 @@
     "selectedService": "Serivisi yatoranijwe",
     "quantityLabel": "Umubare",
     "durationLabel": "Igihe",
+    "estimatedTimeLabel": "Igihe cyitezwe",
+    "estimatedTimeValue": "iminota {minutes}",
+    "estimatedTimeHint": "Iyi gihe ibarwa ku buryo bwikora ukurikije serivisi wahisemo.",
     "summaryTitle": "Incamake y'ubusabe mugihe nyacyo",
     "summaryText": "Icyegeranyo cyawe gihinduka ako kanya uko wahitamo itariki, igihe, n’ serivisi.",
     "summaryService": "Serivisi",
@@ -147,7 +163,18 @@
     "phoneLabel": "Telefoni",
     "emailLabel": "Imeyili",
     "sending": "Iohereza…",
-    "sendQuoteButton": "Ohereza icyifuzo cy'icyegeranyo"
+    "sendQuoteButton": "Ohereza icyifuzo cy'icyegeranyo",
+    "successEyebrow": "Icyifuzo cy'icyegeranyo cyakiriwe",
+    "successTitle": "Icyifuzo cyawe kirimo gutunganywa",
+    "successText": "Urakoze guhitamo 510 Cleaning. Itsinda ryacu rizasuzuma icyifuzo cyawe kandi rikugereze vuba.",
+    "referenceLabel": "Inozo y'ubusabe",
+    "contactWithin": "Tuzaguhamagara mu masaha 2.",
+    "whatsappFollowUp": "Kuganira kuri WhatsApp",
+    "bookAnother": "Teganya indi serivisi"
+  },
+  "services": {
+    "getQuote": "Shaka icyegeranyo",
+    "bookNow": "Teganya ubusabe"
   },
   "servicesPage": {
     "eyebrow": "Serivisi",
@@ -186,6 +213,10 @@
       "coverage": "Dukora murihe turere?"
     }
   },
+  "common": {
+    "minutes": "iminota",
+    "hours": "amasaha"
+  },
   "ui": {
     "loadingHome": "Twitegura uburambe bwawe bwo gusukura…",
     "loadingBook": "Ibirimo gutegura ubusabe bw’icyegeranyo…",
@@ -220,12 +251,23 @@
     "contactUs": "Tuvugishe",
     "plan1Feature1": "Isuku imwe ku cyumweru",
     "plan1Feature2": "Ibyo guteganya byihutirwa",
+    "plan1Feature3": "Igihe cyo gusura cyoroshye",
     "plan2Feature1": "Isuku enye ku kwezi",
     "plan2Feature2": "Ubufasha bwihutirwa",
     "plan2Feature3": "Igihe cyo guteganya cyoroshye",
+    "plan2Feature4": "Byiza ku mazu n'ibiro",
     "plan3Feature1": "Isuku umunani ku kwezi",
     "plan3Feature2": "Umukoresha wihariye",
     "plan3Feature3": "Ubufasha bwihutirwa",
+    "plan3Feature4": "Isuku ya premium kandi gusubiza vuba",
+    "faqTitle": "Ibibazo bimwe na bimwe",
+    "faqSubtitle": "Ibyo ukwiye kumenya ku isuku y'igihe cyose",
+    "faq1Question": "Amafaranga akora gute?",
+    "faq1Answer": "Twandikire kuri WhatsApp, maze tuganire ku biciro byihariye bikubiyemo ibyo ukeneye.",
+    "faq2Question": "Nshobora guhagarika igihe cyose?",
+    "faq2Answer": "Yego, gahunda z'ubwishyu zoroheje kandi nta masezerano maremare.",
+    "faq3Question": "Muhezo w'ahantu utwikiriye he?",
+    "faq3Answer": "Tukora mu turere twose twa Kigali harimo Kacyiru, Kimihurura, Nyarutarama, Gisozi, Remera n'ibindi byinshi.",
     "compareTitle": "Gereranya gahunda",
     "compareSubtitle": "Reba vuba ibyo buri gahunda irimo",
     "compareFeature": "Ikintu",
@@ -253,7 +295,24 @@
     "switchToLight": "Hindura ubururu bwumucyo"
   },
   "dashboard": {
-    "welcome": "Murakaza neza, {name}.",
+    "eyebrow": "Ikibaho cy'abakiriya",
+    "welcome": "Muraho {name}",
+    "guest": "we",
+    "subtitle": "Komeza ubone ubusabe bwawe, reba isuku izaza, kandi ugereho ibyifuzo byawe ahantu hamwe.",
+    "statTotal": "Ibibazo byose",
+    "statPending": "Bitegereje",
+    "statCompleted": "Byarangiye",
+    "tabBookings": "Amasaha",
+    "tabSubscription": "Icyemezo cy'ubwishyu",
+    "errorBookings": "Ntibishobotse gutegura ubusabe bwawe ubu.",
+    "errorState": "Habaye ikosa mu gutegura ikibaho cyawe. Ongera ugerageze.",
+    "emptyTitle": "Nta busabe buhari",
+    "emptyText": "Tangira isuku ya mbere kugira ngo ubone amateka yawe hano.",
+    "emptyAction": "Teganya isuku ya mbere",
+    "viewDetails": "Reba ibimenyetso",
+    "bookAgain": "Ongera utange",
+    "cancel": "Hagarika",
+    "cancelling": "Hagarika...",
     "heading": "Amasaha yawe",
     "subtext": "Reba amakuru ya vuba, ugenzure ibisabwa by'icyegeranyo n'ibindi.",
     "bookNew": "Teganya serivisi nshya",

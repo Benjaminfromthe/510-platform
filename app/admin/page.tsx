@@ -41,7 +41,7 @@ function statusTone(status: string) {
     case "CANCELLED":
       return "bg-rose-500/10 text-rose-100 border-rose-500/30";
     default:
-      return "bg-slate-500/10 text-slate-100 border-slate-500/30";
+      return "bg-slate-500/10 text-[var(--text-primary)] border-slate-500/30";
   }
 }
 
@@ -221,7 +221,7 @@ export default function AdminPage() {
   }
 
   if (!isLoaded) {
-    return <main className="min-h-screen bg-slate-950 p-8 text-slate-100">Loading admin access…</main>;
+    return <main className="min-h-screen bg-[var(--bg-primary)] p-8 text-[var(--text-primary)]">Loading admin access…</main>;
   }
 
   if (role !== "ADMIN") {
@@ -229,12 +229,12 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+    <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
         <header className="space-y-3">
           <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">Admin dashboard</p>
-          <h1 className="text-3xl font-semibold text-white sm:text-4xl">Operations overview</h1>
-          <p className="max-w-2xl text-slate-300">Monitor bookings, assign staff, update status, and review weekly revenue from one responsive view.</p>
+          <h1 className="text-3xl font-semibold text-[var(--text-primary)] sm:text-4xl">Operations overview</h1>
+          <p className="max-w-2xl text-[var(--text-secondary)]">Monitor bookings, assign staff, update status, and review weekly revenue from one responsive view.</p>
         </header>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -244,47 +244,47 @@ export default function AdminPage() {
             ["Monthly Revenue", formatCurrency(stats.monthlyRevenue)],
             ["Staff Count", stats.staffCount],
           ].map(([label, value]) => (
-            <article key={label as string} className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-2xl shadow-black/20">
-              <p className="text-sm text-slate-300">{label as string}</p>
-              <p className="mt-3 text-3xl font-semibold text-white">{value as string}</p>
+            <article key={label as string} className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-2xl shadow-black/20">
+              <p className="text-sm text-[var(--text-secondary)]">{label as string}</p>
+              <p className="mt-3 text-3xl font-semibold text-[var(--text-primary)]">{value as string}</p>
             </article>
           ))}
         </div>
 
         <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-          <article className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-2xl shadow-black/20">
+          <article className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-2xl shadow-black/20">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-semibold text-white">Bookings</h2>
-                <p className="text-sm text-slate-300">Filter by status and date, then update records in place.</p>
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">Bookings</h2>
+                <p className="text-sm text-[var(--text-secondary)]">Filter by status and date, then update records in place.</p>
               </div>
               <button type="button" onClick={exportCsv} className="rounded-xl bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-300">Export to CSV</button>
             </div>
 
             <div className="mt-4 flex flex-col gap-3 lg:hidden">
-              <button type="button" onClick={() => setFiltersOpen((prev) => !prev)} className="h-11 rounded-xl border border-slate-700 bg-slate-950 px-4 py-2 text-sm font-semibold text-slate-100">{filtersOpen ? "Hide filters" : "Show filters"}</button>
+              <button type="button" onClick={() => setFiltersOpen((prev) => !prev)} className="h-11 rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-sm font-semibold text-[var(--text-primary)]">{filtersOpen ? "Hide filters" : "Show filters"}</button>
               {filtersOpen ? (
                 <div className="grid gap-3">
-                  <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100">
+                  <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-3 text-sm text-[var(--text-primary)]">
                     <option value="ALL">All statuses</option>
                     {['PENDING','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED'].map((status) => <option key={status} value={status}>{status}</option>)}
                   </select>
-                  <input type="date" value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100" />
+                  <input type="date" value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-3 text-sm text-[var(--text-primary)]" />
                 </div>
               ) : null}
             </div>
 
             <div className="mt-4 hidden flex-wrap gap-3 lg:flex">
-              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100">
+              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)]">
                 <option value="ALL">All statuses</option>
                 {['PENDING','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED'].map((status) => <option key={status} value={status}>{status}</option>)}
               </select>
-              <input type="date" value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100" />
+              <input type="date" value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)]" />
             </div>
 
             <div className="mt-5 overflow-x-auto">
-              <table className="min-w-[720px] divide-y divide-slate-800 text-left text-sm text-slate-200">
-                <thead className="bg-slate-950/80 text-slate-300">
+              <table className="min-w-[720px] divide-y divide-slate-800 text-left text-sm text-[var(--text-secondary)]">
+                <thead className="bg-[var(--bg-primary)]/80 text-[var(--text-secondary)]">
                   <tr>
                     <th className="px-3 py-3">Customer</th>
                     <th className="px-3 py-3">Service</th>
@@ -296,17 +296,17 @@ export default function AdminPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-800">
                   {filteredBookings.map((booking) => (
-                    <tr key={booking.id} className="hover:bg-slate-800/40">
-                      <td className="px-3 py-4 text-white">{booking.customerName || booking.email || `Booking ${booking.id}`}</td>
+                    <tr key={booking.id} className="hover:bg-[var(--bg-secondary)]/40">
+                      <td className="px-3 py-4 text-[var(--text-primary)]">{booking.customerName || booking.email || `Booking ${booking.id}`}</td>
                       <td className="px-3 py-4">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</td>
                       <td className="px-3 py-4">{formatDate(booking.scheduledDate)}</td>
                       <td className="px-3 py-4">
-                        <select value={booking.status} onChange={(event) => void updateBookingStatus(booking.id, event.target.value)} disabled={updatingId === booking.id} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100">
+                        <select value={booking.status} onChange={(event) => void updateBookingStatus(booking.id, event.target.value)} disabled={updatingId === booking.id} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)]">
                           {['PENDING','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED'].map((status) => <option key={status} value={status}>{status}</option>)}
                         </select>
                       </td>
                       <td className="px-3 py-4">
-                        <select value={booking.staffId ?? ""} onChange={(event) => void assignStaff(booking.id, event.target.value)} disabled={updatingId === booking.id} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100">
+                        <select value={booking.staffId ?? ""} onChange={(event) => void assignStaff(booking.id, event.target.value)} disabled={updatingId === booking.id} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)]">
                           <option value="">Unassigned</option>
                           {staffList.map((staff) => <option key={staff.id} value={staff.id}>Staff #{staff.id}</option>)}
                         </select>
@@ -319,9 +319,9 @@ export default function AdminPage() {
             </div>
           </article>
 
-          <article className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-2xl shadow-black/20">
-            <h2 className="text-xl font-semibold text-white">Weekly revenue</h2>
-            <p className="mt-1 text-sm text-slate-300">Revenue trend for the last 7 days.</p>
+          <article className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-2xl shadow-black/20">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">Weekly revenue</h2>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">Revenue trend for the last 7 days.</p>
             <div className="mt-5 h-72 w-full overflow-hidden">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={weeklyRevenue}>

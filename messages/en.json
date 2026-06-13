@@ -66,10 +66,19 @@
   "legal": {
     "copyright": "© 2026 510 Cleaning Services, Kigali Rwanda | Privacy Policy | Terms"
   },
+  "category": {
+    "electronics": "Electronics",
+    "furniture": "Furniture",
+    "other": "Other"
+  },
   "booking": {
     "title": "Quote request",
     "subtitle": "Three simple steps to request a free quote",
     "progress": "Booking progress",
+    "stepCounter": "Step {current} of {total}",
+    "stepLabelChoose": "Choose Service",
+    "stepLabelSchedule": "Schedule",
+    "stepLabelConfirm": "Confirm",
     "step1Title": "Step 1 — Service Details",
     "step1Text": "Choose the quantity and confirm the service you want quoted.",
     "step2Title": "Step 2 — Describe your needs",
@@ -78,6 +87,10 @@
     "step3Text": "Provide your contact details so our team can send the quote.",
     "quantity": "Quantity",
     "duration": "Duration",
+    "availability": {
+      "open": "Open",
+      "limited": "Limited availability"
+    },
     "date": "Date",
     "time": "Time slot",
     "address": "Address",
@@ -118,6 +131,9 @@
     "selectedService": "Selected service",
     "quantityLabel": "Quantity",
     "durationLabel": "Duration",
+    "estimatedTimeLabel": "Estimated time",
+    "estimatedTimeValue": "{minutes} min",
+    "estimatedTimeHint": "This is calculated automatically from the selected service.",
     "summaryTitle": "Live booking summary",
     "summaryText": "Your quote updates instantly as you choose the date, time, and service.",
     "summaryService": "Service",
@@ -147,7 +163,18 @@
     "phoneLabel": "Phone",
     "emailLabel": "Email",
     "sending": "Sending…",
-    "sendQuoteButton": "Send Quote Request"
+    "sendQuoteButton": "Send Quote Request",
+    "successEyebrow": "Quote request received",
+    "successTitle": "Your request is on its way",
+    "successText": "Thanks for booking with 510 Cleaning. Our team will review your request and contact you soon.",
+    "referenceLabel": "Booking reference",
+    "contactWithin": "We will contact you within 2 hours.",
+    "whatsappFollowUp": "Chat on WhatsApp",
+    "bookAnother": "Book another service"
+  },
+  "services": {
+    "getQuote": "Get a Quote",
+    "bookNow": "Book now"
   },
   "servicesPage": {
     "eyebrow": "Services",
@@ -186,6 +213,10 @@
       "coverage": "What areas do you cover?"
     }
   },
+  "common": {
+    "minutes": "minutes",
+    "hours": "hours"
+  },
   "ui": {
     "loadingHome": "Preparing your clean experience…",
     "loadingBook": "Loading your booking flow…",
@@ -220,12 +251,23 @@
     "contactUs": "Contact us",
     "plan1Feature1": "1 cleaning per week",
     "plan1Feature2": "Priority booking",
+    "plan1Feature3": "Flexible visit times",
     "plan2Feature1": "4 cleanings per month",
     "plan2Feature2": "Priority support",
     "plan2Feature3": "Flexible scheduling",
+    "plan2Feature4": "Ideal for homes and offices",
     "plan3Feature1": "8 cleanings per month",
     "plan3Feature2": "Dedicated cleaner",
     "plan3Feature3": "Priority support",
+    "plan3Feature4": "Premium care and faster response",
+    "faqTitle": "FAQ",
+    "faqSubtitle": "Everything you need to know about recurring cleaning",
+    "faq1Question": "How does pricing work?",
+    "faq1Answer": "Contact us via WhatsApp and we discuss a custom price based on your needs.",
+    "faq2Question": "Can I cancel anytime?",
+    "faq2Answer": "Yes, subscriptions are flexible with no long-term contracts.",
+    "faq3Question": "What areas do you cover?",
+    "faq3Answer": "We cover all areas of Kigali including Kacyiru, Kimihurura, Nyarutarama, Gisozi, Remera and more.",
     "compareTitle": "Plan comparison",
     "compareSubtitle": "See what each plan includes at a glance",
     "compareFeature": "Feature",
@@ -253,7 +295,24 @@
     "switchToLight": "Switch to light mode"
   },
   "dashboard": {
-    "welcome": "Welcome back, {name}.",
+    "eyebrow": "Customer dashboard",
+    "welcome": "Hello {name}",
+    "guest": "there",
+    "subtitle": "Track your bookings, review upcoming cleanings, and manage your service requests in one place.",
+    "statTotal": "Total Requests",
+    "statPending": "Pending",
+    "statCompleted": "Completed",
+    "tabBookings": "Bookings",
+    "tabSubscription": "My Subscription",
+    "errorBookings": "Unable to load your bookings right now.",
+    "errorState": "Something went wrong while loading your dashboard. Please try again.",
+    "emptyTitle": "No bookings yet",
+    "emptyText": "Start with your first clean to see your booking history here.",
+    "emptyAction": "Book your first clean",
+    "viewDetails": "View Details",
+    "bookAgain": "Book Again",
+    "cancel": "Cancel",
+    "cancelling": "Cancelling...",
     "heading": "Your bookings",
     "subtext": "Review the latest status updates and open full booking details.",
     "bookNew": "Book New Service",

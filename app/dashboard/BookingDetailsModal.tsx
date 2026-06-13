@@ -59,48 +59,48 @@ export default function BookingDetailsModal({ booking, serviceName, onClose }: B
   if (!booking) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl shadow-black/30">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-primary)]/80 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-2xl rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-6 shadow-2xl shadow-black/30">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">Booking details</p>
-            <h2 className="mt-2 text-2xl font-semibold text-white">{serviceName}</h2>
-            <p className="mt-1 text-sm text-slate-300">Status: {booking.status}</p>
+            <h2 className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">{serviceName}</h2>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">Status: {booking.status}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-slate-700 px-3 py-2 text-sm text-slate-200 hover:border-cyan-400 hover:text-white"
+            className="rounded-full border border-[var(--border-color)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"
           >
             Close
           </button>
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
-          <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-sm text-slate-200">
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Schedule</p>
-            <p className="mt-2 text-base text-white">{formatDate(booking.scheduledDate)}</p>
-            <p className="text-slate-300">{formatTime(booking.scheduledTime)}</p>
+          <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)]">
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">Schedule</p>
+            <p className="mt-2 text-base text-[var(--text-primary)]">{formatDate(booking.scheduledDate)}</p>
+            <p className="text-[var(--text-secondary)]">{formatTime(booking.scheduledTime)}</p>
           </article>
-          <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-sm text-slate-200">
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Price</p>
-            <p className="mt-2 text-base text-white">{formatCurrency(booking.totalPrice || 0)}</p>
-            <p className="text-slate-300">Quantity: {booking.quantity}</p>
+          <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)]">
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">Price</p>
+            <p className="mt-2 text-base text-[var(--text-primary)]">{formatCurrency(booking.totalPrice || 0)}</p>
+            <p className="text-[var(--text-secondary)]">Quantity: {booking.quantity}</p>
           </article>
-          <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-sm text-slate-200 md:col-span-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Contact</p>
-            <p className="mt-2 text-base text-white">{booking.customerName || "Customer"}</p>
-            <p className="text-slate-300">{booking.phone || "No phone on file"}</p>
-            <p className="text-slate-300">{booking.email || "No email on file"}</p>
+          <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)] md:col-span-2">
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">Contact</p>
+            <p className="mt-2 text-base text-[var(--text-primary)]">{booking.customerName || "Customer"}</p>
+            <p className="text-[var(--text-secondary)]">{booking.phone || "No phone on file"}</p>
+            <p className="text-[var(--text-secondary)]">{booking.email || "No email on file"}</p>
           </article>
-          <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-sm text-slate-200 md:col-span-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Address & notes</p>
-            <p className="mt-2 text-white">{booking.address}</p>
-            <p className="mt-1 text-slate-300">{booking.notes || "No notes provided."}</p>
+          <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)] md:col-span-2">
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">Address & notes</p>
+            <p className="mt-2 text-[var(--text-primary)]">{booking.address}</p>
+            <p className="mt-1 text-[var(--text-secondary)]">{booking.notes || "No notes provided."}</p>
           </article>
-          <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-sm text-slate-200 md:col-span-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Add-ons</p>
-            <p className="mt-2 text-slate-300">{booking.addOns && booking.addOns.length ? booking.addOns.join(", ") : "No add-ons selected"}</p>
+          <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)] md:col-span-2">
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">Add-ons</p>
+            <p className="mt-2 text-[var(--text-secondary)]">{booking.addOns && booking.addOns.length ? booking.addOns.join(", ") : "No add-ons selected"}</p>
           </article>
         </div>
       </div>

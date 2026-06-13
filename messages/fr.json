@@ -66,10 +66,19 @@
   "legal": {
     "copyright": "© 2026 Services de nettoyage 510, Kigali Rwanda | Politique de confidentialité | Conditions"
   },
+  "category": {
+    "electronics": "Électronique",
+    "furniture": "Mobilier",
+    "other": "Autre"
+  },
   "booking": {
     "title": "Demande de devis",
     "subtitle": "Trois étapes simples pour demander un devis gratuit",
     "progress": "Avancement de la réservation",
+    "stepCounter": "Étape {current} sur {total}",
+    "stepLabelChoose": "Choisir le service",
+    "stepLabelSchedule": "Planifier",
+    "stepLabelConfirm": "Confirmer",
     "step1Title": "Étape 1 — Détails du service",
     "step1Text": "Choisissez la quantité et confirmez le service pour lequel vous souhaitez un devis.",
     "step2Title": "Étape 2 — Décrivez vos besoins",
@@ -78,6 +87,10 @@
     "step3Text": "Fournissez vos coordonnées afin que notre équipe puisse vous envoyer le devis.",
     "quantity": "Quantité",
     "duration": "Durée",
+    "availability": {
+      "open": "Ouvert",
+      "limited": "Disponibilité limitée"
+    },
     "date": "Date",
     "time": "Créneau horaire",
     "address": "Adresse",
@@ -118,6 +131,9 @@
     "selectedService": "Service sélectionné",
     "quantityLabel": "Quantité",
     "durationLabel": "Durée",
+    "estimatedTimeLabel": "Temps estimé",
+    "estimatedTimeValue": "{minutes} min",
+    "estimatedTimeHint": "Cette durée est calculée automatiquement selon le service choisi.",
     "summaryTitle": "Résumé de réservation en direct",
     "summaryText": "Votre devis se met à jour instantanément lorsque vous choisissez la date, l’horaire et le service.",
     "summaryService": "Service",
@@ -147,7 +163,18 @@
     "phoneLabel": "Téléphone",
     "emailLabel": "E-mail",
     "sending": "Envoi…",
-    "sendQuoteButton": "Envoyer la demande de devis"
+    "sendQuoteButton": "Envoyer la demande de devis",
+    "successEyebrow": "Demande de devis reçue",
+    "successTitle": "Votre demande est en cours de traitement",
+    "successText": "Merci d’avoir choisi 510 Cleaning. Notre équipe va examiner votre demande et vous recontacter rapidement.",
+    "referenceLabel": "Référence de réservation",
+    "contactWithin": "Nous vous contacterons dans les 2 heures.",
+    "whatsappFollowUp": "Discuter sur WhatsApp",
+    "bookAnother": "Réserver un autre service"
+  },
+  "services": {
+    "getQuote": "Obtenir un devis",
+    "bookNow": "Réserver maintenant"
   },
   "servicesPage": {
     "eyebrow": "Services",
@@ -186,6 +213,10 @@
       "coverage": "Quelles zones couvrez-vous ?"
     }
   },
+  "common": {
+    "minutes": "minutes",
+    "hours": "heures"
+  },
   "ui": {
     "loadingHome": "Préparation de votre expérience de nettoyage…",
     "loadingBook": "Chargement du parcours de réservation…",
@@ -220,12 +251,23 @@
     "contactUs": "Nous contacter",
     "plan1Feature1": "1 nettoyage par semaine",
     "plan1Feature2": "Réservation prioritaire",
+    "plan1Feature3": "Horaires de visite flexibles",
     "plan2Feature1": "4 nettoyages par mois",
     "plan2Feature2": "Support prioritaire",
     "plan2Feature3": "Planning flexible",
+    "plan2Feature4": "Idéal pour les maisons et bureaux",
     "plan3Feature1": "8 nettoyages par mois",
     "plan3Feature2": "Nettoyeur dédié",
     "plan3Feature3": "Support prioritaire",
+    "plan3Feature4": "Soin premium et réponse plus rapide",
+    "faqTitle": "FAQ",
+    "faqSubtitle": "Tout ce qu'il faut savoir sur le nettoyage récurrent",
+    "faq1Question": "Comment fonctionne la tarification ?",
+    "faq1Answer": "Contactez-nous via WhatsApp et nous discutons d'un prix personnalisé selon vos besoins.",
+    "faq2Question": "Puis-je annuler à tout moment ?",
+    "faq2Answer": "Oui, les abonnements sont flexibles sans contrat à long terme.",
+    "faq3Question": "Quelles zones desservez-vous ?",
+    "faq3Answer": "Nous couvrons toutes les zones de Kigali, y compris Kacyiru, Kimihurura, Nyarutarama, Gisozi, Remera et plus encore.",
     "compareTitle": "Comparatif des plans",
     "compareSubtitle": "Découvrez rapidement ce que comprend chaque offre",
     "compareFeature": "Fonctionnalité",
@@ -253,7 +295,24 @@
     "switchToLight": "Passer en mode clair"
   },
   "dashboard": {
-    "welcome": "Bon retour, {name}.",
+    "eyebrow": "Tableau de bord client",
+    "welcome": "Bonjour {name}",
+    "guest": "vous",
+    "subtitle": "Suivez vos réservations, consultez vos nettoyages à venir et gérez vos demandes en un seul endroit.",
+    "statTotal": "Demandes totales",
+    "statPending": "En attente",
+    "statCompleted": "Terminé",
+    "tabBookings": "Réservations",
+    "tabSubscription": "Mon abonnement",
+    "errorBookings": "Impossible de charger vos réservations pour le moment.",
+    "errorState": "Une erreur est survenue lors du chargement de votre tableau de bord. Veuillez réessayer.",
+    "emptyTitle": "Aucune réservation pour le moment",
+    "emptyText": "Commencez par votre premier nettoyage pour voir votre historique ici.",
+    "emptyAction": "Réservez votre premier nettoyage",
+    "viewDetails": "Voir les détails",
+    "bookAgain": "Réserver",
+    "cancel": "Annuler",
+    "cancelling": "Annulation...",
     "heading": "Vos réservations",
     "subtext": "Consultez les dernières mises à jour de statut et ouvrez les détails complets des réservations.",
     "bookNew": "Réserver un nouveau service",

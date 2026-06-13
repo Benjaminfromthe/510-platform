@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { sendBookingConfirmationToCustomer, sendBookingNotificationToAdmin } from "../../../lib/email";
@@ -33,6 +34,7 @@ function toBookingDate(date: string, time: string) {
 
 export async function POST(request: Request) {
   try {
+    const { userId } = auth();
     const body = await request.json();
     const parsed = bookingSchema.safeParse(body);
 
@@ -44,7 +46,7 @@ export async function POST(request: Request) {
 
     const booking = await prisma.booking.create({
       data: {
-        userId: null,
+        userId: userId ?? null,
         serviceId: parsed.data.serviceId,
         quantity: parsed.data.quantity,
         addOns: parsed.data.addOns,
@@ -78,12 +80,17 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
+    const { userId } = auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const page = Math.max(1, Number(searchParams.get("page") || 1));
     const limit = Math.max(1, Math.min(50, Number(searchParams.get("limit") || 10)));
     const skip = (page - 1) * limit;
 
-    const where = {};
+    const where = { userId };
 
     const [bookings, total] = await Promise.all([
       prisma.booking.findMany({

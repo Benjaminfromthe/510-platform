@@ -21,7 +21,7 @@ export default function LanguageSwitcher() {
           className={`inline-flex h-11 items-center justify-center rounded-full border px-3 py-2 text-base font-semibold transition sm:text-xs ${
             locale === item.code
               ? 'border-cyan-400 bg-cyan-400 text-slate-950'
-              : 'border-slate-700 bg-slate-900 text-slate-200 hover:border-cyan-400 hover:text-white'
+              : 'border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-primary)] hover:border-cyan-400 hover:text-cyan-100'
           }`}
         >
           <span aria-hidden="true">{item.flag}</span>

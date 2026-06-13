@@ -14,7 +14,7 @@ export default function WhatsAppFloat() {
       rel="noreferrer"
       aria-label={t("whatsappTooltip")}
       title={t("whatsappTooltip")}
-      className="group fixed bottom-4 left-4 z-40 hidden md:inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-500 p-3 text-white shadow-2xl shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:bg-emerald-400"
+      className="group fixed bottom-4 left-4 z-40 hidden md:inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-500 p-3 text-[var(--text-primary)] shadow-2xl shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:bg-emerald-400"
     >
       <MessageCircleMore className="h-5 w-5" />
       <span className="ml-2 hidden max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold opacity-0 transition-all duration-200 group-hover:max-w-[8rem] group-hover:opacity-100 md:inline-block md:group-hover:max-w-[8rem]">

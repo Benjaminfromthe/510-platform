@@ -1,12 +1,14 @@
 "use client";
 
+// NO HARDCODED STRINGS - use t('key') always
+
 import "react-datepicker/dist/react-datepicker.css";
 
 import { Monitor, Sofa, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import DatePicker from "react-datepicker";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { z } from "zod";
 
 type ServiceCategory = "ELECTRONICS" | "FURNITURE" | "OTHER";
@@ -44,18 +46,19 @@ const bookingSchema = z.object({
 });
 
 const PUBLIC_HOLIDAYS = ["01-01", "04-07", "07-04", "08-15", "12-25"];
-const TIME_SLOTS = [
-  { label: "8AM", value: "08:00" },
-  { label: "9AM", value: "09:00" },
-  { label: "10AM", value: "10:00" },
-  { label: "11AM", value: "11:00" },
-  { label: "2PM", value: "14:00" },
-  { label: "3PM", value: "15:00" },
-  { label: "4PM", value: "16:00" },
-];
+const TIME_SLOTS = ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00"] as const;
 
 function formatYMD(date: Date) {
   return date.toISOString().slice(0, 10);
+}
+
+function formatDateLabel(locale: string, dateValue: string) {
+  return new Intl.DateTimeFormat(locale, { year: "numeric", month: "short", day: "numeric" }).format(new Date(`${dateValue}T00:00:00`));
+}
+
+function formatTimeLabel(locale: string, value: string) {
+  const [hours, minutes] = value.split(":").map(Number);
+  return new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "2-digit" }).format(new Date(2024, 0, 1, hours, minutes));
 }
 
 function isHoliday(date: Date) {
@@ -87,6 +90,8 @@ function getBookedSlotsForDate(date: string, count: number) {
 
 export default function BookForm() {
   const t = useTranslations("booking");
+  const globalT = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const serviceId = Number(searchParams.get("serviceId") || 0);
@@ -112,7 +117,8 @@ export default function BookForm() {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [bookingReference, setBookingReference] = useState("");
   const bookingT = useTranslations("booking");
 
   useEffect(() => {
@@ -269,18 +275,21 @@ export default function BookForm() {
 
       setStep(1);
       setErrors({});
+      scrollToTop();
       return;
     }
 
     if (validateStep(step)) {
       setStep((prev) => Math.min(prev + 1, 3));
       setErrors({});
+      scrollToTop();
     }
   }
 
   async function handleBack() {
     setStep((prev) => Math.max(prev - 1, 0));
     setErrors({});
+    scrollToTop();
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -289,7 +298,7 @@ export default function BookForm() {
     if (!validateStep(3)) return;
 
     setSubmitting(true);
-    setSuccessMessage("");
+    setErrors({});
 
     try {
       const response = await fetch("/api/bookings", {
@@ -314,8 +323,10 @@ export default function BookForm() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Booking failed.");
 
-      setSuccessMessage(`Quote request sent for ${service?.name || "your selected service"}.`);
+      setBookingReference(String(data.bookingId || "REQ-" + Date.now()));
+      setSubmitted(true);
       setStep(3);
+      scrollToTop();
     } catch (error) {
       setErrors({ form: error instanceof Error ? error.message : "Something went wrong." });
     } finally {
@@ -324,38 +335,76 @@ export default function BookForm() {
   }
 
   const progress = step === 0 ? 0 : [25, 50, 100][step - 1];
+  const stepLabels = [
+    { id: 1, label: bookingT("stepLabelChoose") },
+    { id: 2, label: bookingT("stepLabelSchedule") },
+    { id: 3, label: bookingT("stepLabelConfirm") },
+  ];
+
+  function scrollToTop() {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+    <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
         <header className="space-y-3">
           <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">{t("title")}</p>
-          <h1 className="text-4xl font-semibold text-white sm:text-5xl">{t("subtitle")}</h1>
+          <h1 className="text-4xl font-semibold text-[var(--text-primary)] sm:text-5xl">{t("subtitle")}</h1>
         </header>
 
-        <div className="rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-2xl shadow-black/20">
-          <div className="mb-2 flex items-center justify-between text-sm text-slate-300">
+        <div className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-2xl shadow-black/20">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3 text-sm text-[var(--text-secondary)]">
             <span>{bookingT("progress")}</span>
-            <strong>{step} / 3</strong>
+            <strong>{bookingT("stepCounter", { current: step + 1, total: 3 })}</strong>
           </div>
-          <div className="h-2 rounded-full bg-slate-800">
+          <div className="flex flex-wrap gap-2 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-2">
+            {stepLabels.map((item, index) => {
+              const isActive = step === index;
+              const isDone = step > index;
+              return (
+                <div key={item.id} className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm ${isActive ? "bg-cyan-400/15 text-cyan-100" : isDone ? "bg-emerald-400/10 text-emerald-100" : "bg-[var(--bg-card)] text-[var(--text-secondary)]"}`}>
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full border border-current text-xs font-semibold">{isDone ? "✓" : item.id}</span>
+                  <span>{item.label}</span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-3 h-2 rounded-full bg-[var(--bg-secondary)]">
             <div className="h-2 rounded-full bg-cyan-400" style={{ width: `${progress}%` }} />
           </div>
         </div>
 
         {errors.form ? <p className="rounded-2xl border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-200">{errors.form}</p> : null}
-        {successMessage ? <p className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-3 text-sm text-emerald-100">{successMessage}</p> : null}
 
-        <form onSubmit={handleSubmit} className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-          <section className="rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-2xl shadow-black/20 sm:p-6">
+        {submitted ? (
+          <section className="rounded-3xl border border-emerald-400/30 bg-emerald-400/10 p-6 shadow-2xl shadow-black/20">
+            <p className="text-sm uppercase tracking-[0.35em] text-emerald-100">{bookingT("successEyebrow")}</p>
+            <h2 className="mt-3 text-3xl font-semibold text-[var(--text-primary)]">{bookingT("successTitle")}</h2>
+            <p className="mt-3 text-[var(--text-secondary)]">{bookingT("successText")}</p>
+            <div className="mt-5 rounded-2xl border border-emerald-400/30 bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-primary)]">
+              <p className="text-[var(--text-secondary)]">{bookingT("referenceLabel")}</p>
+              <p className="mt-1 text-2xl font-semibold text-emerald-200">#{bookingReference}</p>
+            </div>
+            <p className="mt-4 text-sm text-emerald-100">{bookingT("contactWithin")}</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <a href="https://wa.me/250787769046?text=Hi%20510%20Cleaning%2C%20I%20would%20like%20to%20follow%20up%20on%20my%20quote%20request%20reference%20%23%23" target="_blank" rel="noreferrer" className="rounded-xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950">{bookingT("whatsappFollowUp")}</a>
+              <button type="button" onClick={() => { setSubmitted(false); setStep(0); setErrors({}); scrollToTop(); }} className="rounded-xl border border-[var(--border-color)] px-5 py-3 text-sm text-[var(--text-primary)]">{bookingT("bookAnother")}</button>
+            </div>
+          </section>
+        ) : (
+          <form onSubmit={handleSubmit} className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+          <section className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-2xl shadow-black/20 sm:p-6">
             {step === 0 ? (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-semibold text-white">{t("selectServiceTitle")}</h2>
-                  <p className="text-slate-300">{t("selectServiceText")}</p>
+                  <h2 className="text-2xl font-semibold text-[var(--text-primary)]">{t("selectServiceTitle")}</h2>
+                  <p className="text-[var(--text-secondary)]">{t("selectServiceText")}</p>
                 </div>
 
-                {servicesLoading ? <p className="text-slate-300">{t("loadingServices")}</p> : null}
+                {servicesLoading ? <p className="text-[var(--text-secondary)]">{t("loadingServices")}</p> : null}
 
                 <div className="grid gap-4 md:grid-cols-2">
                   {serviceOptions.map((item) => {
@@ -368,17 +417,17 @@ export default function BookForm() {
                           setService(item);
                           router.replace(`/book?serviceId=${item.id}`, { scroll: false });
                         }}
-                        className={`rounded-3xl border p-5 text-left transition ${isSelected ? "border-cyan-400 bg-cyan-400/10 shadow-lg shadow-cyan-500/10" : "border-slate-800 bg-slate-950 hover:border-cyan-400/70 hover:bg-slate-900"}`}
+                        className={`rounded-3xl border p-5 text-left transition ${isSelected ? "border-cyan-400 bg-cyan-400/10 shadow-lg shadow-cyan-500/10" : "border-[var(--border-color)] bg-[var(--bg-primary)] hover:border-cyan-400/70 hover:bg-[var(--bg-card)]"}`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{item.category.toLowerCase()}</p>
-                            <h3 className="mt-2 text-xl font-semibold text-white">{item.name}</h3>
-                            <p className="mt-2 text-sm text-slate-300">{item.description}</p>
+                            <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{globalT(`category.${item.category.toLowerCase() as Lowercase<ServiceCategory>}`)}</p>
+                            <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{item.name}</h3>
+                            <p className="mt-2 text-sm text-[var(--text-secondary)]">{item.description}</p>
                           </div>
-                          <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">{t("getQuote")}</span>
+                          <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">{globalT("services.getQuote")}</span>
                         </div>
-                        <p className="mt-4 text-xs text-slate-400">{item.duration} min • {item.category}</p>
+                        <p className="mt-4 text-xs text-[var(--text-secondary)]">{item.duration} {globalT("common.minutes")} • {globalT(`category.${item.category.toLowerCase() as Lowercase<ServiceCategory>}`)}</p>
                       </button>
                     );
                   })}
@@ -391,13 +440,13 @@ export default function BookForm() {
             {step === 1 ? (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-semibold text-white">{t("step1Title")}</h2>
-                  <p className="text-slate-300">{t("step1Text")}</p>
+                  <h2 className="text-2xl font-semibold text-[var(--text-primary)]">{t("step1Title")}</h2>
+                  <p className="text-[var(--text-secondary)]">{t("step1Text")}</p>
                 </div>
 
-                {loading ? <p className="text-slate-300">{t("loadingSelectedService")}</p> : service ? (
-                  <article className="rounded-2xl border border-slate-800 bg-slate-950 p-4">
-                    <div className="flex h-36 items-center justify-center rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+                {loading ? <p className="text-[var(--text-secondary)]">{t("loadingSelectedService")}</p> : service ? (
+                  <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4">
+                    <div className="flex h-36 items-center justify-center rounded-2xl border border-[var(--border-color)] bg-gradient-to-br from-[var(--bg-secondary)] via-[var(--bg-card)] to-[var(--bg-primary)]">
                       {(() => {
                         const Icon = serviceIcon(service.category);
                         return <Icon className="h-12 w-12 text-cyan-200" />;
@@ -405,26 +454,27 @@ export default function BookForm() {
                     </div>
                     <div className="mt-4 flex items-start justify-between gap-3">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.3em] text-cyan-300">{service.category.toLowerCase()}</p>
-                        <h3 className="text-xl font-semibold text-white">{service.name}</h3>
-                        <p className="mt-2 text-sm text-slate-300">{service.description}</p>
+                        <p className="text-xs uppercase tracking-[0.3em] text-cyan-300">{globalT(`category.${service.category.toLowerCase() as Lowercase<ServiceCategory>}`)}</p>
+                        <h3 className="text-xl font-semibold text-[var(--text-primary)]">{service.name}</h3>
+                        <p className="mt-2 text-sm text-[var(--text-secondary)]">{service.description}</p>
                       </div>
-                      <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-sm font-semibold text-cyan-200">{t("getQuote")}</span>
+                      <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-sm font-semibold text-cyan-200">{globalT("services.getQuote")}</span>
                     </div>
                   </article>
                 ) : <p className="text-rose-200">{t("noServiceSelected")}</p>}
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="space-y-1 text-sm text-slate-200">
+                  <label className="space-y-1 text-sm text-[var(--text-secondary)]">
                     <span>{t("quantity")}</span>
-                    <input type="number" min="1" max="10" value={quantity} onChange={(e) => setQuantity(Number(e.target.value) || 1)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
+                    <input type="number" min="1" max="10" value={quantity} onChange={(e) => setQuantity(Number(e.target.value) || 1)} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]" />
                     {errors.quantity ? <span className="text-rose-300">{errors.quantity}</span> : null}
                   </label>
 
-                  <label className="space-y-1 text-sm text-slate-200">
-                    <span>{t("duration")}</span>
-                    <input value={`${service?.duration || 0} minutes`} readOnly className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-300" />
-                  </label>
+                  <div className="rounded-2xl border border-cyan-400/25 bg-cyan-400/10 p-4 text-sm text-cyan-50">
+                    <p className="text-xs uppercase tracking-[0.35em] text-cyan-200">{bookingT("estimatedTimeLabel")}</p>
+                    <p className="mt-2 text-lg font-semibold">{bookingT("estimatedTimeValue", { minutes: service?.duration || 0 })}</p>
+                    <p className="mt-1 text-cyan-100/90">{bookingT("estimatedTimeHint")}</p>
+                  </div>
                 </div>
               </div>
             ) : null}
@@ -432,16 +482,16 @@ export default function BookForm() {
             {step === 2 ? (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-semibold text-white">{t("step2Title")}</h2>
-                  <p className="text-slate-300">{t("step2Text")}</p>
+                  <h2 className="text-2xl font-semibold text-[var(--text-primary)]">{t("step2Title")}</h2>
+                  <p className="text-[var(--text-secondary)]">{t("step2Text")}</p>
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-                  <div className="w-full overflow-x-auto rounded-3xl border border-slate-800 bg-slate-950 p-4">
+                  <div className="w-full overflow-x-auto rounded-3xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4">
                     <div className="mb-3 flex items-center justify-between">
                       <div>
                         <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{bookingT("availabilityLabel")}</p>
-                        <h3 className="text-xl font-semibold text-white">{bookingT("interactiveCalendar")}</h3>
+                        <h3 className="text-xl font-semibold text-[var(--text-primary)]">{bookingT("interactiveCalendar")}</h3>
                       </div>
                       <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-100">{bookingT("liveUpdates")}</span>
                     </div>
@@ -473,33 +523,34 @@ export default function BookForm() {
                       }}
                     />
 
-                    <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950 p-3 text-xs text-slate-300">
+                    <div className="mt-4 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-3 text-xs text-[var(--text-secondary)]">
                       <p>• {bookingT("blockedDates")}</p>
                       <p>• {bookingT("calendarHint")}</p>
                       <p>• {bookingT("calendarFull")}</p>
                     </div>
                   </div>
 
-                  <div className="space-y-4 rounded-3xl border border-slate-800 bg-slate-950 p-4">
+                  <div className="space-y-4 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{bookingT("timeSlotsLabel")}</p>
-                      <h3 className="text-xl font-semibold text-white">{bookingT("chooseTime")}</h3>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)]">{bookingT("chooseTime")}</h3>
                     </div>
 
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {TIME_SLOTS.map((slot, index) => {
                         const occupied = bookedSlots.has(index);
                         const disabled = occupied || (selectedAvailability?.status === "full");
+                        const label = formatTimeLabel(locale, slot);
                         return (
                           <button
-                            key={slot.value}
+                            key={slot}
                             type="button"
-                            onClick={() => setScheduledTime(slot.value)}
+                            onClick={() => setScheduledTime(slot)}
                             disabled={disabled}
-                            className={`rounded-2xl border px-4 py-3 text-left transition ${scheduledTime === slot.value ? "border-cyan-400 bg-cyan-400/15 text-cyan-50" : "border-slate-700 bg-slate-900 text-slate-100 hover:border-cyan-400/60 hover:bg-slate-800"}${disabled ? " cursor-not-allowed opacity-40" : ""}`}
+                            className={`rounded-2xl border px-4 py-3 text-left transition ${scheduledTime === slot ? "border-cyan-400 bg-cyan-400/15 text-cyan-50" : "border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-primary)] hover:border-cyan-400/60 hover:bg-[var(--bg-secondary)]"}${disabled ? " cursor-not-allowed opacity-40" : ""}`}
                           >
-                            <span className="block text-sm font-semibold">{slot.label}</span>
-                            <span className="text-xs text-slate-400">{slot.value}</span>
+                            <span className="block text-sm font-semibold">{label}</span>
+                            <span className="text-xs text-[var(--text-secondary)]">{slot}</span>
                           </button>
                         );
                       })}
@@ -514,22 +565,22 @@ export default function BookForm() {
                   </div>
                 </div>
 
-                <label className="space-y-1 text-sm text-slate-200">
+                <label className="space-y-1 text-sm text-[var(--text-secondary)]">
                   <span>{bookingT("addressLabel")}</span>
-                  <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder={bookingT("addressPlaceholder")} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
+                  <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder={bookingT("addressPlaceholder")} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]" />
                   {errors.address ? <span className="text-rose-300">{errors.address}</span> : null}
                 </label>
 
-                <label className="space-y-1 text-sm text-slate-200">
+                <label className="space-y-1 text-sm text-[var(--text-secondary)]">
                   <span>{bookingT("descriptionLabel")}</span>
-                  <textarea value={quoteDescription} onChange={(e) => setQuoteDescription(e.target.value)} rows={4} placeholder={bookingT("descriptionPlaceholder")} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
+                  <textarea value={quoteDescription} onChange={(e) => setQuoteDescription(e.target.value)} rows={4} placeholder={bookingT("descriptionPlaceholder")} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]" />
                   {errors.quoteDescription ? <span className="text-rose-300">{errors.quoteDescription}</span> : null}
                 </label>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="space-y-1 text-sm text-slate-200">
+                  <label className="space-y-1 text-sm text-[var(--text-secondary)]">
                     <span>{bookingT("propertySizeLabel")}</span>
-                    <select value={propertySize} onChange={(e) => setPropertySize(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">
+                    <select value={propertySize} onChange={(e) => setPropertySize(e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]">
                       <option value="">{bookingT("selectSize")}</option>
                       <option value="Small room">Small room</option>
                       <option value="Large room">Large room</option>
@@ -540,9 +591,9 @@ export default function BookForm() {
                     {errors.propertySize ? <span className="text-rose-300">{errors.propertySize}</span> : null}
                   </label>
 
-                  <label className="space-y-1 text-sm text-slate-200">
+                  <label className="space-y-1 text-sm text-[var(--text-secondary)]">
                     <span>{bookingT("urgencyLabel")}</span>
-                    <select value={urgency} onChange={(e) => setUrgency(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">
+                    <select value={urgency} onChange={(e) => setUrgency(e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]">
                       <option value="">{bookingT("selectUrgency")}</option>
                       <option value="Flexible">Flexible</option>
                       <option value="This week">This week</option>
@@ -553,9 +604,9 @@ export default function BookForm() {
                   </label>
                 </div>
 
-                <label className="space-y-1 text-sm text-slate-200">
+                <label className="space-y-1 text-sm text-[var(--text-secondary)]">
                   <span>{bookingT("instructionsLabel")}</span>
-                  <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder={bookingT("instructionsPlaceholder")} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
+                  <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder={bookingT("instructionsPlaceholder")} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]" />
                   {errors.notes ? <span className="text-rose-300">{errors.notes}</span> : null}
                 </label>
               </div>
@@ -564,26 +615,26 @@ export default function BookForm() {
             {step === 3 ? (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-semibold text-white">{t("step3Title")}</h2>
-                  <p className="text-slate-300">{t("step3Text")}</p>
+                  <h2 className="text-2xl font-semibold text-[var(--text-primary)]">{t("step3Title")}</h2>
+                  <p className="text-[var(--text-secondary)]">{t("step3Text")}</p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="space-y-1 text-sm text-slate-200">
+                  <label className="space-y-1 text-sm text-[var(--text-secondary)]">
                     <span>{bookingT("fullNameLabel")}</span>
-                    <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
+                    <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]" />
                     {errors.customerName ? <span className="text-rose-300">{errors.customerName}</span> : null}
                   </label>
 
-                  <label className="space-y-1 text-sm text-slate-200">
+                  <label className="space-y-1 text-sm text-[var(--text-secondary)]">
                     <span>{bookingT("phoneLabel")}</span>
-                    <input value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
+                    <input value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]" />
                     {errors.phone ? <span className="text-rose-300">{errors.phone}</span> : null}
                   </label>
 
-                  <label className="space-y-1 text-sm text-slate-200 sm:col-span-2">
+                  <label className="space-y-1 text-sm text-[var(--text-secondary)] sm:col-span-2">
                     <span>{bookingT("emailLabel")}</span>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" />
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]" />
                     {errors.email ? <span className="text-rose-300">{errors.email}</span> : null}
                   </label>
                 </div>
@@ -591,7 +642,7 @@ export default function BookForm() {
             ) : null}
 
             <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <button type="button" onClick={handleBack} disabled={step === 0 || step === 1 && !serviceId} className="h-11 rounded-xl border border-slate-700 px-4 py-3 text-sm text-slate-200 disabled:cursor-not-allowed disabled:opacity-40">{t("back")}</button>
+              <button type="button" onClick={handleBack} disabled={step === 0 || step === 1 && !serviceId} className="h-11 rounded-xl border border-[var(--border-color)] px-4 py-3 text-sm text-[var(--text-secondary)] disabled:cursor-not-allowed disabled:opacity-40">{t("back")}</button>
               {step === 0 ? (
                 <button type="button" onClick={handleNext} className="h-11 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950">{t("continue")}</button>
               ) : step < 3 ? (
@@ -602,27 +653,27 @@ export default function BookForm() {
             </div>
           </section>
 
-          <aside className="space-y-6 rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-2xl shadow-black/20 sm:p-6">
+          <aside className="space-y-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-2xl shadow-black/20 sm:p-6">
             <div>
-              <h2 className="text-xl font-semibold text-white">{bookingT("summaryTitle")}</h2>
-              <p className="text-sm text-slate-300">{bookingT("summaryText")}</p>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">{bookingT("summaryTitle")}</h2>
+              <p className="text-sm text-[var(--text-secondary)]">{bookingT("summaryText")}</p>
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-sm text-slate-200">
+            <div className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)]">
               <div className="flex items-center justify-between"><span>{bookingT("summaryService")}</span><strong>{service?.name || bookingT("selectedService")}</strong></div>
               <div className="mt-2 flex items-center justify-between"><span>{bookingT("summaryQuantity")}</span><strong>{quantity}</strong></div>
-              <div className="mt-2 flex items-center justify-between"><span>{bookingT("summaryDuration")}</span><strong>{service?.duration || 0} min</strong></div>
+              <div className="mt-2 flex items-center justify-between"><span>{bookingT("summaryDuration")}</span><strong>{bookingT("estimatedTimeValue", { minutes: service?.duration || 0 })}</strong></div>
             </div>
 
             <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-4">
               <p className="text-sm text-cyan-100">{bookingT("quoteStatus")}</p>
-              <p className="mt-1 text-xl font-semibold text-white">{bookingT("quotePending")}</p>
+              <p className="mt-1 text-xl font-semibold text-[var(--text-primary)]">{bookingT("quotePending")}</p>
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-sm text-slate-300 space-y-2">
-              <p><strong>{t("summaryDate")}:</strong> {scheduledDate || "—"}</p>
-              <p><strong>{t("summaryTime")}:</strong> {TIME_SLOTS.find((slot) => slot.value === scheduledTime)?.label || scheduledTime || "—"}</p>
-              <p><strong>{t("summaryAvailability")}:</strong> {selectedAvailability?.status === "full" ? t("fullyBooked") : selectedAvailability?.status === "limited" ? t("limitedAvailability") : t("open")}</p>
+            <div className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)] space-y-2">
+              <p><strong>{t("summaryDate")}:</strong> {scheduledDate ? formatDateLabel(locale, scheduledDate) : "—"}</p>
+              <p><strong>{t("summaryTime")}:</strong> {scheduledTime ? formatTimeLabel(locale, scheduledTime) : "—"}</p>
+              <p><strong>{t("summaryAvailability")}:</strong> {selectedAvailability?.status === "full" ? t("fullyBooked") : selectedAvailability?.status === "limited" ? globalT("booking.availability.limited") : globalT("booking.availability.open")}</p>
               <p><strong>{t("summaryAddress")}:</strong> {address || "—"}</p>
             </div>
 
@@ -632,6 +683,7 @@ export default function BookForm() {
             </div>
           </aside>
         </form>
+        )}
       </section>
     </main>
   );

@@ -42,7 +42,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body className="bg-background text-foreground antialiased" style={{ fontFamily: 'var(--font-inter), Arial, sans-serif' }}>
+      <body className="bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased" style={{ fontFamily: 'var(--font-inter), Arial, sans-serif' }}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <ClerkProvider>
             <ToastProvider>

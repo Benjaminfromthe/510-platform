@@ -88,16 +88,16 @@ export default function AIAssistant() {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {open ? (
-        <aside className="w-[92vw] max-w-md rounded-3xl border border-slate-800 bg-slate-900 shadow-2xl shadow-black/30">
-          <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
+        <aside className="w-[92vw] max-w-md rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] shadow-2xl shadow-black/30">
+          <div className="flex items-center justify-between border-b border-[var(--border-color)] px-4 py-3">
             <div>
               <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{t("title")}</p>
-              <h2 className="text-base font-semibold text-white">{t("subtitle")}</h2>
+              <h2 className="text-base font-semibold text-[var(--text-primary)]">{t("subtitle")}</h2>
             </div>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded-full border border-slate-700 px-3 py-1 text-sm text-slate-200 hover:border-cyan-400 hover:text-white"
+              className="rounded-full border border-[var(--border-color)] px-3 py-1 text-sm text-[var(--text-secondary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"
             >
               {t("close")}
             </button>
@@ -121,31 +121,31 @@ export default function AIAssistant() {
                 key={`${message.role}-${index}`}
                 className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
                   message.role === "assistant"
-                    ? "bg-slate-800 text-slate-100"
+                    ? "bg-[var(--bg-secondary)] text-[var(--text-primary)]"
                     : "ml-auto bg-cyan-400 text-slate-950"
                 }`}
               >
                 <p>{message.content}</p>
-                <span className={`mt-1 block text-[10px] ${message.role === "assistant" ? "text-slate-400" : "text-slate-700"}`}>
+                <span className={`mt-1 block text-[10px] ${message.role === "assistant" ? "text-[var(--text-secondary)]" : "text-slate-700"}`}>
                   {message.timestamp}
                 </span>
               </article>
             ))}
 
             {loading ? (
-              <article className="max-w-[85%] rounded-2xl bg-slate-800 px-3 py-2 text-sm text-slate-100">
+              <article className="max-w-[85%] rounded-2xl bg-[var(--bg-secondary)] px-3 py-2 text-sm text-[var(--text-primary)]">
                 <div className="flex items-center gap-1.5">
                   <span className="h-2 w-2 animate-bounce rounded-full bg-cyan-300" />
                   <span className="h-2 w-2 animate-bounce rounded-full bg-cyan-300 [animation-delay:120ms]" />
                   <span className="h-2 w-2 animate-bounce rounded-full bg-cyan-300 [animation-delay:240ms]" />
                 </div>
-                <span className="mt-1 block text-[10px] text-slate-400">{t("typing")}</span>
+                <span className="mt-1 block text-[10px] text-[var(--text-secondary)]">{t("typing")}</span>
               </article>
             ) : null}
             <div ref={bottomRef} />
           </div>
 
-          <form onSubmit={handleSend} className="border-t border-slate-800 p-3">
+          <form onSubmit={handleSend} className="border-t border-[var(--border-color)] p-3">
             <label className="sr-only" htmlFor="ai-message">{t("placeholder")}</label>
             <div className="flex gap-2">
               <input
@@ -153,7 +153,7 @@ export default function AIAssistant() {
                 value={input}
                 onChange={(event) => setInput(event.target.value.slice(0, MAX_CHARS))}
                 placeholder={t("placeholder")}
-                className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100 outline-none ring-0 placeholder:text-slate-400 focus:border-cyan-400"
+                className="w-full rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-3 text-sm text-[var(--text-primary)] outline-none ring-0 placeholder:text-[var(--text-secondary)] focus:border-cyan-400"
               />
               <button
                 type="submit"
@@ -163,7 +163,7 @@ export default function AIAssistant() {
                 {t("send")}
               </button>
             </div>
-            <p className="mt-2 text-[11px] text-slate-400">{input.length}/{MAX_CHARS} {t("characters")}</p>
+            <p className="mt-2 text-[11px] text-[var(--text-secondary)]">{input.length}/{MAX_CHARS} {t("characters")}</p>
           </form>
         </aside>
       ) : null}

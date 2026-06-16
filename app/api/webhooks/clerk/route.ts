@@ -2,10 +2,8 @@ export const dynamic = 'force-dynamic';
 
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../../../lib/prisma";
 import { Webhook } from "svix";
-
-const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;

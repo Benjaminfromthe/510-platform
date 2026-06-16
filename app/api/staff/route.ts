@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../../lib/prisma";
 
 export const dynamic = "force-dynamic";
-
-const prisma = new PrismaClient();
 
 function getRole() {
   const authResult = auth() as { sessionClaims?: any };

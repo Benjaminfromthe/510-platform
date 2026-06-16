@@ -2,10 +2,8 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../../../lib/prisma";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
 
 const statusSchema = z.enum(["PENDING", "CONFIRMED", "IN_PROGRESS", "COMPLETED", "CANCELLED"]);
 const updateBookingSchema = z.object({

@@ -3,10 +3,11 @@
 // NO HARDCODED STRINGS - use t('key') always
 
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
-import { Calendar, Menu, Sparkles, Truck, X, Laptop, Smartphone, BedDouble, BadgeCheck, CheckCircle2, Globe, MessageCircleMore, Send, Monitor, Armchair, Sofa } from "lucide-react";
+import { Calendar, Menu, Sparkles, Truck, X, Laptop, Smartphone, BedDouble, BadgeCheck, CheckCircle2, Globe, MessageCircleMore, Send, Monitor, Armchair, Sofa, Info } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import ServiceIllustration from "../components/ServiceIllustration";
@@ -30,9 +31,12 @@ const serviceIllustrations = {
 export default function HomePage() {
   const t = useTranslations();
   const pathname = usePathname();
+  const { resolvedTheme } = useTheme();
+  const isDarkTheme = resolvedTheme === 'dark';
   const { showToast } = useToast();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showSafetyTooltip, setShowSafetyTooltip] = useState(false);
 
   const steps = [
     { icon: Sparkles, title: t("home.processStep1Title"), description: t("home.processStep1Text") },
@@ -97,12 +101,33 @@ export default function HomePage() {
               <SignedIn>
                 <UserButton
                   afterSignOutUrl="/"
-                  appearance={{
-                    elements: {
-                      avatarBox: "w-8 h-8",
-                      userButtonPopoverCard: "border border-[var(--border-color)] bg-[var(--bg-card)]",
-                    },
-                  }}
+                  appearance={
+                    isDarkTheme
+                      ? {
+                          elements: {
+                            avatarBox: 'w-8 h-8',
+                            userButtonPopoverCard: 'border border-gray-700 bg-gray-900 shadow-xl',
+                            userPreviewMainIdentifier: 'text-white',
+                            userPreviewSecondaryIdentifier: 'text-gray-400',
+                            menuItem: 'text-white hover:bg-gray-800',
+                            menuItemButton: 'text-white hover:bg-gray-800',
+                            menuItemIcon: 'text-gray-400',
+                            dividerLine: 'bg-gray-700',
+                          },
+                        }
+                      : {
+                          elements: {
+                            avatarBox: 'w-8 h-8',
+                            userButtonPopoverCard: 'border border-slate-200 bg-white shadow-xl',
+                            userPreviewMainIdentifier: 'text-slate-900',
+                            userPreviewSecondaryIdentifier: 'text-slate-500',
+                            menuItem: 'text-slate-900 hover:bg-slate-100',
+                            menuItemButton: 'text-slate-900 hover:bg-slate-100',
+                            menuItemIcon: 'text-slate-400',
+                            dividerLine: 'bg-slate-200',
+                          },
+                        }
+                  }
                 />
               </SignedIn>
             </div>
@@ -149,13 +174,30 @@ export default function HomePage() {
             <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">{t("home.eyebrow")}</p>
             <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">{t("home.heroTitle")}</h1>
             <p className="max-w-2xl text-base text-[var(--text-secondary)] sm:text-lg">{t("home.heroSubtext")}</p>
-            <div className="flex flex-wrap gap-3">
-              <span className="inline-flex items-center rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-100">🧴 {t("home.badgeFoam")}</span>
-              <span className="inline-flex items-center rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-100">📱 {t("home.badgeSafe")}</span>
+            <div className="flex flex-wrap gap-3 mb-8">
+              <span className="inline-flex items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-400/10 px-3 py-1.5 text-sm text-cyan-100">🧴 {t("home.badgeFoam")}</span>
+              <div className="relative inline-flex items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-400/10 px-3 py-1.5 text-sm text-cyan-100"
+                onMouseEnter={() => setShowSafetyTooltip(true)}
+                onMouseLeave={() => setShowSafetyTooltip(false)}>
+                <span className="flex items-center gap-1">📱 {t("home.badgeSafe")}</span>
+                <button
+                  type="button"
+                  onClick={() => setShowSafetyTooltip(!showSafetyTooltip)}
+                  className="ml-1.5 inline-flex cursor-pointer rounded-full hover:bg-cyan-400/20 transition-colors"
+                  aria-label="Safety information"
+                >
+                  <Info size={14} className="text-cyan-200" />
+                </button>
+                {showSafetyTooltip && (
+                  <div className="absolute bottom-full mb-2 w-64 p-2 bg-gray-950 border border-gray-800 text-xs text-gray-200 rounded-md shadow-lg z-50 transition-all">
+                    {t("home.badgeSafeTooltip")}
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-3">
-              <Link href="/services" onClick={() => showToast(t("home.toastBook"), "success")} className="rounded-full bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-cyan-300">{t("home.bookQuote")}</Link>
-              <Link href="/subscriptions" onClick={() => showToast(t("home.toastPlans"), "info")} className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:-translate-y-0.5 hover:border-cyan-400 hover:bg-cyan-400/10">{t("home.explorePlans")}</Link>
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <Link href="/services" onClick={() => showToast(t("home.toastBook"), "success")} className="w-full sm:w-auto rounded-full bg-cyan-400 px-6 py-3 text-center text-base font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-cyan-300">{t("home.bookQuote")}</Link>
+              <Link href="/subscriptions" onClick={() => showToast(t("home.toastPlans"), "info")} className="w-full sm:w-auto rounded-full border border-white/10 bg-white/5 px-6 py-3 text-center text-base font-semibold text-[var(--text-primary)] transition hover:-translate-y-0.5 hover:border-cyan-400 hover:bg-cyan-400/10">{t("home.explorePlans")}</Link>
             </div>
           </div>
 

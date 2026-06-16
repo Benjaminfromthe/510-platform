@@ -1,5 +1,10 @@
 {
-  "nav": {
+  "languages": {
+    "selectLanguage": "Hitamo ururimi",
+    "kinyarwanda": "Kinyarwanda",
+    "english": "Icyongereza",
+    "french": "Igifaransa"
+  },
     "services": "Serivisi",
     "bookNow": "Teganya ubusabe",
     "myBookings": "Amasaha yanjye",
@@ -12,6 +17,7 @@
     "heroSubtext": "Dukoresheje tekinoroji y'ifuro yo gusukura mu rwego rwo hejuru, dusubiza ibikoresho byawe no kubyubakisha mu mimerere ihagaze neza. Teganya uyu munsi, tuza iwanyu.",
     "badgeFoam": "Tekinoroji y'ifuro",
     "badgeSafe": "Ibikoresho by'amashanyarazi birinzwe",
+    "badgeSafeTooltip": "Bikoreye Ibyuma bya Erekitironiki: Tekinoroji yacu y'ifuro ryuma ntabwo ikoresha amazi, bityo ntiyangiza imihanda y'umuriro n'orongoranyamashusho.",
     "statAvailable": "Igihe cyaboneka",
     "statResponse": "Igihe cyo gusubiza",
     "statCoverage": "Gukora hose",
@@ -153,7 +159,9 @@
     "addressPlaceholder": "Urugero: Kacyiru, Kigali",
     "descriptionLabel": "Sobanura ibyo ukeneye gusukura",
     "descriptionPlaceholder": "Tubwire ibyo ukeneye gusukura, ibyangiritse, ibyumba, cyangwa ibindi byifuzo...",
-    "propertySizeLabel": "Ingano y’ahantu",
+    "propertySizeLabel": "Ingano y'ahantu",
+    "propertySizeOptionalLabel": "Ingano y'ahantu (ntiyigomba)",
+    "propertySizeHint": "Gusiga ikaramu nta gipurwa iyo guteganya icyuma kimwe",
     "selectSize": "Hitamo ingano",
     "urgencyLabel": "Byihutirwa",
     "selectUrgency": "Hitamo ibyihutirwa",

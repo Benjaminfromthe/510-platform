@@ -1,5 +1,10 @@
 {
-  "nav": {
+  "languages": {
+    "selectLanguage": "Select language",
+    "kinyarwanda": "Kinyarwanda",
+    "english": "English",
+    "french": "Français"
+  },
     "services": "Services",
     "bookNow": "Book now",
     "myBookings": "My bookings",
@@ -12,6 +17,7 @@
     "heroSubtext": "Using professional-grade foam cleaning technology, we restore your devices and furniture to showroom condition. Book today, we come to you.",
     "badgeFoam": "Foam Technology",
     "badgeSafe": "Electronics Safe",
+    "badgeSafeTooltip": "Electronics Safe: Our professional dry foam technology uses zero liquid moisture, making it completely harmless to sensitive circuits and digital displays.",
     "statAvailable": "Availability",
     "statResponse": "Response time",
     "statCoverage": "Coverage",
@@ -154,6 +160,8 @@
     "descriptionLabel": "Describe your cleaning needs",
     "descriptionPlaceholder": "Tell us what needs cleaning, any stains, rooms, or special requests...",
     "propertySizeLabel": "Property size",
+    "propertySizeOptionalLabel": "Property size (optional)",
+    "propertySizeHint": "Leave blank if booking for a single device",
     "selectSize": "Select size",
     "urgencyLabel": "Urgency",
     "selectUrgency": "Select urgency",

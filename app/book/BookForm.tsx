@@ -41,8 +41,7 @@ const bookingSchema = z.object({
   phone: z.string().min(7, "Phone number is required"),
   email: z.string().email("A valid email is required"),
   quoteDescription: z.string().min(10, "Please describe the cleaning needs in at least 10 characters."),
-  propertySize: z.string().min(1, "Property size is required"),
-  urgency: z.string().min(1, "Urgency is required"),
+  propertySize: z.string().optional().or(z.literal("")),
 });
 
 const PUBLIC_HOLIDAYS = ["01-01", "04-07", "07-04", "08-15", "12-25"];
@@ -111,7 +110,6 @@ export default function BookForm() {
   const [notes, setNotes] = useState("");
   const [quoteDescription, setQuoteDescription] = useState("");
   const [propertySize, setPropertySize] = useState("");
-  const [urgency, setUrgency] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -233,8 +231,6 @@ export default function BookForm() {
       if (!scheduledTime) localErrors.scheduledTime = "Choose a time slot.";
       if (!address.trim()) localErrors.address = "Address is required.";
       if (!quoteDescription.trim()) localErrors.quoteDescription = "Please describe your cleaning needs.";
-      if (!propertySize) localErrors.propertySize = "Please choose the property size.";
-      if (!urgency) localErrors.urgency = "Please choose the urgency.";
     }
 
     if (targetStep === 3) {
@@ -251,7 +247,6 @@ export default function BookForm() {
         email,
         quoteDescription,
         propertySize,
-        urgency,
       });
 
       if (!parsed.success) {
@@ -314,7 +309,6 @@ export default function BookForm() {
           email,
           quoteDescription,
           propertySize,
-          urgency,
           name: customerName,
           date: scheduledDate,
           time: scheduledTime,
@@ -595,32 +589,19 @@ export default function BookForm() {
                   {errors.quoteDescription ? <span className="text-rose-300">{errors.quoteDescription}</span> : null}
                 </label>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="space-y-1 text-sm text-[var(--text-secondary)]">
-                    <span>{bookingT("propertySizeLabel")}</span>
-                    <select value={propertySize} onChange={(e) => setPropertySize(e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]">
-                      <option value="">{bookingT("selectSize")}</option>
-                      <option value="Small room">Small room</option>
-                      <option value="Large room">Large room</option>
-                      <option value="Full apartment">Full apartment</option>
-                      <option value="Full house">Full house</option>
-                      <option value="Office">Office</option>
-                    </select>
-                    {errors.propertySize ? <span className="text-rose-300">{errors.propertySize}</span> : null}
-                  </label>
-
-                  <label className="space-y-1 text-sm text-[var(--text-secondary)]">
-                    <span>{bookingT("urgencyLabel")}</span>
-                    <select value={urgency} onChange={(e) => setUrgency(e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]">
-                      <option value="">{bookingT("selectUrgency")}</option>
-                      <option value="Flexible">Flexible</option>
-                      <option value="This week">This week</option>
-                      <option value="Tomorrow">Tomorrow</option>
-                      <option value="Today (urgent)">Today (urgent)</option>
-                    </select>
-                    {errors.urgency ? <span className="text-rose-300">{errors.urgency}</span> : null}
-                  </label>
-                </div>
+                <label className="space-y-1 text-sm text-[var(--text-secondary)]">
+                  <span>{bookingT("propertySizeOptionalLabel")}</span>
+                  <select value={propertySize} onChange={(e) => setPropertySize(e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]">
+                    <option value="">{bookingT("selectSize")}</option>
+                    <option value="Small room">Small room</option>
+                    <option value="Large room">Large room</option>
+                    <option value="Full apartment">Full apartment</option>
+                    <option value="Full house">Full house</option>
+                    <option value="Office">Office</option>
+                  </select>
+                  <p className="mt-1 text-xs text-[var(--text-secondary)]">{bookingT("propertySizeHint")}</p>
+                  {errors.propertySize ? <span className="text-rose-300">{errors.propertySize}</span> : null}
+                </label>
 
                 <label className="space-y-1 text-sm text-[var(--text-secondary)]">
                   <span>{bookingT("instructionsLabel")}</span>

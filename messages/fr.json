@@ -1,5 +1,10 @@
 {
-  "nav": {
+  "languages": {
+    "selectLanguage": "Sélectionner la langue",
+    "kinyarwanda": "Kinyarwanda",
+    "english": "Anglais",
+    "french": "Français"
+  },
     "services": "Services",
     "bookNow": "Réserver maintenant",
     "myBookings": "Mes réservations",
@@ -12,6 +17,7 @@
     "heroSubtext": "Grâce à une technologie de nettoyage en mousse de qualité professionnelle, nous restaurons vos appareils et meubles dans un état de showroom. Réservez aujourd'hui, nous venons chez vous.",
     "badgeFoam": "Technologie mousse",
     "badgeSafe": "Électronique sûre",
+    "badgeSafeTooltip": "Sécurisé pour l'Électronique: Notre technologie de mousse sèche n'utilise aucun liquide, ce qui la rend totalement inoffensive pour les circuits et les écrans.",
     "statAvailable": "Disponibilité",
     "statResponse": "Temps de réponse",
     "statCoverage": "Couverture",
@@ -154,6 +160,8 @@
     "descriptionLabel": "Décrivez vos besoins de nettoyage",
     "descriptionPlaceholder": "Dites-nous ce qui doit être nettoyé, les taches, les pièces ou les demandes spéciales...",
     "propertySizeLabel": "Taille du bien",
+    "propertySizeOptionalLabel": "Taille du bien (optionnel)",
+    "propertySizeHint": "Laissez vide si vous réservez pour un seul appareil",
     "selectSize": "Choisir la taille",
     "urgencyLabel": "Urgence",
     "selectUrgency": "Choisir l’urgence",

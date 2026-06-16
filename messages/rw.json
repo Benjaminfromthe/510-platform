@@ -5,6 +5,11 @@
     "english": "Icyongereza",
     "french": "Igifaransa"
   },
+  "nav": {
+    "services": "Serivisi",
+    "bookNow": "Yandikisha",
+    "myBookings": "Ibgezeho"
+  },
   "services": "Serivisi",
   "bookNow": "Teganya ubusabe",
   "myBookings": "Amasaha yanjye",
@@ -311,6 +316,8 @@
     "statCompleted": "Byarangiye",
     "tabBookings": "Amasaha",
     "tabSubscription": "Icyemezo cy'ubwishyu",
+    "manageTitle": "Genzura gahunda yawe",
+    "manageText": "Hinduranya hagati y’amasaha n’amakuru y’ubwishyu ahantu hamwe.",
     "errorBookings": "Ntibishobotse gutegura ubusabe bwawe ubu.",
     "errorState": "Habaye ikosa mu gutegura ikibaho cyawe. Ongera ugerageze.",
     "emptyTitle": "Nta busabe buhari",

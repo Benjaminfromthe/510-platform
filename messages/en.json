@@ -5,6 +5,11 @@
     "english": "English",
     "french": "Français"
   },
+  "nav": {
+    "services": "Services",
+    "bookNow": "Book Now",
+    "myBookings": "My Bookings"
+  },
   "services": "Services",
   "bookNow": "Book now",
   "myBookings": "My bookings",
@@ -311,6 +316,8 @@
     "statCompleted": "Completed",
     "tabBookings": "Bookings",
     "tabSubscription": "My Subscription",
+    "manageTitle": "Manage your plan",
+    "manageText": "Switch between bookings and your subscription details in one place.",
     "errorBookings": "Unable to load your bookings right now.",
     "errorState": "Something went wrong while loading your dashboard. Please try again.",
     "emptyTitle": "No bookings yet",

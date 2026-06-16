@@ -57,12 +57,16 @@ export default function SubscriptionsPage() {
           <p className="max-w-2xl text-[var(--text-secondary)]">{t("subscriptions.subtitle")}</p>
         </header>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 pb-24 lg:pb-16">
           {plans.map((plan) => {
             const Icon = plan.icon;
+            const isPopular = plan.key === "MONTHLY";
+            const cardClasses = isPopular
+              ? "relative z-10 rounded-3xl border-2 border-cyan-400/60 bg-[#0d1630] p-6 shadow-[0_0_24px_rgba(34,211,238,0.15)] scale-100 lg:scale-[1.03]"
+              : "bg-slate-900/50 border border-gray-800/80 rounded-2xl p-6 shadow-xl transition-all hover:border-gray-700";
 
             return (
-              <article key={plan.key} className={`rounded-3xl border p-6 shadow-2xl shadow-black/20 transition hover:-translate-y-1 ${plan.accent}`}>
+              <article key={plan.key} className={cardClasses}>
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-xs uppercase tracking-[0.35em] text-cyan-100">{t(plan.badgeKey)}</p>

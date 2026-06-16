@@ -187,7 +187,7 @@ export default function AIAssistant() {
       <button
         type="button"
         onClick={openChat}
-        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 shadow-2xl shadow-cyan-400/20 transition hover:bg-cyan-300 md:right-5 md:bottom-20"
+        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-slate-900/80 backdrop-blur-md border border-gray-800 px-4 py-2 text-sm font-semibold text-slate-100 shadow-2xl transition hover:bg-slate-800 md:right-5 md:bottom-20"
       >
         <span className="text-base">🤖</span>
         <span className="whitespace-nowrap">{t("askAi")}</span>

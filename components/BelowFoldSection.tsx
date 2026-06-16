@@ -39,11 +39,11 @@ export default function BelowFoldSection() {
       </article>
 
 
-      <footer className="mt-6 rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-2xl shadow-black/20 lg:col-span-2">
+      <footer className="mt-6 rounded-3xl border border-white/10 bg-slate-950/80 p-6 pb-24 pt-12 shadow-2xl shadow-black/20 lg:col-span-2">
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           <div>
             <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">{t("footer.aboutTitle")}</p>
-            <h3 className="mt-3 text-xl font-semibold text-white">510 Cleaning Services</h3>
+            <h3 className="mt-3 text-xl font-semibold text-white">{t("footer.brandName")}</h3>
             <p className="mt-3 text-sm text-slate-300">{t("footer.aboutText")}</p>
           </div>
           <div>
@@ -71,7 +71,7 @@ export default function BelowFoldSection() {
             </ul>
           </div>
         </div>
-        <div className="mt-6 border-t border-white/10 pt-4 text-xs uppercase tracking-[0.3em] text-slate-400">© 2026 510 Cleaning Services, Kigali Rwanda</div>
+        <div className="mt-6 border-t border-white/10 pt-4 text-xs uppercase tracking-[0.3em] text-slate-400">{t("legal.copyright")}</div>
       </footer>
     </section>
   );

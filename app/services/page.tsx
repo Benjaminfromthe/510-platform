@@ -85,7 +85,7 @@ export default function ServicesPage() {
           <p className="max-w-2xl text-[var(--text-secondary)]">{t("servicesPage.subtitle")}</p>
         </header>
 
-        <nav className="flex flex-wrap gap-3">
+        <nav className="flex flex-wrap gap-3 mb-12">
           {tabs.map((tab) => {
             const isActive = tab === activeTab;
 
@@ -131,30 +131,29 @@ export default function ServicesPage() {
               filteredServices.map((service) => (
                 <article
                   key={service.id}
-                  className="overflow-hidden rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] shadow-2xl shadow-black/20"
+                  className="overflow-hidden rounded-2xl bg-[#0b1329] border border-gray-800/80 p-5 shadow-xl transition-all hover:border-gray-700"
                 >
-                  <div className="border-b border-[var(--border-color)] bg-gradient-to-br from-[var(--bg-secondary)] via-[var(--bg-card)] to-[var(--bg-primary)] p-4">
+                  <div className="border-b border-gray-800 bg-gradient-to-br from-[var(--bg-secondary)] via-[var(--bg-card)] to-[var(--bg-primary)] p-4">
                     <ServiceIllustration category={service.category} className="h-36 w-full rounded-2xl border border-white/5 bg-[var(--bg-primary)]/80 p-3" />
                   </div>
-                  <div className="flex flex-col gap-4 p-5">
+                  <div className="flex flex-col gap-4">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="text-xs uppercase tracking-[0.3em] text-cyan-300">{categoryLabel(service.category, t)}</p>
                         <h2 className="mt-1 text-xl font-semibold text-[var(--text-primary)]">{service.name}</h2>
                       </div>
-                      <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-sm font-semibold text-emerald-300">{t("services.getQuote")}</span>
                     </div>
 
                     <p className="text-sm text-[var(--text-secondary)]">{service.description}</p>
 
                     <div className="flex items-center justify-between text-sm text-[var(--text-secondary)]">
-                      <span>{t("servicesPage.durationLabel")}: {service.duration} {t("common.minutes")}</span>
-                      <span>{t("servicesPage.categoryLabel")}: {categoryLabel(service.category, t)}</span>
+                      <span>{t("servicesPage.durationLabel")} : {service.duration} {t("common.minutes")}</span>
+                      <span>{t("servicesPage.categoryLabel")} : {categoryLabel(service.category, t)}</span>
                     </div>
 
                     <a
                       href={`/book?serviceId=${service.id}`}
-                      className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
+                      className="w-full block rounded-lg bg-cyan-400 py-2.5 text-center text-base font-semibold text-slate-900 shadow-md transition-all hover:bg-cyan-300"
                     >
                       {t("services.bookNow")}
                     </a>

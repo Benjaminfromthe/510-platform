@@ -5,6 +5,11 @@
     "english": "Anglais",
     "french": "Français"
   },
+  "nav": {
+    "services": "Services",
+    "bookNow": "Réserver",
+    "myBookings": "Mes Réservations"
+  },
   "services": "Services",
   "bookNow": "Réserver maintenant",
   "myBookings": "Mes réservations",
@@ -311,6 +316,8 @@
     "statCompleted": "Terminé",
     "tabBookings": "Réservations",
     "tabSubscription": "Mon abonnement",
+    "manageTitle": "Gérez votre plan",
+    "manageText": "Basculez entre les réservations et les détails d’abonnement en un seul endroit.",
     "errorBookings": "Impossible de charger vos réservations pour le moment.",
     "errorState": "Une erreur est survenue lors du chargement de votre tableau de bord. Veuillez réessayer.",
     "emptyTitle": "Aucune réservation pour le moment",

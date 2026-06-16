@@ -196,8 +196,8 @@ export default function HomePage() {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <Link href="/services" onClick={() => showToast(t("home.toastBook"), "success")} className="w-full sm:w-auto rounded-full bg-cyan-400 px-6 py-3 text-center text-base font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-cyan-300">{t("home.bookQuote")}</Link>
-              <Link href="/subscriptions" onClick={() => showToast(t("home.toastPlans"), "info")} className="w-full sm:w-auto rounded-full border border-white/10 bg-white/5 px-6 py-3 text-center text-base font-semibold text-[var(--text-primary)] transition hover:-translate-y-0.5 hover:border-cyan-400 hover:bg-cyan-400/10">{t("home.explorePlans")}</Link>
+              <Link href="/services" onClick={() => showToast(t("home.toastBook"), "success")} className="w-full sm:w-auto rounded-full bg-cyan-400 px-6 py-3 text-center text-base font-semibold text-slate-950 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] hover:bg-cyan-300">{t("home.bookQuote")}</Link>
+              <Link href="/subscriptions" onClick={() => showToast(t("home.toastPlans"), "info")} className="w-full sm:w-auto rounded-full border border-white/10 bg-white/5 px-6 py-3 text-center text-base font-semibold text-[var(--text-primary)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] hover:border-cyan-400 hover:bg-cyan-400/10">{t("home.explorePlans")}</Link>
             </div>
           </div>
 
@@ -233,7 +233,7 @@ export default function HomePage() {
             ))}
           </section>
 
-          <section data-reveal className="mx-auto grid w-full max-w-7xl gap-6 px-3 pb-16 sm:px-6 lg:px-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <section data-reveal className="mx-auto grid w-full max-w-7xl gap-6 px-3 pb-16 pr-20 sm:px-6 sm:pr-24 lg:px-8 lg:grid-cols-[1.1fr_0.9fr]">
             <article className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)]/85 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
               <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">{t("home.whatWeClean")}</p>
               <h2 className="mt-3 text-2xl font-semibold text-[var(--text-primary)]">{t("home.whatWeCleanTitle")}</h2>
@@ -242,7 +242,7 @@ export default function HomePage() {
                 {cleanItems.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <article key={item.label} className="soft-card rounded-2xl p-4 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-cyan-400/5">
+                    <article key={item.label} className="bg-slate-900/40 border border-gray-800/80 rounded-xl p-4 transition-all duration-300 hover:border-cyan-400/50">
                       <div className="flex items-center gap-3">
                         <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-100"><Icon className="h-5 w-5" /></span>
                         <h3 className="text-base font-semibold text-[var(--text-primary)]">{item.label}</h3>
@@ -260,7 +260,7 @@ export default function HomePage() {
                 {steps.map((step, index) => {
                   const Icon = step.icon;
                   return (
-                    <div key={step.title} className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)]/80 p-4">
+                    <div key={step.title} className="bg-[#0b1329] border border-gray-800 p-5 rounded-xl shadow-xl mb-4 relative overflow-hidden">
                       <div className="flex items-start gap-4">
                         <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-100"><Icon className="h-5 w-5" /></span>
                         <div>
@@ -298,7 +298,7 @@ export default function HomePage() {
             </article>
           </section>
 
-          <footer className="mt-6 rounded-3xl border border-white/10 bg-[var(--bg-primary)]/80 p-6">
+          <footer className="mt-6 rounded-3xl border border-white/10 bg-[var(--bg-primary)]/80 p-6 pb-24 pt-12">
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
               <div>
                 <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">{t("footer.aboutTitle")}</p>

@@ -3,7 +3,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { CalendarCheck2, Sparkles } from "lucide-react";
+import { AlertTriangle, CalendarCheck2, Sparkles } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -85,7 +85,7 @@ export default function DashboardPage() {
 
       setBookings(Array.isArray(bookingsData.bookings) ? bookingsData.bookings : []);
       setServices(Array.isArray(servicesData.services) ? servicesData.services : []);
-      setSubscription(subscriptionResponse.ok ? subscriptionData.subscription : null);
+      setSubscription(subscriptionResponse.ok && subscriptionData?.subscription ? subscriptionData.subscription : null);
     } catch (error) {
       console.error("Error loading dashboard data", error);
       setBookings([]);
@@ -162,7 +162,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+    <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] pb-20">
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
         <header className="space-y-3">
           <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">{t("eyebrow")}</p>
@@ -176,7 +176,7 @@ export default function DashboardPage() {
             { label: t("statPending"), value: stats.pending },
             { label: t("statCompleted"), value: stats.completed },
           ].map((item) => (
-            <article key={item.label} className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-2xl shadow-black/20">
+            <article key={item.label} className="bg-slate-900/60 border border-gray-800/80 rounded-xl p-5 shadow-lg shadow-black/20">
               <p className="text-sm text-[var(--text-secondary)]">{item.label}</p>
               <p className="mt-3 text-3xl font-semibold text-[var(--text-primary)]">{item.value}</p>
             </article>
@@ -185,12 +185,12 @@ export default function DashboardPage() {
 
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-2xl shadow-black/20">
           <div>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">Manage your plan</h2>
-            <p className="text-sm text-[var(--text-secondary)]">Switch between bookings and your subscription details in one place.</p>
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">{t("manageTitle")}</h2>
+            <p className="text-sm text-[var(--text-secondary)]">{t("manageText")}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={() => setActiveTab("bookings")} className={`rounded-full px-4 py-2 text-sm font-semibold ${activeTab === "bookings" ? "bg-cyan-400 text-slate-950" : "border border-[var(--border-color)] text-[var(--text-secondary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"}`}>{t("tabBookings")}</button>
-            <button type="button" onClick={() => setActiveTab("subscription")} className={`rounded-full px-4 py-2 text-sm font-semibold ${activeTab === "subscription" ? "bg-cyan-400 text-slate-950" : "border border-[var(--border-color)] text-[var(--text-secondary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"}`}>{t("tabSubscription")}</button>
+            <button type="button" onClick={() => setActiveTab("bookings")} className={`rounded-full px-4 py-2 text-sm ${activeTab === "bookings" ? "font-semibold bg-cyan-400 text-slate-950" : "font-medium text-gray-400 hover:text-white transition-colors cursor-pointer"}`}>{t("tabBookings")}</button>
+            <button type="button" onClick={() => setActiveTab("subscription")} className={`rounded-full px-4 py-2 text-sm ${activeTab === "subscription" ? "font-semibold bg-cyan-400 text-slate-950" : "font-medium text-gray-400 hover:text-white transition-colors cursor-pointer"}`}>{t("tabSubscription")}</button>
           </div>
         </div>
 
@@ -226,12 +226,14 @@ export default function DashboardPage() {
 
         {activeTab === "bookings" ? (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-2xl shadow-black/20">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 pr-16 lg:pr-4 shadow-2xl shadow-black/20">
               <div>
-                <h2 className="text-xl font-semibold text-[var(--text-primary)]">Your bookings</h2>
-                <p className="text-sm text-[var(--text-secondary)]">Review the latest status updates and open full booking details.</p>
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">{t("heading")}</h2>
+                <p className="text-sm text-[var(--text-secondary)]">{t("subtext")}</p>
               </div>
-              <Link href="/services" className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300">Book New Service</Link>
+              <div className="flex w-full justify-end lg:w-auto">
+                <Link href="/services" className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300 w-full lg:w-auto justify-center">{t("bookNew")}</Link>
+              </div>
             </div>
 
             {loading ? (
@@ -243,7 +245,10 @@ export default function DashboardPage() {
                 </div>
               </section>
             ) : errorMessage ? (
-              <section className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-6 text-[var(--text-secondary)] shadow-2xl shadow-black/20">{errorMessage}</section>
+              <section className="bg-red-950/20 border border-red-500/30 rounded-xl p-4 my-4 text-sm text-red-300 flex items-center gap-3 shadow-lg max-w-2xl mx-auto">
+                <AlertTriangle className="h-5 w-5 text-red-400" aria-hidden="true" />
+                <p>{errorMessage}</p>
+              </section>
             ) : bookings.length === 0 ? (
               <section className="rounded-3xl border border-dashed border-[var(--border-color)] bg-[var(--bg-card)]/70 p-8 text-[var(--text-secondary)] shadow-2xl shadow-black/20 text-center">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-100"><CalendarCheck2 className="h-7 w-7" /></div>

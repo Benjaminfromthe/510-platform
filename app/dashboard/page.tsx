@@ -226,13 +226,13 @@ export default function DashboardPage() {
 
         {activeTab === "bookings" ? (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 pr-16 lg:pr-4 shadow-2xl shadow-black/20">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 pr-24 lg:pr-6 shadow-2xl shadow-black/20">
               <div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">{t("heading")}</h2>
                 <p className="text-sm text-[var(--text-secondary)]">{t("subtext")}</p>
               </div>
-              <div className="flex w-full justify-end lg:w-auto">
-                <Link href="/services" className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300 w-full lg:w-auto justify-center">{t("bookNew")}</Link>
+              <div className="flex w-full justify-end lg:w-auto relative">
+                <Link href="/services" className="relative z-50 inline-flex items-center justify-center rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300 w-full lg:w-auto justify-center">{t("bookNew")}</Link>
               </div>
             </div>
 
@@ -245,7 +245,7 @@ export default function DashboardPage() {
                 </div>
               </section>
             ) : errorMessage ? (
-              <section className="bg-red-950/20 border border-red-500/30 rounded-xl p-4 my-4 text-sm text-red-300 flex items-center gap-3 shadow-lg max-w-2xl mx-auto">
+              <section className="bg-red-950/20 border border-red-500/30 rounded-xl p-4 my-4 text-sm text-red-300 flex items-center gap-3 shadow-lg max-w-2xl mx-auto relative z-40">
                 <AlertTriangle className="h-5 w-5 text-red-400" aria-hidden="true" />
                 <p>{errorMessage}</p>
               </section>

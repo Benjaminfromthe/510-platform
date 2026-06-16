@@ -5,12 +5,11 @@
     "english": "Anglais",
     "french": "Français"
   },
-    "services": "Services",
-    "bookNow": "Réserver maintenant",
-    "myBookings": "Mes réservations",
-    "signIn": "Se connecter",
-    "createAccount": "Créer un compte"
-  },
+  "services": "Services",
+  "bookNow": "Réserver maintenant",
+  "myBookings": "Mes réservations",
+  "signIn": "Se connecter",
+  "createAccount": "Créer un compte",
   "home": {
     "eyebrow": "SERVICE DE NETTOYAGE PREMIUM À KIGALI",
     "heroTitle": "Nous redonnons à vos appareils et meubles un aspect neuf",

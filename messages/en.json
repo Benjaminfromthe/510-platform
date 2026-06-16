@@ -5,12 +5,11 @@
     "english": "English",
     "french": "Français"
   },
-    "services": "Services",
-    "bookNow": "Book now",
-    "myBookings": "My bookings",
-    "signIn": "Sign in",
-    "createAccount": "Create account"
-  },
+  "services": "Services",
+  "bookNow": "Book now",
+  "myBookings": "My bookings",
+  "signIn": "Sign in",
+  "createAccount": "Create account",
   "home": {
     "eyebrow": "KIGALI'S PREMIUM CLEANING SERVICE",
     "heroTitle": "We Make Your Electronics & Furniture Look Brand New",

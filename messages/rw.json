@@ -5,12 +5,11 @@
     "english": "Icyongereza",
     "french": "Igifaransa"
   },
-    "services": "Serivisi",
-    "bookNow": "Teganya ubusabe",
-    "myBookings": "Amasaha yanjye",
-    "signIn": "Injira",
-    "createAccount": "Fungura konti"
-  },
+  "services": "Serivisi",
+  "bookNow": "Teganya ubusabe",
+  "myBookings": "Amasaha yanjye",
+  "signIn": "Injira",
+  "createAccount": "Fungura konti",
   "home": {
     "eyebrow": "SERIVISI NZIZA YO GUSUKURA YA KIGALI",
     "heroTitle": "Dusubiza ibikoresho byawe by'amashanyarazi n'ibikoresho by'inzu bimeze nk'ibishya",

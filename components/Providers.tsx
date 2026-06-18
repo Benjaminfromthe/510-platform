@@ -2,6 +2,7 @@
 
 import { NextIntlClientProvider } from 'next-intl';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { ClerkProvider } from '@clerk/nextjs';
 
 import en from '../messages/en.json';
 import fr from '../messages/fr.json';
@@ -56,6 +57,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }, [locale]);
 
   const value = useMemo(() => ({ locale, setLocale: setLocaleWithPersistence }), [locale]);
+
+  // Map our locales to Clerk's supported locales
+  // Clerk supports: en, fr, and others. For Kinyarwanda (rw), fallback to English
+  const clerkLocale = locale === 'rw' ? 'en' : locale;
 
   return (
     <LocaleContext.Provider value={value}>

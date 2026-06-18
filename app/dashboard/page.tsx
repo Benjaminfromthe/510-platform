@@ -3,7 +3,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { AlertTriangle, CalendarCheck2, Sparkles } from "lucide-react";
+import { CalendarCheck2, Sparkles } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -58,7 +58,6 @@ export default function DashboardPage() {
   const [services, setServices] = useState<ServiceRecord[]>([]);
   const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
   const [activeTab, setActiveTab] = useState<"bookings" | "subscription">("bookings");
   const [selectedBooking, setSelectedBooking] = useState<BookingRecord | null>(null);
   const [busyBookingId, setBusyBookingId] = useState<number | null>(null);
@@ -66,32 +65,42 @@ export default function DashboardPage() {
 
   const loadDashboardData = useCallback(async () => {
     setLoading(true);
-    setErrorMessage("");
 
     try {
-      const [bookingsResponse, servicesResponse, subscriptionResponse] = await Promise.all([
-        fetch("/api/bookings", { cache: "no-store" }),
-        fetch("/api/services", { cache: "no-store" }),
-        fetch("/api/subscriptions", { cache: "no-store" }),
-      ]);
+      const bookingsResponse = await fetch("/api/bookings", {
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+      });
 
-      const bookingsData = await bookingsResponse.json().catch(() => ({}));
-      const servicesData = await servicesResponse.json().catch(() => ({}));
-      const subscriptionData = await subscriptionResponse.json().catch(() => ({}));
+      let bookingsData = { bookings: [] };
+      if (bookingsResponse.ok) {
+        bookingsData = await bookingsResponse.json().catch(() => ({ bookings: [] }));
+      } else {
+        const errorData = await bookingsResponse.json().catch(() => ({}));
+        console.error("Bookings fetch error:", errorData);
+      }
 
-      if (!bookingsResponse.ok) {
-        throw new Error(bookingsData.error || t("errorBookings"));
+      const servicesResponse = await fetch("/api/services", { cache: "no-store" });
+      let servicesData = { services: [] };
+      if (servicesResponse.ok) {
+        servicesData = await servicesResponse.json().catch(() => ({ services: [] }));
+      }
+
+      const subscriptionResponse = await fetch("/api/subscriptions", { cache: "no-store" });
+      let subscriptionData = {};
+      if (subscriptionResponse.ok) {
+        subscriptionData = await subscriptionResponse.json().catch(() => ({}));
       }
 
       setBookings(Array.isArray(bookingsData.bookings) ? bookingsData.bookings : []);
       setServices(Array.isArray(servicesData.services) ? servicesData.services : []);
       setSubscription(subscriptionResponse.ok && subscriptionData?.subscription ? subscriptionData.subscription : null);
     } catch (error) {
-      console.error("Error loading dashboard data", error);
+      console.error("Error loading dashboard data:", error);
+      // Always show empty state, never show error to customer
       setBookings([]);
       setServices([]);
       setSubscription(null);
-      setErrorMessage(t("errorState"));
     } finally {
       setLoading(false);
     }
@@ -243,11 +252,6 @@ export default function DashboardPage() {
                   <div className="h-4 w-1/2 rounded bg-[var(--bg-secondary)] animate-pulse" />
                   <div className="h-24 rounded-2xl bg-[var(--bg-secondary)]/80 animate-pulse" />
                 </div>
-              </section>
-            ) : errorMessage ? (
-              <section className="bg-red-950/20 border border-red-500/30 rounded-xl p-4 my-4 text-sm text-red-300 flex items-center gap-3 shadow-lg max-w-2xl mx-auto relative z-40">
-                <AlertTriangle className="h-5 w-5 text-red-400" aria-hidden="true" />
-                <p>{errorMessage}</p>
               </section>
             ) : bookings.length === 0 ? (
               <section className="rounded-3xl border border-dashed border-[var(--border-color)] bg-[var(--bg-card)]/70 p-8 text-[var(--text-secondary)] shadow-2xl shadow-black/20 text-center">

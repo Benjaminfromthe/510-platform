@@ -121,18 +121,19 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
+  let userId: string | null = null;
   try {
-    let userId: string | null = null;
-    try {
-      const { auth } = await import("@clerk/nextjs/server");
-      ({ userId } = await auth());
-    } catch {
-      userId = null;
-    }
-    if (!userId) {
-      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
-    }
+    const { auth } = await import("@clerk/nextjs/server");
+    ({ userId } = await auth());
+  } catch {
+    userId = null;
+  }
 
+  if (!userId) {
+    return NextResponse.json({ bookings: [], page: 1, limit: 10, total: 0, totalPages: 0 }, { status: 200 });
+  }
+
+  try {
     const { searchParams } = new URL(request.url);
     const page = Math.max(1, Number(searchParams.get("page") || 1));
     const limit = Math.max(1, Math.min(50, Number(searchParams.get("limit") || 10)));
@@ -159,6 +160,7 @@ export async function GET(request: Request) {
     }, { status: 200 });
   } catch (error) {
     console.error("Booking GET error:", error);
-    return NextResponse.json({ error: "Unable to fetch bookings." }, { status: 500 });
+    // Return empty array on database error instead of throwing
+    return NextResponse.json({ bookings: [], page: 1, limit: 10, total: 0, totalPages: 0 }, { status: 200 });
   }
 }

@@ -3,8 +3,8 @@
 // NO HARDCODED STRINGS - use t('key') always
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
-import ServiceIllustration from "../../components/ServiceIllustration";
 
 type ServiceCategory = "ELECTRONICS" | "FURNITURE" | "OTHER";
 
@@ -19,6 +19,22 @@ type Service = {
 };
 
 const tabs = ["All", "ELECTRONICS", "FURNITURE", "OTHER"] as const;
+
+// Service image URLs with alt text keys by category
+const serviceImages: Record<ServiceCategory, { url: string; altKey: string }> = {
+  ELECTRONICS: {
+    url: "https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=800&q=80",
+    altKey: "category.electronicsAlt",
+  },
+  FURNITURE: {
+    url: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
+    altKey: "category.furnitureAlt",
+  },
+  OTHER: {
+    url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    altKey: "category.deepCleanAlt",
+  },
+};
 
 function categoryLabel(category: ServiceCategory, t: ReturnType<typeof useTranslations>) {
   return t(`category.${category.toLowerCase() as Lowercase<ServiceCategory>}`);
@@ -131,12 +147,22 @@ export default function ServicesPage() {
               filteredServices.map((service) => (
                 <article
                   key={service.id}
-                  className="overflow-hidden rounded-2xl bg-[#0b1329] border border-gray-800/80 p-5 shadow-xl transition-all hover:border-gray-700"
+                  className="overflow-hidden rounded-2xl bg-[#0b1329] border border-gray-800/80 shadow-xl transition-all hover:border-gray-700"
                 >
-                  <div className="border-b border-gray-800 bg-gradient-to-br from-[var(--bg-secondary)] via-[var(--bg-card)] to-[var(--bg-primary)] p-4">
-                    <ServiceIllustration category={service.category} className="h-36 w-full rounded-2xl border border-white/5 bg-[var(--bg-primary)]/80 p-3" />
+                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-[var(--bg-secondary)] via-[var(--bg-card)] to-[var(--bg-primary)]">
+                    <Image
+                      src={serviceImages[service.category].url}
+                      alt={t(serviceImages[service.category].altKey)}
+                      width={400}
+                      height={200}
+                      className="w-full h-48 object-cover"
+                      priority={false}
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                   </div>
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-4 p-5">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="text-xs uppercase tracking-[0.3em] text-cyan-300">{categoryLabel(service.category, t)}</p>

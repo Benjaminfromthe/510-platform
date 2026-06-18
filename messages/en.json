@@ -79,7 +79,10 @@
   "category": {
     "electronics": "Electronics",
     "furniture": "Furniture",
-    "other": "Other"
+    "other": "Other",
+    "electronicsAlt": "Professional electronics cleaning service",
+    "furnitureAlt": "Professional furniture cleaning service",
+    "deepCleanAlt": "Professional deep cleaning service"
   },
   "booking": {
     "title": "Quote request",

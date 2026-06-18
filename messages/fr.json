@@ -79,7 +79,10 @@
   "category": {
     "electronics": "Électronique",
     "furniture": "Mobilier",
-    "other": "Autre"
+    "other": "Autre",
+    "electronicsAlt": "Service de nettoyage électronique professionnel",
+    "furnitureAlt": "Service de nettoyage du mobilier professionnel",
+    "deepCleanAlt": "Service de nettoyage en profondeur professionnel"
   },
   "booking": {
     "title": "Demande de devis",

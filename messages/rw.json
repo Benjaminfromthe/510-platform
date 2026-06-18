@@ -79,7 +79,10 @@
   "category": {
     "electronics": "Ibikoresho by’amashanyarazi",
     "furniture": "Ibikoresho by’inzu",
-    "other": "Ibindi"
+    "other": "Ibindi",
+    "electronicsAlt": "Serivisi nziza yisuku y'ibikoresho by'amashanyarazi",
+    "furnitureAlt": "Serivisi nziza yisuku y'ibikoresho by'inzu",
+    "deepCleanAlt": "Serivisi nziza yo gusukura cyane"
   },
   "booking": {
     "title": "Icyifuzo cy'icyegeranyo",

@@ -160,3 +160,88 @@ body {
     padding-bottom: 6rem;
   }
 }
+
+/* Clerk UserButton Dark Mode Styling */
+.dark [role="dialog"] {
+  background-color: rgb(3, 7, 30) !important;
+  border-color: rgb(55, 65, 81) !important;
+}
+
+.dark [role="dialog"] > div {
+  background-color: rgb(3, 7, 30) !important;
+}
+
+/* Ensure dropdown menu items are readable in dark mode */
+.dark .cl-userButtonPopoverCard {
+  background-color: rgb(3, 7, 30) !important;
+  border: 1px solid rgb(55, 65, 81) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .cl-menuItem {
+  color: rgb(226, 232, 240) !important;
+}
+
+.dark .cl-menuItem:hover {
+  background-color: rgb(31, 41, 55) !important;
+  color: rgb(241, 245, 250) !important;
+}
+
+.dark .cl-menuItemButton {
+  color: rgb(226, 232, 240) !important;
+}
+
+.dark .cl-menuItemButton:hover {
+  background-color: rgb(31, 41, 55) !important;
+  color: rgb(241, 245, 250) !important;
+}
+
+.dark .cl-profileSectionPrimaryButton {
+  color: rgb(226, 232, 240) !important;
+}
+
+.dark .cl-profileSectionPrimaryButton:hover {
+  background-color: rgb(31, 41, 55) !important;
+  color: rgb(241, 245, 250) !important;
+}
+
+.dark .cl-userPreviewMainIdentifier {
+  color: rgb(255, 255, 255) !important;
+}
+
+.dark .cl-userPreviewSecondaryIdentifier {
+  color: rgb(156, 163, 175) !important;
+}
+
+/* Light Mode Styling for Clerk */
+.light .cl-userButtonPopoverCard {
+  background-color: rgb(255, 255, 255) !important;
+  border: 1px solid rgb(229, 231, 235) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.light .cl-menuItem {
+  color: rgb(55, 65, 81) !important;
+}
+
+.light .cl-menuItem:hover {
+  background-color: rgb(243, 244, 246) !important;
+  color: rgb(17, 24, 39) !important;
+}
+
+.light .cl-menuItemButton {
+  color: rgb(55, 65, 81) !important;
+}
+
+.light .cl-menuItemButton:hover {
+  background-color: rgb(243, 244, 246) !important;
+  color: rgb(17, 24, 39) !important;
+}
+
+.light .cl-userPreviewMainIdentifier {
+  color: rgb(17, 24, 39) !important;
+}
+
+.light .cl-userPreviewSecondaryIdentifier {
+  color: rgb(107, 114, 128) !important;
+}

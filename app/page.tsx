@@ -2,16 +2,16 @@
 
 // NO HARDCODED STRINGS - use t('key') always
 
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Calendar, Menu, Sparkles, Truck, X, Laptop, Smartphone, BedDouble, BadgeCheck, CheckCircle2, Globe, MessageCircleMore, Send, Monitor, Armchair, Sofa, Info } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "../components/LanguageSwitcher";
-import ServiceIllustration from "../components/ServiceIllustration";
 import ThemeToggle from "../components/ThemeToggle";
+import UserButtonWithTheme from "../components/UserButtonWithTheme";
 import { useToast } from "../components/ToastProvider";
 
 const statItems = [
@@ -21,18 +21,26 @@ const statItems = [
   { value: "Foam", label: "home.statTechnology" },
 ];
 
-const serviceIllustrations = {
-  electronics: "ELECTRONICS" as const,
-  furniture: "FURNITURE" as const,
-  deep: "OTHER" as const,
+// Service image URLs with alt text keys
+const serviceImages = {
+  electronics: {
+    url: "https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=800&q=80",
+    altKey: "category.electronicsAlt",
+  },
+  furniture: {
+    url: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
+    altKey: "category.furnitureAlt",
+  },
+  deep: {
+    url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    altKey: "category.deepCleanAlt",
+  },
 };
 
 
 export default function HomePage() {
   const t = useTranslations();
   const pathname = usePathname();
-  const { resolvedTheme } = useTheme();
-  const isDarkTheme = resolvedTheme === 'dark';
   const { showToast } = useToast();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -99,36 +107,7 @@ export default function HomePage() {
                 </SignUpButton>
               </SignedOut>
               <SignedIn>
-                <UserButton
-                  afterSignOutUrl="/"
-                  appearance={
-                    isDarkTheme
-                      ? {
-                          elements: {
-                            avatarBox: 'w-8 h-8',
-                            userButtonPopoverCard: 'border border-gray-700 bg-gray-900 shadow-xl',
-                            userPreviewMainIdentifier: 'text-white',
-                            userPreviewSecondaryIdentifier: 'text-gray-400',
-                            menuItem: 'text-white hover:bg-gray-800',
-                            menuItemButton: 'text-white hover:bg-gray-800',
-                            menuItemIcon: 'text-gray-400',
-                            dividerLine: 'bg-gray-700',
-                          },
-                        }
-                      : {
-                          elements: {
-                            avatarBox: 'w-8 h-8',
-                            userButtonPopoverCard: 'border border-slate-200 bg-white shadow-xl',
-                            userPreviewMainIdentifier: 'text-slate-900',
-                            userPreviewSecondaryIdentifier: 'text-slate-500',
-                            menuItem: 'text-slate-900 hover:bg-slate-100',
-                            menuItemButton: 'text-slate-900 hover:bg-slate-100',
-                            menuItemIcon: 'text-slate-400',
-                            dividerLine: 'bg-slate-200',
-                          },
-                        }
-                  }
-                />
+                <UserButtonWithTheme />
               </SignedIn>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -212,18 +191,29 @@ export default function HomePage() {
 
           <section data-reveal className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {[
-              { title: t("home.electronicsTitle"), description: t("home.electronicsDescription"), href: "/services", illustration: serviceIllustrations.electronics },
-              { title: t("home.furnitureTitle"), description: t("home.furnitureDescription"), href: "/services", illustration: serviceIllustrations.furniture },
-              { title: t("home.deepTitle"), description: t("home.deepDescription"), href: "/services", illustration: serviceIllustrations.deep },
+              { key: "electronics", title: t("home.electronicsTitle"), description: t("home.electronicsDescription"), href: "/services", image: serviceImages.electronics },
+              { key: "furniture", title: t("home.furnitureTitle"), description: t("home.furnitureDescription"), href: "/services", image: serviceImages.furniture },
+              { key: "deep", title: t("home.deepTitle"), description: t("home.deepDescription"), href: "/services", image: serviceImages.deep },
             ].map((service) => (
-              <article key={service.title} className="group soft-card rounded-3xl p-6 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-cyan-400/5">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm uppercase tracking-[0.25em] text-cyan-300">{t("home.serviceLabel")}</p>
-                  <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-cyan-100">{t("home.quoteBadge")}</span>
+              <article key={service.key} className="group soft-card rounded-3xl overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-cyan-400/5">
+                <div className="relative h-48 overflow-hidden rounded-t-3xl">
+                  <Image
+                    src={service.image.url}
+                    alt={t(service.image.altKey)}
+                    width={400}
+                    height={200}
+                    className="w-full h-48 object-cover"
+                    priority={false}
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 </div>
-                <div className="mt-4 rounded-2xl border border-white/5 bg-[var(--bg-primary)]/80 p-3">
-                  <ServiceIllustration category={service.illustration} className="h-28 w-full" />
-                </div>
+                <div className="p-6">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm uppercase tracking-[0.25em] text-cyan-300">{t("home.serviceLabel")}</p>
+                    <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-cyan-100">{t("home.quoteBadge")}</span>
+                  </div>
                   {service.title === t("home.furnitureTitle") ? <span className="mt-3 inline-flex w-fit rounded-full bg-emerald-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-emerald-200">{t("home.popularBadge")}</span> : null}
                   <h2 className="mt-3 text-xl font-semibold text-[var(--text-primary)]">{service.title}</h2>
                   <p className="mt-2 text-sm text-[var(--text-secondary)]">{service.description}</p>

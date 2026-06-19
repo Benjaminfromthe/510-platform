@@ -24,7 +24,8 @@ const statItems = [
 // Service image URLs with alt text keys
 const serviceImages = {
   electronics: {
-    url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+    // Flat-lay of laptop, phone and tablet — captures all devices we clean
+    url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80",
     altKey: "category.electronicsAlt",
   },
   furniture: {
@@ -32,7 +33,8 @@ const serviceImages = {
     altKey: "category.furnitureAlt",
   },
   deep: {
-    url: "https://images.unsplash.com/photo-1527515637462-cff94ead201b?w=800&q=80",
+    // Cleaning spray and supplies — clearly about deep cleaning
+    url: "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=800&q=80",
     altKey: "category.deepCleanAlt",
   },
 };

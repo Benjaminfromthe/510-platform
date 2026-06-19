@@ -111,6 +111,26 @@ export async function POST(request: Request) {
       );
     }
 
+    // Detect language from the latest user message and inject a directive
+    const lastUserMessage = Array.isArray(messages)
+      ? [...messages].reverse().find((m: { role?: string; content?: string }) => m.role === "user")
+      : null;
+    const detectedLang = lastUserMessage ? detectLanguage(String(lastUserMessage.content || "")) : "English";
+
+    const processedMessages = Array.isArray(messages)
+      ? messages.map((message: { role?: string; content?: string }, index: number) => {
+          const isLastUserMessage =
+            message.role === "user" &&
+            index === messages.map((m: { role?: string }) => m.role).lastIndexOf("user");
+          return {
+            role: message.role === "assistant" ? "assistant" : "user",
+            content: isLastUserMessage
+              ? `[IMPORTANT: You MUST respond in ${detectedLang} ONLY. Do NOT use Kiswahili. Do NOT use any other language.]\n\n${String(message.content || "")}`
+              : String(message.content || ""),
+          };
+        })
+      : [];
+
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -122,12 +142,7 @@ export async function POST(request: Request) {
         temperature: 0.7,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          ...(Array.isArray(messages)
-            ? messages.map((message: { role?: string; content?: string }) => ({
-                role: message.role === "assistant" ? "assistant" : "user",
-                content: String(message.content || ""),
-              }))
-            : []),
+          ...processedMessages,
         ],
       }),
     });

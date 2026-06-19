@@ -15,10 +15,10 @@ import UserButtonWithTheme from "../components/UserButtonWithTheme";
 import { useToast } from "../components/ToastProvider";
 
 const statItems = [
-  { value: "6 days", label: "home.statAvailable" },
-  { value: "2 hr", label: "home.statResponse" },
-  { value: "Kigali", label: "home.statCoverage" },
-  { value: "Foam", label: "home.statTechnology" },
+  { valueKey: "home.statAvailableValue", label: "home.statAvailable" },
+  { valueKey: "home.statResponseValue", label: "home.statResponse" },
+  { valueKey: "home.statCoverageValue", label: "home.statCoverage" },
+  { valueKey: "home.statTechnologyValue", label: "home.statTechnology" },
 ];
 
 // Service image URLs — NO people, NO hands, NO body parts
@@ -93,7 +93,6 @@ export default function HomePage() {
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-1.5 text-3xl font-black tracking-tight text-slate-900 dark:text-cyan-300">
             <span>510</span>
-            <span className="text-base text-cyan-400/80 dark:text-cyan-300/70">·</span>
           </Link>
           <div className="flex items-center gap-2">
             <div className="hidden items-center gap-2 xl:flex">
@@ -186,7 +185,7 @@ export default function HomePage() {
           <div data-reveal className="grid grid-cols-2 gap-4 rounded-3xl border border-white/10 bg-[var(--bg-primary)]/70 p-4 backdrop-blur-xl md:grid-cols-4">
             {statItems.map((item) => (
               <article key={item.label} className="soft-card rounded-2xl p-4 text-center">
-                <p className="text-xl font-semibold text-cyan-200">{item.value}</p>
+                <p className="text-xl font-semibold text-cyan-200">{t(item.valueKey)}</p>
                 <p className="mt-1 text-xs uppercase tracking-[0.25em] text-[var(--text-secondary)]">{t(item.label)}</p>
               </article>
             ))}

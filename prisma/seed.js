@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
+// ALL images verified people-free / hands-free
 const services = [
   {
     id: 1,
@@ -10,7 +11,8 @@ const services = [
     price: 18000,
     duration: 120,
     category: 'OTHER',
-    imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80',
+    // Cleaning spray bottles and cloths on a white surface — no people
+    imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 2,
@@ -19,7 +21,8 @@ const services = [
     price: 22000,
     duration: 90,
     category: 'OTHER',
-    imageUrl: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80',
+    // Empty clean office desk — no people
+    imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 3,
@@ -28,7 +31,8 @@ const services = [
     price: 15000,
     duration: 60,
     category: 'FURNITURE',
-    imageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80',
+    // Clean sofa only — no people
+    imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 4,
@@ -37,7 +41,8 @@ const services = [
     price: 12000,
     duration: 45,
     category: 'ELECTRONICS',
-    imageUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80',
+    // Laptop and phone on desk overhead — no people
+    imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80',
   },
 ];
 

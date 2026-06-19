@@ -87,7 +87,7 @@ export default function DashboardPage() {
       }
 
       const subscriptionResponse = await fetch("/api/subscriptions", { cache: "no-store" });
-      let subscriptionData = {};
+      let subscriptionData: { subscription?: unknown } = {};
       if (subscriptionResponse.ok) {
         subscriptionData = await subscriptionResponse.json().catch(() => ({}));
       }

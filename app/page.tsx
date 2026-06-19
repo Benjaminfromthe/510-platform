@@ -217,8 +217,9 @@ export default function HomePage() {
                   {service.title === t("home.furnitureTitle") ? <span className="mt-3 inline-flex w-fit rounded-full bg-emerald-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-emerald-200">{t("home.popularBadge")}</span> : null}
                   <h2 className="mt-3 text-xl font-semibold text-[var(--text-primary)]">{service.title}</h2>
                   <p className="mt-2 text-sm text-[var(--text-secondary)]">{service.description}</p>
-                <span className="mt-4 inline-flex w-fit rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-cyan-200">{t("home.quoteBadge")}</span>
-                <Link href="/services" onClick={() => showToast(t("home.toastBookingFlow"), "info")} className="mt-5 inline-flex rounded-full bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-cyan-300">{t("home.requestQuote")}</Link>
+                  <span className="mt-4 inline-flex w-fit rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-cyan-200">{t("home.quoteBadge")}</span>
+                  <Link href="/services" onClick={() => showToast(t("home.toastBookingFlow"), "info")} className="mt-5 inline-flex rounded-full bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-cyan-300">{t("home.requestQuote")}</Link>
+                </div>
               </article>
             ))}
           </section>

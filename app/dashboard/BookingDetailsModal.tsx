@@ -8,7 +8,7 @@ export type BookingRecord = {
   status: string;
   scheduledDate: string;
   scheduledTime: string;
-  totalPrice: number;
+  totalPrice: number | null;
   quantity: number;
   address: string;
   notes?: string | null;

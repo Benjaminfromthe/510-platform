@@ -290,7 +290,7 @@ export default function DashboardPage() {
                           {booking.status}
                         </span>
                       </td>
-                      <td className="px-4 py-4">{booking.totalPrice.toLocaleString("en-US")} RWF</td>
+                      <td className="px-4 py-4">{booking.totalPrice != null ? booking.totalPrice.toLocaleString("en-US") + " RWF" : "Quote pending"}</td>
                       <td className="px-4 py-4">
                         <div className="flex flex-wrap gap-2">
                           <button
@@ -333,7 +333,7 @@ export default function DashboardPage() {
                           {booking.status}
                         </span>
                       </div>
-                      <p className="mt-3 text-sm text-[var(--text-secondary)]">{booking.totalPrice.toLocaleString("en-US")} RWF</p>
+                      <p className="mt-3 text-sm text-[var(--text-secondary)]">{booking.totalPrice != null ? booking.totalPrice.toLocaleString("en-US") + " RWF" : "Quote pending"}</p>
                       <div className="mt-4 flex flex-wrap gap-2">
                         <button
                           type="button"

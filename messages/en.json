@@ -313,7 +313,7 @@
   },
   "momo": {
     "label": "Pay via MoMo — Code:",
-    "instruction": "Use MTN Mobile Money to pay",
+    "instruction": "Use MTN Mobile Money to pay · Name: Benjamin",
     "code": "MoMo Code:",
     "network": "MTN Rwanda",
     "ariaLabel": "MoMo payment information ticker"

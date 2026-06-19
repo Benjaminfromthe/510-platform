@@ -313,7 +313,7 @@
   },
   "momo": {
     "label": "Ishyura ukoresheje MoMo — Kode:",
-    "instruction": "Koresha MTN Mobile Money wishyure",
+    "instruction": "Koresha MTN Mobile Money wishyure · Izina: Benjamin",
     "code": "Kode ya MoMo:",
     "network": "MTN Rwanda",
     "ariaLabel": "Ubutumwa bwa MoMo bwo kwishyura"

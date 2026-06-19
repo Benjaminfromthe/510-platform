@@ -24,6 +24,8 @@ const bookingSchema = z.object({
   propertySize: z.string().optional().or(z.literal("")).nullable().optional(),
   totalPrice: z.coerce.number().nonnegative().optional().nullable(),
   quotedPrice: z.coerce.number().nonnegative().optional().nullable(),
+  // Client-side Clerk userId passed as fallback when server-side auth() fails
+  clerkUserId: z.string().optional(),
 });
 
 function toBookingDate(date: string, time: string) {
@@ -86,7 +88,8 @@ export async function POST(request: Request) {
 
     const booking = await prisma.booking.create({
       data: {
-        userId: userId ?? null,
+        // Use server-side userId first, then client-side clerkUserId as fallback
+        userId: userId ?? parsed.data.clerkUserId ?? null,
         serviceId: parsed.data.serviceId,
         quantity: parsed.data.quantity ?? 1,
         addOns: parsed.data.addOns,

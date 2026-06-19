@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import DatePicker from "react-datepicker";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { useAuth } from "@clerk/nextjs";
 import { z } from "zod";
 
 type ServiceCategory = "ELECTRONICS" | "FURNITURE" | "OTHER";
@@ -94,6 +95,7 @@ export default function BookForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const serviceId = Number(searchParams.get("serviceId") || 0);
+  const { userId } = useAuth(); // get Clerk userId client-side — reliable on all platforms
 
   const [step, setStep] = useState(serviceId ? 1 : 0);
   const [service, setService] = useState<Service | null>(null);
@@ -315,6 +317,9 @@ export default function BookForm() {
           date: scheduledDate,
           time: scheduledTime,
           description: quoteDescription,
+          // Pass userId from Clerk client-side — guarantees correct association
+          // even when server-side auth() can't read the session cookie
+          clerkUserId: userId ?? undefined,
         }),
       });
 

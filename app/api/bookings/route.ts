@@ -122,14 +122,15 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   let userId: string | null = null;
-  let userEmail: string | null = null;
+  let userEmails: string[] = [];
 
   try {
     const { auth, currentUser } = await import("@clerk/nextjs/server");
     ({ userId } = await auth());
     if (userId) {
       const clerkUser = await currentUser();
-      userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress ?? null;
+      // Collect ALL email addresses from the Clerk user account
+      userEmails = (clerkUser?.emailAddresses ?? []).map(e => e.emailAddress).filter(Boolean);
     }
   } catch {
     userId = null;
@@ -145,16 +146,18 @@ export async function GET(request: Request) {
     const limit = Math.max(1, Math.min(50, Number(searchParams.get("limit") || 10)));
     const skip = (page - 1) * limit;
 
-    // First: back-fill any bookings that were saved with null userId but matching email
-    // This fixes bookings submitted when Clerk session wasn't yet available server-side
-    if (userEmail) {
+    // Back-fill: claim any bookings saved with null userId but matching this user's emails
+    if (userEmails.length > 0) {
       await prisma.booking.updateMany({
-        where: { userId: null, email: userEmail },
+        where: { userId: null, email: { in: userEmails } },
         data: { userId },
       });
     }
 
-    const where = { userId };
+    // Query by userId (includes just-claimed bookings) OR by email as safety net
+    const where = userEmails.length > 0
+      ? { OR: [{ userId }, { email: { in: userEmails } }] }
+      : { userId };
 
     const [bookings, total] = await Promise.all([
       prisma.booking.findMany({

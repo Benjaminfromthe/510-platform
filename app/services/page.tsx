@@ -20,21 +20,21 @@ type Service = {
 
 const tabs = ["All", "ELECTRONICS", "FURNITURE", "OTHER"] as const;
 
-// Service image URLs — NO people, NO hands, NO body parts
+// Service image URLs — NO people, NO hands. Using verified people-free Unsplash photos.
 const serviceImages: Record<ServiceCategory, { url: string; altKey: string }> = {
   ELECTRONICS: {
-    // Overhead shot: laptop, phone and headphones on a desk — zero people
-    url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80",
+    // Array of electronics: laptops, monitors, cameras, headphones — no people
+    url: "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=800&q=80",
     altKey: "category.electronicsAlt",
   },
   FURNITURE: {
-    // Clean green sofa — zero people
-    url: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
+    // Clean white interior furniture, table and plants — no people
+    url: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80",
     altKey: "category.furnitureAlt",
   },
   OTHER: {
-    // Cleaning supplies — spray bottles, sponge, cloth on white surface — zero people
-    url: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
+    // Empty modern office workstations with chairs — no people
+    url: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80",
     altKey: "category.deepCleanAlt",
   },
 };

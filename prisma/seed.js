@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-// ALL images verified people-free / hands-free
+// ALL images: zero people, zero hands, zero body parts
 const services = [
   {
     id: 1,
@@ -11,8 +11,8 @@ const services = [
     price: 18000,
     duration: 120,
     category: 'OTHER',
-    // Cleaning spray bottles and cloths on a white surface — no people
-    imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80',
+    // Empty modern office/room interior — no people
+    imageUrl: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 2,
@@ -21,8 +21,8 @@ const services = [
     price: 22000,
     duration: 90,
     category: 'OTHER',
-    // Empty clean office desk — no people
-    imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
+    // Empty modern office workstations with chairs — no people
+    imageUrl: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 3,
@@ -31,8 +31,8 @@ const services = [
     price: 15000,
     duration: 60,
     category: 'FURNITURE',
-    // Clean sofa only — no people
-    imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80',
+    // Clean white dressing table with plants and mirror — no people
+    imageUrl: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 4,
@@ -41,8 +41,8 @@ const services = [
     price: 12000,
     duration: 45,
     category: 'ELECTRONICS',
-    // Laptop and phone on desk overhead — no people
-    imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80',
+    // Electronics display: laptops, monitors, camera, headphones — no people
+    imageUrl: 'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?auto=format&fit=crop&w=800&q=80',
   },
 ];
 

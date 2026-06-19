@@ -311,6 +311,13 @@
     "switchToDark": "Switch to dark mode",
     "switchToLight": "Switch to light mode"
   },
+  "momo": {
+    "label": "Pay via MoMo — Code:",
+    "instruction": "Use MTN Mobile Money to pay",
+    "code": "MoMo Code:",
+    "network": "MTN Rwanda",
+    "ariaLabel": "MoMo payment information ticker"
+  },
   "dashboard": {
     "eyebrow": "Customer dashboard",
     "welcome": "Hello {name}",

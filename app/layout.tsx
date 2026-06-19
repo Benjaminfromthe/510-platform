@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from 'next-themes';
 import AIAssistant from '../components/AIAssistant';
+import MoMoTicker from '../components/MoMoTicker';
 import Providers from '../components/Providers';
 import ToastProvider from '../components/ToastProvider';
 import WhatsAppFloat from '../components/WhatsAppFloat';
@@ -47,6 +48,7 @@ export default function RootLayout({
           <ClerkProvider>
             <ToastProvider>
               <Providers>
+                <MoMoTicker />
                 {children}
                 <WhatsAppFloat />
                 <AIAssistant />

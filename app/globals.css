@@ -94,6 +94,12 @@ body {
 .animate-gradient { animation: gradientShift 16s ease infinite; }
 .animate-float { animation: floatPulse 7s ease-in-out infinite; }
 .animate-fade-up { animation: fadeIn 650ms ease-out both; }
+.animate-ticker { animation: ticker 28s linear infinite; }
+
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 
 .typing-text {
   display: inline-block;

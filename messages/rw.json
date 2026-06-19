@@ -311,6 +311,13 @@
     "switchToDark": "Hindura ubururu bwijima",
     "switchToLight": "Hindura ubururu bwumucyo"
   },
+  "momo": {
+    "label": "Ishyura ukoresheje MoMo — Kode:",
+    "instruction": "Koresha MTN Mobile Money wishyure",
+    "code": "Kode ya MoMo:",
+    "network": "MTN Rwanda",
+    "ariaLabel": "Ubutumwa bwa MoMo bwo kwishyura"
+  },
   "dashboard": {
     "eyebrow": "Ikibaho cy'abakiriya",
     "welcome": "Muraho {name}",

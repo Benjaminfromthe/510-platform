@@ -122,9 +122,15 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   let userId: string | null = null;
+  let userEmail: string | null = null;
+
   try {
-    const { auth } = await import("@clerk/nextjs/server");
+    const { auth, currentUser } = await import("@clerk/nextjs/server");
     ({ userId } = await auth());
+    if (userId) {
+      const clerkUser = await currentUser();
+      userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress ?? null;
+    }
   } catch {
     userId = null;
   }
@@ -138,6 +144,15 @@ export async function GET(request: Request) {
     const page = Math.max(1, Number(searchParams.get("page") || 1));
     const limit = Math.max(1, Math.min(50, Number(searchParams.get("limit") || 10)));
     const skip = (page - 1) * limit;
+
+    // First: back-fill any bookings that were saved with null userId but matching email
+    // This fixes bookings submitted when Clerk session wasn't yet available server-side
+    if (userEmail) {
+      await prisma.booking.updateMany({
+        where: { userId: null, email: userEmail },
+        data: { userId },
+      });
+    }
 
     const where = { userId };
 
@@ -160,7 +175,6 @@ export async function GET(request: Request) {
     }, { status: 200 });
   } catch (error) {
     console.error("Booking GET error:", error);
-    // Return empty array on database error instead of throwing
     return NextResponse.json({ bookings: [], page: 1, limit: 10, total: 0, totalPages: 0 }, { status: 200 });
   }
 }

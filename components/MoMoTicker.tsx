@@ -6,7 +6,7 @@ export default function MoMoTicker() {
   const t = useTranslations('momo');
 
   // Build a repeated message array for seamless infinite scroll
-  const message = `💛 ${t('label')} 2142036 · ${t('instruction')} · ${t('code')} 2142036 · ${t('network')} · 💛`;
+  const message = `${t('label')} 2142036 · ${t('instruction')} · ${t('code')} 2142036 · ${t('network')} ·`;
   // Duplicate for seamless loop
   const items = Array.from({ length: 6 }, (_, i) => (
     <span key={i} className="px-8 shrink-0 whitespace-nowrap">

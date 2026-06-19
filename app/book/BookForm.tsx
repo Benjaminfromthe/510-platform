@@ -111,7 +111,7 @@ export default function BookForm() {
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
   const [quoteDescription, setQuoteDescription] = useState("");
-  const [propertySize, setPropertySize] = useState("");
+  const [propertySize, setPropertySize] = useState<string[]>([]);
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -331,7 +331,7 @@ export default function BookForm() {
           phone: phone.trim(),
           email: email.trim(),
           quoteDescription: quoteDescription.trim(),
-          propertySize: propertySize ?? "",
+          propertySize: propertySize.length > 0 ? propertySize.join(", ") : "",
           name: customerName.trim(),
           date: scheduledDate,
           time: scheduledTime,
@@ -660,34 +660,46 @@ export default function BookForm() {
                   {errors.quoteDescription ? <span className="text-rose-300">{errors.quoteDescription}</span> : null}
                 </label>
 
-                <label className="space-y-2 text-sm text-[var(--text-secondary)]">
-                  <span>{bookingT("propertySizeOptionalLabel")}</span>
+                <div className="space-y-2 text-sm text-[var(--text-secondary)]">
+                  <span className="font-medium text-[var(--text-primary)]">{bookingT("itemsToCleanLabel")}</span>
+                  <p className="text-xs text-[var(--text-secondary)]">{bookingT("itemsToCleanHint")}</p>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                     {[
-                      { value: "Phone / Tablet", label: "📱 Phone / Tablet" },
-                      { value: "Laptop / Computer", label: "💻 Laptop / Computer" },
-                      { value: "TV / Screen", label: "🖥️ TV / Screen" },
-                      { value: "Sofa / Chair", label: "🛋️ Sofa / Chair" },
-                      { value: "Mattress / Bed", label: "🛏️ Mattress / Bed" },
-                      { value: "Full room / Office", label: "🏠 Full Room / Office" },
-                    ].map((item) => (
-                      <button
-                        key={item.value}
-                        type="button"
-                        onClick={() => setPropertySize(propertySize === item.value ? "" : item.value)}
-                        className={`rounded-xl border px-3 py-2.5 text-left text-sm transition ${
-                          propertySize === item.value
-                            ? "border-cyan-400 bg-cyan-400/15 text-cyan-100 font-semibold"
-                            : "border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-primary)] hover:border-cyan-400/60 hover:bg-[var(--bg-secondary)]"
-                        }`}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
+                      { value: "Phone / Tablet", label: "Phone / Tablet" },
+                      { value: "Laptop / Computer", label: "Laptop / Computer" },
+                      { value: "TV / Screen", label: "TV / Screen" },
+                      { value: "Sofa / Chair", label: "Sofa / Chair" },
+                      { value: "Mattress / Bed", label: "Mattress / Bed" },
+                      { value: "Full Room / Office", label: "Full Room / Office" },
+                    ].map((item) => {
+                      const selected = propertySize.includes(item.value);
+                      return (
+                        <button
+                          key={item.value}
+                          type="button"
+                          onClick={() =>
+                            setPropertySize((prev) =>
+                              selected ? prev.filter((v) => v !== item.value) : [...prev, item.value]
+                            )
+                          }
+                          className={`rounded-xl border px-3 py-2.5 text-left text-sm transition ${
+                            selected
+                              ? "border-cyan-400 bg-cyan-400/15 text-cyan-100 font-semibold"
+                              : "border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-primary)] hover:border-cyan-400/60 hover:bg-[var(--bg-secondary)]"
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            {selected && <span className="text-cyan-400 text-xs">✓</span>}
+                            {item.label}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
-                  <p className="mt-1 text-xs text-[var(--text-secondary)]">{bookingT("propertySizeHint")}</p>
-                  {errors.propertySize ? <span className="text-rose-300">{errors.propertySize}</span> : null}
-                </label>
+                  {propertySize.length > 0 && (
+                    <p className="text-xs text-cyan-300">{bookingT("itemsSelected", { count: propertySize.length })}</p>
+                  )}
+                </div>
 
                 <label className="space-y-1 text-sm text-[var(--text-secondary)]">
                   <span>{bookingT("instructionsLabel")}</span>

@@ -67,7 +67,12 @@ export default function DashboardPage() {
     setLoading(true);
 
     try {
-      const bookingsResponse = await fetch("/api/bookings", {
+      // Pass user's primary email as query param — server uses it to find bookings
+      // even when Clerk's server-side auth() can't resolve the userId
+      const primaryEmail = user?.primaryEmailAddress?.emailAddress ?? "";
+      const emailParam = primaryEmail ? `?email=${encodeURIComponent(primaryEmail)}` : "";
+
+      const bookingsResponse = await fetch(`/api/bookings${emailParam}`, {
         cache: "no-store",
         headers: { "Content-Type": "application/json" },
       });

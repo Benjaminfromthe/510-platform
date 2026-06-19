@@ -21,20 +21,21 @@ const statItems = [
   { value: "Foam", label: "home.statTechnology" },
 ];
 
-// Service image URLs with alt text keys
+// Service image URLs with alt text keys — no people, no hands, no brands
 const serviceImages = {
   electronics: {
-    // Flat-lay of laptop, phone and tablet — captures all devices we clean
-    url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80",
+    // Multiple devices flat-lay — laptop, phone, tablet, no hands
+    url: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=800&q=80",
     altKey: "category.electronicsAlt",
   },
   furniture: {
+    // Clean sofa — no people
     url: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
     altKey: "category.furnitureAlt",
   },
   deep: {
-    // Cleaning spray and supplies — clearly about deep cleaning
-    url: "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=800&q=80",
+    // Cleaning equipment / mop bucket — no hands, no people
+    url: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
     altKey: "category.deepCleanAlt",
   },
 };

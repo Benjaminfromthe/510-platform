@@ -20,21 +20,21 @@ type Service = {
 
 const tabs = ["All", "ELECTRONICS", "FURNITURE", "OTHER"] as const;
 
-// Service image URLs with alt text keys by category — no people, no brands
+// Service image URLs with alt text keys by category — no people, no hands, no brands
 const serviceImages: Record<ServiceCategory, { url: string; altKey: string }> = {
   ELECTRONICS: {
-    // A clean flat-lay of phone, laptop and tablet together
-    url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80",
+    // Multiple devices laid flat — laptop, phone, tablet, no hands
+    url: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=800&q=80",
     altKey: "category.electronicsAlt",
   },
   FURNITURE: {
-    // Clean sofa / furniture — unchanged, already works perfectly
+    // Clean sofa — no people
     url: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
     altKey: "category.furnitureAlt",
   },
   OTHER: {
-    // Cleaning spray bottles and supplies on a surface — clearly about cleaning
-    url: "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=800&q=80",
+    // Cleaning products / mop and bucket on floor — no hands, no people
+    url: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
     altKey: "category.deepCleanAlt",
   },
 };

@@ -20,10 +20,10 @@ type Service = {
 
 const tabs = ["All", "ELECTRONICS", "FURNITURE", "OTHER"] as const;
 
-// Service image URLs with alt text keys by category
+// Service image URLs with alt text keys by category — no people, no brands
 const serviceImages: Record<ServiceCategory, { url: string; altKey: string }> = {
   ELECTRONICS: {
-    url: "https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=800&q=80",
+    url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
     altKey: "category.electronicsAlt",
   },
   FURNITURE: {
@@ -31,7 +31,7 @@ const serviceImages: Record<ServiceCategory, { url: string; altKey: string }> = 
     altKey: "category.furnitureAlt",
   },
   OTHER: {
-    url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    url: "https://images.unsplash.com/photo-1527515637462-cff94ead201b?w=800&q=80",
     altKey: "category.deepCleanAlt",
   },
 };
@@ -147,7 +147,7 @@ export default function ServicesPage() {
               filteredServices.map((service) => (
                 <article
                   key={service.id}
-                  className="overflow-hidden rounded-2xl bg-[#0b1329] border border-gray-800/80 shadow-xl transition-all hover:border-gray-700"
+                  className="overflow-hidden rounded-2xl bg-[var(--bg-card)] border border-[var(--border-color)] shadow-xl transition-all hover:border-cyan-400/50 hover:-translate-y-1"
                 >
                   <div className="relative h-48 overflow-hidden bg-gradient-to-br from-[var(--bg-secondary)] via-[var(--bg-card)] to-[var(--bg-primary)]">
                     <Image

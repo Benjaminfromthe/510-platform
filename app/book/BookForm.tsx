@@ -235,7 +235,7 @@ export default function BookForm() {
 
     if (targetStep === 3) {
       const parsed = bookingSchema.safeParse({
-        serviceId,
+        serviceId: service?.id || serviceId,
         quantity,
         addOns: [],
         scheduledDate,
@@ -293,12 +293,14 @@ export default function BookForm() {
     setSubmitting(true);
     setErrors({});
 
+    const activeServiceId = service?.id || serviceId;
+
     try {
       const response = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          serviceId,
+          serviceId: activeServiceId,
           quantity,
           scheduledDate,
           scheduledTime,
@@ -634,16 +636,31 @@ export default function BookForm() {
                   {errors.quoteDescription ? <span className="text-rose-300">{errors.quoteDescription}</span> : null}
                 </label>
 
-                <label className="space-y-1 text-sm text-[var(--text-secondary)]">
+                <label className="space-y-2 text-sm text-[var(--text-secondary)]">
                   <span>{bookingT("propertySizeOptionalLabel")}</span>
-                  <select value={propertySize} onChange={(e) => setPropertySize(e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-3 text-[var(--text-primary)]">
-                    <option value="">{bookingT("selectSize")}</option>
-                    <option value="Small room">Small room</option>
-                    <option value="Large room">Large room</option>
-                    <option value="Full apartment">Full apartment</option>
-                    <option value="Full house">Full house</option>
-                    <option value="Office">Office</option>
-                  </select>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {[
+                      { value: "Phone / Tablet", label: "📱 Phone / Tablet" },
+                      { value: "Laptop / Computer", label: "💻 Laptop / Computer" },
+                      { value: "TV / Screen", label: "🖥️ TV / Screen" },
+                      { value: "Sofa / Chair", label: "🛋️ Sofa / Chair" },
+                      { value: "Mattress / Bed", label: "🛏️ Mattress / Bed" },
+                      { value: "Full room / Office", label: "🏠 Full Room / Office" },
+                    ].map((item) => (
+                      <button
+                        key={item.value}
+                        type="button"
+                        onClick={() => setPropertySize(propertySize === item.value ? "" : item.value)}
+                        className={`rounded-xl border px-3 py-2.5 text-left text-sm transition ${
+                          propertySize === item.value
+                            ? "border-cyan-400 bg-cyan-400/15 text-cyan-100 font-semibold"
+                            : "border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-primary)] hover:border-cyan-400/60 hover:bg-[var(--bg-secondary)]"
+                        }`}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
                   <p className="mt-1 text-xs text-[var(--text-secondary)]">{bookingT("propertySizeHint")}</p>
                   {errors.propertySize ? <span className="text-rose-300">{errors.propertySize}</span> : null}
                 </label>

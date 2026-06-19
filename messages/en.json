@@ -8,7 +8,9 @@
   "nav": {
     "services": "Services",
     "bookNow": "Book Now",
-    "myBookings": "My Bookings"
+    "myBookings": "My Bookings",
+    "signIn": "Sign In",
+    "createAccount": "Create Account"
   },
   "services": "Services",
   "bookNow": "Book now",
@@ -30,7 +32,7 @@
     "toastBook": "Booking assistant ready — choose a service to begin.",
     "toastPlans": "Subscription plans opened — compare flexible cleaning packages.",
     "toastBookingFlow": "Booking flow opened — pick a service to continue.",
-    "bookQuote": "Book a quote",
+    "bookQuote": "Book a Request",
     "explorePlans": "Explore subscriptions",
     "headline": "Kigali's #1 Professional Cleaning Service",
     "subtext": "We clean electronics, furniture and more using premium foam technology. Book in minutes, we come to you anywhere in Kigali.",
@@ -42,7 +44,7 @@
     "deepTitle": "Deep Clean Package",
     "deepDescription": "Full home or office deep clean",
     "quoteBadge": "Get Free Quote",
-    "requestQuote": "Request Quote",
+    "requestQuote": "Book a Request",
     "whatWeClean": "What We Clean",
     "whatWeCleanTitle": "Professional foam cleaning for screens, furniture, and more",
     "whatWeCleanText": "From TVs and laptops to sofas and mattresses, we restore everyday items with safe, high-performance foam treatment.",
@@ -85,8 +87,8 @@
     "deepCleanAlt": "Professional deep cleaning service"
   },
   "booking": {
-    "title": "Quote request",
-    "subtitle": "Three simple steps to request a free quote",
+    "title": "Service request",
+    "subtitle": "Three simple steps to book your cleaning service",
     "progress": "Booking progress",
     "stepCounter": "Step {current} of {total}",
     "stepLabelChoose": "Choose Service",
@@ -128,8 +130,8 @@
     "summary": "Order summary",
     "summaryText": "Review your selected package before confirming.",
     "service": "Service",
-    "quoteStatus": "Quote status",
-    "quotePending": "Pending quote review",
+    "quoteStatus": "Request status",
+    "quotePending": "Pending team review",
     "availabilityLabel": "Availability",
     "interactiveCalendar": "Interactive calendar",
     "liveUpdates": "Live updates",
@@ -177,8 +179,8 @@
     "fullNameLabel": "Full name",
     "phoneLabel": "Phone",
     "emailLabel": "Email",
+    "sendQuoteButton": "Send Request",
     "sending": "Sending…",
-    "sendQuoteButton": "Send Quote Request",
     "successEyebrow": "Quote request received",
     "successTitle": "Your request is on its way",
     "successText": "Thanks for booking with 510 Cleaning. Our team will review your request and contact you soon.",
@@ -188,8 +190,8 @@
     "bookAnother": "Book another service"
   },
   "services": {
-    "getQuote": "Get a Quote",
-    "bookNow": "Book now"
+    "getQuote": "Get a Request",
+    "bookNow": "Book a Request"
   },
   "servicesPage": {
     "eyebrow": "Services",

@@ -8,7 +8,9 @@
   "nav": {
     "services": "Serivisi",
     "bookNow": "Yandikisha",
-    "myBookings": "Ibgezeho"
+    "myBookings": "Ibgezeho",
+    "signIn": "Injira",
+    "createAccount": "Fungura konti"
   },
   "services": "Serivisi",
   "bookNow": "Teganya ubusabe",

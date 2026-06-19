@@ -24,7 +24,7 @@ const statItems = [
 // Service image URLs with alt text keys
 const serviceImages = {
   electronics: {
-    url: "https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=800&q=80",
+    url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
     altKey: "category.electronicsAlt",
   },
   furniture: {
@@ -32,7 +32,7 @@ const serviceImages = {
     altKey: "category.furnitureAlt",
   },
   deep: {
-    url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    url: "https://images.unsplash.com/photo-1527515637462-cff94ead201b?w=800&q=80",
     altKey: "category.deepCleanAlt",
   },
 };

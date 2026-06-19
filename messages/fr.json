@@ -8,7 +8,9 @@
   "nav": {
     "services": "Services",
     "bookNow": "Réserver",
-    "myBookings": "Mes Réservations"
+    "myBookings": "Mes Réservations",
+    "signIn": "Se connecter",
+    "createAccount": "Créer un compte"
   },
   "services": "Services",
   "bookNow": "Réserver maintenant",

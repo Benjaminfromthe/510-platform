@@ -59,7 +59,7 @@ export async function sendBookingNotificationToAdmin(booking: {
     return response;
   } catch (error) {
     console.error("Error sending admin email:", error);
-    throw error;
+    // Never throw — email failure must not crash the booking
   }
 }
 
@@ -101,6 +101,6 @@ export async function sendBookingConfirmationToCustomer(
     return response;
   } catch (error) {
     console.error("Error sending customer email:", error);
-    throw error;
+    // Never throw — email failure must not crash the booking
   }
 }

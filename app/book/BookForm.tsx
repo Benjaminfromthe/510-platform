@@ -310,6 +310,10 @@ export default function BookForm() {
 
     if (Object.keys(localErrors).length > 0) {
       setErrors(localErrors);
+      // Scroll to top so user sees the error messages
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
       return;
     }
 
@@ -427,15 +431,24 @@ export default function BookForm() {
         )}
 
         {errors.form ? (
-          <div className="rounded-2xl border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-100">
-            <p className="font-medium">{errors.form}</p>
+          <div className="rounded-2xl border border-rose-500 bg-rose-50 dark:bg-rose-500/10 p-4 text-sm">
+            <p className="font-semibold text-rose-700 dark:text-rose-300">{errors.form}</p>
             <button
               type="button"
               onClick={() => void submitBooking()}
-              className="mt-3 rounded-xl bg-rose-400/90 px-4 py-2 font-semibold text-slate-950 hover:bg-rose-300"
+              className="mt-3 rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-600"
             >
-              Retry submission
+              Retry
             </button>
+          </div>
+        ) : Object.keys(errors).length > 0 ? (
+          <div className="rounded-2xl border border-amber-500 bg-amber-50 dark:bg-amber-500/10 p-4 text-sm">
+            <p className="font-semibold text-amber-700 dark:text-amber-300 mb-2">Please fix the following:</p>
+            <ul className="space-y-1 list-disc list-inside text-amber-700 dark:text-amber-200">
+              {Object.values(errors).map((msg, i) => (
+                <li key={i}>{msg}</li>
+              ))}
+            </ul>
           </div>
         ) : null}
 

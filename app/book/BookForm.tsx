@@ -290,12 +290,31 @@ export default function BookForm() {
   }
 
   async function submitBooking() {
-    if (!validateStep(3)) return;
+    // Determine the real serviceId — prefer service object, fall back to URL param
+    const activeServiceId = service?.id ?? (serviceId > 0 ? serviceId : 0);
+
+    if (!activeServiceId) {
+      setErrors({ form: "No service selected. Please go back and choose a service." });
+      return;
+    }
+
+    // Validate all required fields directly — skip schema for simplicity
+    const localErrors: Record<string, string> = {};
+    if (!customerName.trim() || customerName.trim().length < 2) localErrors.customerName = "Name is required.";
+    if (!phone.trim() || phone.trim().length < 7) localErrors.phone = "Phone number is required.";
+    if (!email.trim() || !email.includes("@")) localErrors.email = "A valid email is required.";
+    if (!scheduledDate) localErrors.scheduledDate = "Please select a date.";
+    if (!scheduledTime) localErrors.scheduledTime = "Please select a time.";
+    if (!address.trim() || address.trim().length < 5) localErrors.address = "Address is required (min 5 chars).";
+    if (!quoteDescription.trim() || quoteDescription.trim().length < 10) localErrors.quoteDescription = "Please describe cleaning needs (min 10 chars).";
+
+    if (Object.keys(localErrors).length > 0) {
+      setErrors(localErrors);
+      return;
+    }
 
     setSubmitting(true);
     setErrors({});
-
-    const activeServiceId = service?.id || serviceId;
 
     try {
       const response = await fetch("/api/bookings", {
@@ -306,32 +325,32 @@ export default function BookForm() {
           quantity,
           scheduledDate,
           scheduledTime,
-          address,
-          notes,
-          customerName,
-          phone,
-          email,
-          quoteDescription,
-          propertySize,
-          name: customerName,
+          address: address.trim(),
+          notes: notes.trim(),
+          customerName: customerName.trim(),
+          phone: phone.trim(),
+          email: email.trim(),
+          quoteDescription: quoteDescription.trim(),
+          propertySize: propertySize ?? "",
+          name: customerName.trim(),
           date: scheduledDate,
           time: scheduledTime,
-          description: quoteDescription,
-          // Pass userId from Clerk client-side — guarantees correct association
-          // even when server-side auth() can't read the session cookie
+          description: quoteDescription.trim(),
           clerkUserId: userId ?? undefined,
         }),
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Booking failed.");
+      if (!response.ok) {
+        throw new Error(data.error || `Server error ${response.status}`);
+      }
 
       setBookingReference(String(data.bookingId || "REQ-" + Date.now()));
       setSubmitted(true);
       setStep(3);
       scrollToTop();
     } catch (error) {
-      setErrors({ form: error instanceof Error ? error.message : "Something went wrong." });
+      setErrors({ form: error instanceof Error ? error.message : "Something went wrong. Please try again." });
     } finally {
       setSubmitting(false);
     }

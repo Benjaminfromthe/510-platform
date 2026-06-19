@@ -109,7 +109,7 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  }, [t, user?.primaryEmailAddress?.emailAddress]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -117,9 +117,8 @@ export default function DashboardPage() {
       router.replace("/sign-in");
       return;
     }
-
     void loadDashboardData();
-  }, [isLoaded, userId, router, loadDashboardData]);
+  }, [isLoaded, userId, router, loadDashboardData, user?.primaryEmailAddress?.emailAddress]);
 
   const serviceMap = useMemo(() => {
     return new Map(services.map((service) => [service.id, service.name]));

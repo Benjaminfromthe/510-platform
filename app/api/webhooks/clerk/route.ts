@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       "svix-signature": svixSignature,
     }) as { type: string; data: { email_addresses?: Array<{ email_address?: string }>; first_name?: string; last_name?: string; username?: string; phone_numbers?: Array<{ phone_number?: string }> } };
 
-    if (evt.type !== "user.created") {
+    if (evt.type !== "user.created" && evt.type !== "user.updated") {
       return NextResponse.json({ ok: true, event: evt.type }, { status: 200 });
     }
 
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
       });
     }
 
-    return NextResponse.json({ ok: true, created: true }, { status: 200 });
+    return NextResponse.json({ ok: true, synced: true }, { status: 200 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Webhook verification failed.";
     return NextResponse.json({ ok: false, message }, { status: 400 });

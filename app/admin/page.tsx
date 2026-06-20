@@ -20,6 +20,7 @@ type BookingRecord = {
   scheduledDate: string;
   scheduledTime: string;
   totalPrice: number;
+  quotedPrice?: number | null;
   customerName?: string | null;
   email?: string | null;
   staffId?: number | null;
@@ -192,6 +193,27 @@ export default function AdminPage() {
     }
   }
 
+  async function setQuotedPrice(bookingId: number, price: string) {
+    const numericPrice = price === "" ? null : Number(price);
+    if (price !== "" && isNaN(Number(price))) return;
+    setUpdatingId(bookingId);
+    try {
+      const response = await fetch(`/api/bookings/${bookingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quotedPrice: numericPrice }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Unable to set price");
+      setBookings((current) => current.map((b) => b.id === bookingId ? { ...b, quotedPrice: numericPrice } : b));
+    } catch (error) {
+      console.error("Set price failed", error);
+      alert(error instanceof Error ? error.message : "Unable to update price");
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
   function exportCsv() {
     const rows = [
       ["Booking ID", "Customer", "Service", "Date", "Time", "Status", "Price", "Staff ID"],
@@ -290,7 +312,7 @@ export default function AdminPage() {
                     <th className="px-3 py-3">Date</th>
                     <th className="px-3 py-3">Status</th>
                     <th className="px-3 py-3">Staff</th>
-                    <th className="px-3 py-3">Price</th>
+                    <th className="px-3 py-3">Quoted Price (RWF)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800">
@@ -310,7 +332,20 @@ export default function AdminPage() {
                           {staffList.map((staff) => <option key={staff.id} value={staff.id}>Staff #{staff.id}</option>)}
                         </select>
                       </td>
-                      <td className="px-3 py-4">{formatCurrency(booking.totalPrice || 0)}</td>
+                      <td className="px-3 py-4">
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder="Enter price…"
+                          defaultValue={booking.quotedPrice ?? ""}
+                          onBlur={(e) => void setQuotedPrice(booking.id, e.target.value)}
+                          disabled={updatingId === booking.id}
+                          className="w-32 rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-cyan-400 focus:outline-none disabled:opacity-50"
+                        />
+                        {booking.quotedPrice != null && (
+                          <p className="mt-1 text-xs text-cyan-400">{booking.quotedPrice.toLocaleString()} RWF</p>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

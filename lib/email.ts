@@ -2,8 +2,26 @@ import { Resend } from "resend";
 import { prisma } from "./prisma";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-
 const adminEmail = process.env.ADMIN_EMAIL || "benjaminnshimiye633@gmail.com";
+// CallMeBot free WhatsApp API — register at callmebot.com to get your apikey
+// Set WHATSAPP_PHONE=+250787769046 and WHATSAPP_APIKEY=your_key in .env
+const waPhone = process.env.WHATSAPP_PHONE || "";
+const waApiKey = process.env.WHATSAPP_APIKEY || "";
+
+// Send a WhatsApp message to yourself for every new booking (free via CallMeBot)
+async function notifyAdminWhatsApp(message: string): Promise<void> {
+  if (!waPhone || !waApiKey) return; // skip if not configured
+  try {
+    const encoded = encodeURIComponent(message);
+    await fetch(
+      `https://api.callmebot.com/whatsapp.php?phone=${waPhone}&text=${encoded}&apikey=${waApiKey}`,
+      { method: "GET" }
+    );
+  } catch (error) {
+    console.error("WhatsApp notification failed:", error);
+    // Never throw — this is a non-critical notification
+  }
+}
 
 // Look up service name from DB — falls back to "Service {id}" if not found
 async function getServiceName(serviceId: number): Promise<string> {
@@ -46,6 +64,10 @@ export async function sendBookingNotificationToAdmin(booking: {
 }) {
   try {
     const serviceName = await getServiceName(booking.serviceId);
+
+    // Free WhatsApp notification to admin via CallMeBot
+    const waMessage = `🔔 New 510 Booking #${booking.id}\n👤 ${booking.customerName || "Unknown"}\n📞 ${booking.phone || "N/A"}\n🧹 ${serviceName}\n📅 ${formatDate(booking.scheduledDate)} ${formatTime(booking.scheduledTime)}\n📍 ${booking.address}`;
+    void notifyAdminWhatsApp(waMessage);
 
     await resend.emails.send({
       from: "510 Cleaning <onboarding@resend.dev>",

@@ -9,23 +9,17 @@ const statusSchema = z.enum(["PENDING", "CONFIRMED", "IN_PROGRESS", "COMPLETED",
 const updateBookingSchema = z.object({
   status: statusSchema.optional(),
   staffId: z.coerce.number().int().positive().optional().nullable(),
+  quotedPrice: z.coerce.number().nonnegative().optional().nullable(),
 });
 
-function getRole() {
-  const authResult = auth() as { sessionClaims?: any };
-  const sessionClaims = authResult.sessionClaims || {};
-
-  return String(
-    sessionClaims?.metadata?.role ||
-      sessionClaims?.role ||
-      sessionClaims?.publicMetadata?.role ||
-      "CUSTOMER"
-  ).toUpperCase();
+function getRole(sessionClaims: Record<string, unknown>): string {
+  const meta = (sessionClaims?.metadata ?? sessionClaims?.publicMetadata ?? {}) as Record<string, unknown>;
+  return String(meta?.role ?? sessionClaims?.role ?? "CUSTOMER").toUpperCase();
 }
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
-    const { userId } = auth();
+    const { userId, sessionClaims } = auth();
     if (!userId) {
       return NextResponse.json({ error: "Authentication required." }, { status: 401 });
     }
@@ -35,7 +29,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: "Booking not found." }, { status: 404 });
     }
 
-    const role = getRole();
+    const role = getRole((sessionClaims ?? {}) as Record<string, unknown>);
     const clerkUser = await currentUser();
     const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress || null;
 
@@ -53,7 +47,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
-    const { userId } = auth();
+    const { userId, sessionClaims } = auth();
     if (!userId) {
       return NextResponse.json({ error: "Authentication required." }, { status: 401 });
     }
@@ -70,21 +64,26 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       return NextResponse.json({ error: "Booking not found." }, { status: 404 });
     }
 
-    const role = getRole();
+    const role = getRole((sessionClaims ?? {}) as Record<string, unknown>);
     const clerkUser = await currentUser();
     const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress || null;
     const isOwner = booking.userId === userId || booking.email === userEmail;
 
-    const canCancel = role === "ADMIN" || (isOwner && parsed.data.status === "CANCELLED" && booking.status === "PENDING");
-    if (!canCancel) {
+    // Admins can do anything; customers can only cancel their own PENDING bookings
+    const isAdmin = role === "ADMIN";
+    const canCustomerCancel = isOwner && parsed.data.status === "CANCELLED" && booking.status === "PENDING";
+
+    if (!isAdmin && !canCustomerCancel) {
       return NextResponse.json({ error: "Forbidden." }, { status: 403 });
     }
 
     const updated = await prisma.booking.update({
       where: { id: Number(params.id) },
       data: {
-        status: parsed.data.status ?? booking.status,
-        staffId: parsed.data.staffId ?? booking.staffId,
+        ...(parsed.data.status ? { status: parsed.data.status } : {}),
+        ...(parsed.data.staffId !== undefined ? { staffId: parsed.data.staffId } : {}),
+        // Only admin can set quoted price
+        ...(isAdmin && parsed.data.quotedPrice !== undefined ? { quotedPrice: parsed.data.quotedPrice } : {}),
       },
     });
 

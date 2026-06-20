@@ -211,27 +211,27 @@ export default function DashboardPage() {
           <section className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-6 shadow-2xl shadow-black/20">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">My Subscription</p>
-                <h2 className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">{subscription ? subscription.plan.replace("_", " ") : "No active subscription"}</h2>
-                <p className="text-sm text-[var(--text-secondary)]">Track your plan status, next cleaning date, and remaining cleanings here.</p>
+                <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">{t("subscriptionTitle")}</p>
+                <h2 className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">{subscription ? subscription.plan.replace("_", " ") : t("noSubscription").split(".")[0]}</h2>
+                <p className="text-sm text-[var(--text-secondary)]">{t("subscriptionSubtext")}</p>
               </div>
-              <Link href="/subscriptions" className="rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-cyan-300">View Plans</Link>
+              <Link href="/subscriptions" className="rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-cyan-300">{t("subViewPlans")}</Link>
             </div>
 
             {!subscription ? (
-              <div className="mt-6 rounded-2xl border border-dashed border-[var(--border-color)] bg-[var(--bg-primary)]/80 p-5 text-[var(--text-secondary)]">You do not have an active subscription yet. Choose a plan to get started.</div>
+              <div className="mt-6 rounded-2xl border border-dashed border-[var(--border-color)] bg-[var(--bg-primary)]/80 p-5 text-[var(--text-secondary)]">{t("noSubscription")}</div>
             ) : (
               <div className="mt-6 grid gap-4 md:grid-cols-3">
-                <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4"><p className="text-sm text-[var(--text-secondary)]">Plan</p><p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{subscription.plan}</p></article>
-                <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4"><p className="text-sm text-[var(--text-secondary)]">Next cleaning</p><p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{formatDate(subscription.nextCleaningDate)}</p></article>
-                <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4"><p className="text-sm text-[var(--text-secondary)]">Cleanings remaining</p><p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{Math.max(0, subscription.totalCleanings - subscription.cleaningsUsed)}</p></article>
+                <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4"><p className="text-sm text-[var(--text-secondary)]">{t("subPlan")}</p><p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{subscription.plan}</p></article>
+                <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4"><p className="text-sm text-[var(--text-secondary)]">{t("subNextCleaning")}</p><p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{formatDate(subscription.nextCleaningDate)}</p></article>
+                <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4"><p className="text-sm text-[var(--text-secondary)]">{t("subRemaining")}</p><p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{Math.max(0, subscription.totalCleanings - subscription.cleaningsUsed)}</p></article>
               </div>
             )}
 
             {subscription && (
               <div className="mt-6 flex flex-wrap gap-3">
-                <button type="button" onClick={() => void handleSubscriptionStatus("PAUSED")} disabled={busySubscription || subscription.status === "PAUSED"} className="rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-100 disabled:cursor-not-allowed disabled:opacity-50">{subscription.status === "PAUSED" ? "Paused" : "Pause Subscription"}</button>
-                <button type="button" onClick={() => void handleSubscriptionStatus("CANCELLED")} disabled={busySubscription || subscription.status === "CANCELLED"} className="rounded-xl border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm font-semibold text-rose-100 disabled:cursor-not-allowed disabled:opacity-50">{subscription.status === "CANCELLED" ? "Cancelled" : "Cancel Subscription"}</button>
+                <button type="button" onClick={() => void handleSubscriptionStatus("PAUSED")} disabled={busySubscription || subscription.status === "PAUSED"} className="rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-700 dark:text-amber-100 disabled:cursor-not-allowed disabled:opacity-50">{subscription.status === "PAUSED" ? t("subPaused") : t("subPause")}</button>
+                <button type="button" onClick={() => void handleSubscriptionStatus("CANCELLED")} disabled={busySubscription || subscription.status === "CANCELLED"} className="rounded-xl border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm font-semibold text-rose-700 dark:text-rose-100 disabled:cursor-not-allowed disabled:opacity-50">{subscription.status === "CANCELLED" ? t("subCancelled") : t("subCancel")}</button>
               </div>
             )}
           </section>

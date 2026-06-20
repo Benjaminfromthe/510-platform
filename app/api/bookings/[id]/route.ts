@@ -5,7 +5,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "../../../../lib/prisma";
 import { z } from "zod";
 
-const statusSchema = z.enum(["PENDING", "CONFIRMED", "IN_PROGRESS", "COMPLETED", "CANCELLED"]);
+const statusSchema = z.enum(["PENDING", "CONFIRMED", "IN_PROGRESS", "COMPLETED", "CANCELLED", "PENDING_QUOTE"]);
 const updateBookingSchema = z.object({
   status: statusSchema.optional(),
   staffId: z.coerce.number().int().positive().optional().nullable(),

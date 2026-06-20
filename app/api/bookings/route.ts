@@ -125,10 +125,23 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   let userId: string | null = null;
+  let isAdmin = false;
 
   try {
     const { auth } = await import("@clerk/nextjs/server");
     ({ userId } = await auth());
+    if (userId) {
+      // Check admin role via session claims
+      const { sessionClaims } = await (await import("@clerk/nextjs/server")).auth();
+      const claims = sessionClaims as Record<string, unknown>;
+      const role = String(
+        (claims?.metadata as Record<string,unknown>)?.role ||
+        claims?.role ||
+        (claims?.publicMetadata as Record<string,unknown>)?.role ||
+        "CUSTOMER"
+      ).toUpperCase();
+      isAdmin = role === "ADMIN";
+    }
   } catch {
     userId = null;
   }
@@ -136,6 +149,29 @@ export async function GET(request: Request) {
   // Get email passed directly from the dashboard client as a reliable fallback
   const { searchParams } = new URL(request.url);
   const clientEmail = searchParams.get("email") ?? null;
+
+  // Admins can fetch ALL bookings
+  if (isAdmin) {
+    try {
+      const page = Math.max(1, Number(searchParams.get("page") || 1));
+      const limit = Math.max(1, Math.min(200, Number(searchParams.get("limit") || 100)));
+      const skip = (page - 1) * limit;
+
+      const [bookings, total] = await Promise.all([
+        prisma.booking.findMany({
+          skip,
+          take: limit,
+          orderBy: { createdAt: "desc" },
+        }),
+        prisma.booking.count(),
+      ]);
+
+      return NextResponse.json({ bookings, page, limit, total, totalPages: Math.ceil(total / limit) }, { status: 200 });
+    } catch (error) {
+      console.error("Admin bookings GET error:", error);
+      return NextResponse.json({ bookings: [], page: 1, limit: 100, total: 0, totalPages: 0 }, { status: 200 });
+    }
+  }
 
   // If no userId AND no email, we can't identify the user — return empty
   if (!userId && !clientEmail) {
@@ -156,10 +192,9 @@ export async function GET(request: Request) {
         const clerkEmails = (clerkUser?.emailAddresses ?? [])
           .map((e: { emailAddress: string }) => e.emailAddress)
           .filter(Boolean);
-        // Merge Clerk emails with client-provided email
         userEmails = [...new Set([...userEmails, ...clerkEmails])];
       } catch {
-        // non-fatal — use whatever emails we already have
+        // non-fatal
       }
     }
 
@@ -175,32 +210,17 @@ export async function GET(request: Request) {
       }
     }
 
-    // Build query: match by userId OR by any known email
     const orConditions: object[] = [];
     if (userId) orConditions.push({ userId });
     if (userEmails.length > 0) orConditions.push({ email: { in: userEmails } });
-
     const where = orConditions.length > 1 ? { OR: orConditions } : orConditions[0] ?? {};
 
     const [bookings, total] = await Promise.all([
-      prisma.booking.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { createdAt: "desc" },
-      }),
+      prisma.booking.findMany({ where, skip, take: limit, orderBy: { createdAt: "desc" } }),
       prisma.booking.count({ where }),
     ]);
 
-    console.log(`Bookings GET: userId=${userId} emails=${userEmails.join(',')} found=${total}`);
-
-    return NextResponse.json({
-      bookings,
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
-    }, { status: 200 });
+    return NextResponse.json({ bookings, page, limit, total, totalPages: Math.ceil(total / limit) }, { status: 200 });
   } catch (error) {
     console.error("Booking GET error:", error);
     return NextResponse.json({ bookings: [], page: 1, limit: 10, total: 0, totalPages: 0 }, { status: 200 });

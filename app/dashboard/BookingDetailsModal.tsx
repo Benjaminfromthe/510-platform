@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export type BookingRecord = {
   id: number;
@@ -42,16 +43,13 @@ function formatTime(value?: string) {
   });
 }
 
-function formatCurrency(value: number) {
-  return `${value.toLocaleString("en-US")} RWF`;
-}
-
 export default function BookingDetailsModal({ booking, serviceName, onClose }: BookingDetailsModalProps) {
+  const t = useTranslations("bookingModal");
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
-
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onClose]);
@@ -63,45 +61,53 @@ export default function BookingDetailsModal({ booking, serviceName, onClose }: B
       <div className="w-full max-w-2xl rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-6 shadow-2xl shadow-black/30">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">Booking details</p>
+            <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{t("title")}</p>
             <h2 className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">{serviceName}</h2>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">Status: {booking.status}</p>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("status")}: <span className="font-medium text-[var(--text-primary)]">{booking.status.replace("_", " ")}</span></p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="rounded-full border border-[var(--border-color)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"
           >
-            Close
+            {t("close")}
           </button>
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)]">
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">Schedule</p>
-            <p className="mt-2 text-base text-[var(--text-primary)]">{formatDate(booking.scheduledDate)}</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">{t("schedule")}</p>
+            <p className="mt-2 text-base font-semibold text-[var(--text-primary)]">{formatDate(booking.scheduledDate)}</p>
             <p className="text-[var(--text-secondary)]">{formatTime(booking.scheduledTime)}</p>
           </article>
+
           <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)]">
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">Price</p>
-            <p className="mt-2 text-base text-[var(--text-primary)]">{formatCurrency(booking.totalPrice || 0)}</p>
-            <p className="text-[var(--text-secondary)]">Quantity: {booking.quantity}</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">{t("price")}</p>
+            <p className="mt-2 text-base font-semibold text-[var(--text-primary)]">
+              {booking.totalPrice != null ? `${booking.totalPrice.toLocaleString("en-US")} RWF` : t("quotePending")}
+            </p>
+            <p className="text-[var(--text-secondary)]">{t("quantity")}: {booking.quantity}</p>
           </article>
+
           <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)] md:col-span-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">Contact</p>
-            <p className="mt-2 text-base text-[var(--text-primary)]">{booking.customerName || "Customer"}</p>
-            <p className="text-[var(--text-secondary)]">{booking.phone || "No phone on file"}</p>
-            <p className="text-[var(--text-secondary)]">{booking.email || "No email on file"}</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">{t("contact")}</p>
+            <p className="mt-2 text-base font-semibold text-[var(--text-primary)]">{booking.customerName || "—"}</p>
+            <p className="text-[var(--text-secondary)]">{booking.phone || t("noPhone")}</p>
+            <p className="text-[var(--text-secondary)]">{booking.email || t("noEmail")}</p>
           </article>
+
           <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)] md:col-span-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">Address & notes</p>
-            <p className="mt-2 text-[var(--text-primary)]">{booking.address}</p>
-            <p className="mt-1 text-[var(--text-secondary)]">{booking.notes || "No notes provided."}</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">{t("addressNotes")}</p>
+            <p className="mt-2 font-medium text-[var(--text-primary)]">{booking.address}</p>
+            <p className="mt-1 text-[var(--text-secondary)]">{booking.notes || t("noNotes")}</p>
           </article>
-          <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)] md:col-span-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">Add-ons</p>
-            <p className="mt-2 text-[var(--text-secondary)]">{booking.addOns && booking.addOns.length ? booking.addOns.join(", ") : "No add-ons selected"}</p>
-          </article>
+
+          {booking.addOns && booking.addOns.length > 0 ? (
+            <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)] md:col-span-2">
+              <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">{t("addOns")}</p>
+              <p className="mt-2 text-[var(--text-secondary)]">{booking.addOns.join(", ")}</p>
+            </article>
+          ) : null}
         </div>
       </div>
     </div>

@@ -79,9 +79,9 @@ export default function AdminPage() {
       setLoading(true);
       try {
         const [bookingsResponse, servicesResponse, staffResponse] = await Promise.all([
-          fetch("/api/bookings", { cache: "force-cache" }),
-          fetch("/api/services", { cache: "force-cache" }),
-          fetch("/api/staff", { cache: "force-cache" }),
+          fetch("/api/bookings", { cache: "no-store" }),
+          fetch("/api/services", { cache: "no-store" }),
+          fetch("/api/staff", { cache: "no-store" }),
         ]);
 
         const bookingsData = await bookingsResponse.json();
@@ -266,8 +266,7 @@ export default function AdminPage() {
               {filtersOpen ? (
                 <div className="grid gap-3">
                   <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-3 text-sm text-[var(--text-primary)]">
-                    <option value="ALL">All statuses</option>
-                    {['PENDING','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED'].map((status) => <option key={status} value={status}>{status}</option>)}
+                  {['ALL_PENDING','PENDING','PENDING_QUOTE','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED'].map((status) => <option key={status} value={status === 'ALL_PENDING' ? 'ALL' : status}>{status === 'ALL_PENDING' ? 'All statuses' : status.replace('_', ' ')}</option>)}
                   </select>
                   <input type="date" value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-3 text-sm text-[var(--text-primary)]" />
                 </div>
@@ -277,7 +276,7 @@ export default function AdminPage() {
             <div className="mt-4 hidden flex-wrap gap-3 lg:flex">
               <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)]">
                 <option value="ALL">All statuses</option>
-                {['PENDING','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED'].map((status) => <option key={status} value={status}>{status}</option>)}
+                {['PENDING','PENDING_QUOTE','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED'].map((status) => <option key={status} value={status}>{status.replace('_', ' ')}</option>)}
               </select>
               <input type="date" value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)]" />
             </div>
@@ -302,7 +301,7 @@ export default function AdminPage() {
                       <td className="px-3 py-4">{formatDate(booking.scheduledDate)}</td>
                       <td className="px-3 py-4">
                         <select value={booking.status} onChange={(event) => void updateBookingStatus(booking.id, event.target.value)} disabled={updatingId === booking.id} className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)]">
-                          {['PENDING','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED'].map((status) => <option key={status} value={status}>{status}</option>)}
+                          {['PENDING_QUOTE','PENDING','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED'].map((status) => <option key={status} value={status}>{status.replace('_', ' ')}</option>)}
                         </select>
                       </td>
                       <td className="px-3 py-4">

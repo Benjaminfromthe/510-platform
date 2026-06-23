@@ -226,13 +226,13 @@ export default function BookForm() {
     }
 
     if (targetStep === 2) {
-      if (!scheduledDate) localErrors.scheduledDate = "Choose a booking date.";
+      if (!scheduledDate) localErrors.scheduledDate = t("validationDate");
       if (scheduledDate && (isHoliday(new Date(`${scheduledDate}T00:00:00`)) || new Date(scheduledDate).getDay() === 0)) {
-        localErrors.scheduledDate = "Sundays and public holidays are unavailable.";
+        localErrors.scheduledDate = t("validationSunday");
       }
-      if (!scheduledTime) localErrors.scheduledTime = "Choose a time slot.";
-      if (!address.trim()) localErrors.address = "Address is required.";
-      if (!quoteDescription.trim()) localErrors.quoteDescription = "Please describe your cleaning needs.";
+      if (!scheduledTime) localErrors.scheduledTime = t("validationTime");
+      if (!address.trim()) localErrors.address = t("validationAddress");
+      if (!quoteDescription.trim()) localErrors.quoteDescription = t("validationDescription");
     }
 
     if (targetStep === 3) {
@@ -438,12 +438,12 @@ export default function BookForm() {
               onClick={() => void submitBooking()}
               className="mt-3 rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-600"
             >
-              Retry
+              {t("retryButton")}
             </button>
           </div>
         ) : Object.keys(errors).length > 0 ? (
           <div className="rounded-2xl border border-amber-500 bg-amber-50 dark:bg-amber-500/10 p-4 text-sm">
-            <p className="font-semibold text-amber-700 dark:text-amber-300 mb-2">Please fix the following:</p>
+            <p className="font-semibold text-amber-700 dark:text-amber-300 mb-2">{t("errorFix")}</p>
             <ul className="space-y-1 list-disc list-inside text-amber-700 dark:text-amber-200">
               {Object.values(errors).map((msg, i) => (
                 <li key={i}>{msg}</li>
@@ -467,6 +467,7 @@ export default function BookForm() {
             <p className="mt-4 text-sm text-emerald-100">{bookingT("contactWithin")}</p>
             <div className="mt-5 pl-16 sm:pl-0 sm:ml-4 flex flex-col sm:flex-row gap-4 mb-8">
               <a href="https://wa.me/250787769046?text=Hi%20510%20Cleaning%2C%20I%20would%20like%20to%20follow%20up%20on%20my%20quote%20request%20reference%20%23%23" target="_blank" rel="noreferrer" className="rounded-xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950">{bookingT("whatsappFollowUp")}</a>
+              <a href="/dashboard" className="rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 text-center">{bookingT("viewDashboard")}</a>
               <button type="button" onClick={() => { setSubmitted(false); setStep(0); setErrors({}); scrollToTop(); }} className="rounded-xl border border-[var(--border-color)] px-5 py-3 text-sm text-[var(--text-primary)]">{bookingT("bookAnother")}</button>
             </div>
           </section>

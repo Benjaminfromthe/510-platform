@@ -6,7 +6,22 @@ function isProtectedRoute(req: NextRequest) {
 }
 
 export default authMiddleware({
-  publicRoutes: ["/", "/services", "/book", "/sign-in(.*)", "/sign-up(.*)", "/api/webhooks/clerk"],
+  publicRoutes: [
+    "/",
+    "/services",
+    "/book",
+    "/subscriptions",
+    "/about",
+    "/contact",
+    "/privacy",
+    "/terms",
+    "/sign-in(.*)",
+    "/sign-up(.*)",
+    "/api/webhooks/clerk",
+    "/api/services",
+    "/api/availability",
+    "/api/ai/chat",
+  ],
   afterAuth(auth, req) {
     if (!auth.userId && isProtectedRoute(req)) {
       const signInUrl = new URL("/sign-in", req.url);

@@ -63,8 +63,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    console.log("Booking POST body:", body);
-
+    // Note: body is not logged to protect customer PII
     const parsed = bookingSchema.safeParse(body);
 
     if (!parsed.success) {

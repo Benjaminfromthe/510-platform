@@ -324,7 +324,14 @@ export default function HomePage() {
                 </ul>
               </div>
             </div>
-            <div className="mt-6 border-t border-white/10 pt-4 text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">{t("legal.copyright")}</div>
+            <div className="mt-6 border-t border-white/10 pt-4 text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">
+              {t("legal.copyright")} &nbsp;·&nbsp;
+              <a href="/privacy" className="hover:text-cyan-300 transition">Privacy Policy</a>
+              &nbsp;·&nbsp;
+              <a href="/terms" className="hover:text-cyan-300 transition">Terms</a>
+              &nbsp;·&nbsp;
+              <a href="/about" className="hover:text-cyan-300 transition">About</a>
+            </div>
           </footer>
         </div>
       </section>

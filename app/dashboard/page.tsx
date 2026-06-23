@@ -9,6 +9,7 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import BookingDetailsModal, { type BookingRecord } from "./BookingDetailsModal";
+import { useToast } from "../../components/ToastProvider";
 
 type ServiceRecord = {
   id: number;
@@ -54,6 +55,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const { user } = useUser();
   const { userId, isLoaded } = useAuth();
+  const { showToast } = useToast();
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
   const [services, setServices] = useState<ServiceRecord[]>([]);
   const [subscription, setSubscription] = useState<any>(null);
@@ -147,7 +149,7 @@ export default function DashboardPage() {
       if (!response.ok) throw new Error(data.error || "Unable to update subscription");
       await loadDashboardData();
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Unable to update subscription");
+      showToast(error instanceof Error ? error.message : "Unable to update subscription", "error");
     } finally {
       setBusySubscription(false);
     }
@@ -168,7 +170,7 @@ export default function DashboardPage() {
       await loadDashboardData();
     } catch (error) {
       console.error("Cancel booking failed", error);
-      alert(error instanceof Error ? error.message : "Unable to cancel booking");
+      showToast(error instanceof Error ? error.message : "Unable to cancel booking", "error");
     } finally {
       setBusyBookingId(null);
     }
@@ -270,12 +272,12 @@ export default function DashboardPage() {
               <table className="min-w-full divide-y divide-slate-800 text-left text-sm text-[var(--text-secondary)]">
                 <thead className="bg-[var(--bg-primary)]/80 text-[var(--text-secondary)]">
                   <tr>
-                    <th className="px-4 py-3">Service</th>
-                    <th className="px-4 py-3">Date</th>
-                    <th className="px-4 py-3">Time</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3">Price</th>
-                    <th className="px-4 py-3">Actions</th>
+                    <th className="px-4 py-3">{t("colService")}</th>
+                    <th className="px-4 py-3">{t("colDate")}</th>
+                    <th className="px-4 py-3">{t("colTime")}</th>
+                    <th className="px-4 py-3">{t("colStatus")}</th>
+                    <th className="px-4 py-3">{t("colPrice")}</th>
+                    <th className="px-4 py-3">{t("colActions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800">
@@ -289,7 +291,7 @@ export default function DashboardPage() {
                           {booking.status}
                         </span>
                       </td>
-                      <td className="px-4 py-4">{booking.totalPrice != null ? booking.totalPrice.toLocaleString("en-US") + " RWF" : "Quote pending"}</td>
+                      <td className="px-4 py-4">{booking.totalPrice != null ? booking.totalPrice.toLocaleString("en-US") + " RWF" : t("quotePendingLabel")}</td>
                       <td className="px-4 py-4">
                         <div className="flex flex-wrap gap-2">
                           <button

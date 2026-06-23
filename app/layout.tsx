@@ -5,6 +5,7 @@ import './globals.css';
 import { ThemeProvider } from 'next-themes';
 import AIAssistant from '../components/AIAssistant';
 import MoMoTicker from '../components/MoMoTicker';
+import PageNav from '../components/PageNav';
 import Providers from '../components/Providers';
 import ToastProvider from '../components/ToastProvider';
 import WhatsAppFloat from '../components/WhatsAppFloat';
@@ -49,6 +50,7 @@ export default function RootLayout({
             <ToastProvider>
               <Providers>
                 <MoMoTicker />
+                <PageNav />
                 {children}
                 <WhatsAppFloat />
                 <AIAssistant />

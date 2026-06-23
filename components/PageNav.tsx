@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight, RotateCw, Home, Menu, X } from 'lucide-react';
+import { ArrowLeft, RotateCw, Home, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import ThemeToggle from './ThemeToggle';
@@ -30,54 +30,48 @@ export default function PageNav() {
   return (
     <>
       <nav className="sticky top-0 z-40 border-b border-[var(--border-color)] bg-[var(--bg-primary)]/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between px-3 py-2 sm:px-6">
 
-          {/* Left — nav arrows + home */}
-          <div className="flex items-center gap-1 shrink-0">
+          {/* Left — back + logo only on mobile */}
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => router.back()}
               aria-label="Go back"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-secondary)] transition hover:border-cyan-400 hover:text-cyan-500"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-cyan-400 hover:text-cyan-500"
             >
               <ArrowLeft className="h-4 w-4" />
             </button>
-            <button
-              type="button"
-              onClick={() => router.forward()}
-              aria-label="Go forward"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-secondary)] transition hover:border-cyan-400 hover:text-cyan-500"
-            >
-              <ArrowRight className="h-4 w-4" />
-            </button>
+
+            {/* Refresh + Home — hidden on mobile to save space */}
             <button
               type="button"
               onClick={() => router.refresh()}
               aria-label="Refresh"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-secondary)] transition hover:border-cyan-400 hover:text-cyan-500"
+              className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-cyan-400 hover:text-cyan-500"
             >
               <RotateCw className="h-4 w-4" />
             </button>
+
             <Link
               href="/"
               aria-label="Home"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-secondary)] transition hover:border-cyan-400 hover:text-cyan-500"
+              className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-cyan-400 hover:text-cyan-500"
             >
               <Home className="h-4 w-4" />
             </Link>
-          </div>
 
-          {/* Center — brand + desktop links */}
-          <div className="flex items-center gap-3">
-            <Link href="/" className="text-xl font-black tracking-tight text-[var(--text-primary)] dark:text-cyan-300">
+            <Link href="/" className="text-lg font-black tracking-tight text-[var(--text-primary)] dark:text-cyan-300">
               510
             </Link>
-            <div className="hidden items-center gap-1 lg:flex">
+
+            {/* Desktop page links */}
+            <div className="hidden lg:flex items-center gap-1 ml-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`rounded-full px-3 py-1.5 text-sm transition hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] ${
+                  className={`rounded-full px-3 py-1.5 text-sm transition hover:bg-[var(--bg-secondary)] ${
                     pathname === link.href
                       ? 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 font-medium'
                       : 'text-[var(--text-secondary)]'
@@ -89,36 +83,45 @@ export default function PageNav() {
             </div>
           </div>
 
-          {/* Right — theme, language, auth, mobile menu */}
-          <div className="flex items-center gap-1.5 shrink-0">
+          {/* Right — compact on mobile */}
+          <div className="flex items-center gap-1.5">
+            {/* Theme + language always visible but compact */}
             <ThemeToggle />
-            <LanguageSwitcher />
-            {/* Auth — always visible on all screen sizes */}
+            <div className="hidden xs:block">
+              <LanguageSwitcher />
+            </div>
+
+            {/* Auth */}
             <SignedIn>
               <UserButtonWithTheme />
             </SignedIn>
             <SignedOut>
               <SignInButton mode="modal">
-                <button className="rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] px-3 py-1.5 text-sm font-semibold text-[var(--text-primary)] hover:border-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition">
+                <button className="rounded-full bg-cyan-400 px-3 py-1.5 text-xs font-semibold text-slate-950 hover:bg-cyan-300 transition whitespace-nowrap">
                   {t('signIn')}
                 </button>
               </SignInButton>
             </SignedOut>
-            {/* Mobile hamburger */}
+
+            {/* Hamburger — shows on all non-desktop */}
             <button
               type="button"
-              aria-label="Toggle menu"
+              aria-label="Menu"
               onClick={() => setMenuOpen((p) => !p)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-secondary)] lg:hidden"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-secondary)] lg:hidden"
             >
               {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile dropdown menu */}
+        {/* Mobile dropdown */}
         {menuOpen && (
-          <div className="border-t border-[var(--border-color)] bg-[var(--bg-primary)]/98 px-4 py-3 lg:hidden">
+          <div className="border-t border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 lg:hidden">
+            {/* Language switcher in mobile menu */}
+            <div className="mb-2 xs:hidden">
+              <LanguageSwitcher />
+            </div>
             <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link
@@ -134,6 +137,23 @@ export default function PageNav() {
                   {link.label}
                 </Link>
               ))}
+              {/* Refresh + Home in mobile menu */}
+              <div className="mt-2 flex gap-2 sm:hidden">
+                <button
+                  type="button"
+                  onClick={() => { router.refresh(); setMenuOpen(false); }}
+                  className="flex-1 rounded-xl border border-[var(--border-color)] py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center justify-center gap-2"
+                >
+                  <RotateCw className="h-4 w-4" /> Refresh
+                </button>
+                <Link
+                  href="/"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex-1 rounded-xl border border-[var(--border-color)] py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center justify-center gap-2"
+                >
+                  <Home className="h-4 w-4" /> Home
+                </Link>
+              </div>
             </div>
           </div>
         )}

@@ -26,12 +26,23 @@ export default function StudentPage() {
       router.replace("/sign-in?redirect_url=/student");
       return;
     }
-    // Check if already a student
-    const meta = (user?.publicMetadata ?? {}) as Record<string, unknown>;
-    if (meta.isStudent === true) {
-      setAlreadyVerified(true);
-      setVerifiedUniversity(String(meta.university ?? ""));
-    }
+    // Check student status from API (works even if Clerk metadata update failed)
+    fetch("/api/student")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.isStudent) {
+          setAlreadyVerified(true);
+          setVerifiedUniversity(String(data.university ?? ""));
+        }
+      })
+      .catch(() => {
+        // Fallback to Clerk metadata
+        const meta = (user?.publicMetadata ?? {}) as Record<string, unknown>;
+        if (meta.isStudent === true) {
+          setAlreadyVerified(true);
+          setVerifiedUniversity(String(meta.university ?? ""));
+        }
+      });
   }, [isLoaded, userId, user, router]);
 
   async function handleSubmit(e: React.FormEvent) {

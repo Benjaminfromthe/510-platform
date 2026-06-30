@@ -97,9 +97,20 @@ export default function BookForm() {
   const serviceId = Number(searchParams.get("serviceId") || 0);
   const { userId } = useAuth(); // get Clerk userId client-side — reliable on all platforms
   const { user } = useUser();
+  const [isStudent, setIsStudent] = useState(false);
 
-  // Check if this user has student discount
-  const isStudent = (user?.publicMetadata as Record<string, unknown>)?.isStudent === true;
+  // Check student status from API — works even when Clerk metadata update used DB fallback
+  useEffect(() => {
+    if (!userId) return;
+    fetch("/api/student")
+      .then((r) => r.json())
+      .then((data) => { if (data.isStudent) setIsStudent(true); })
+      .catch(() => {
+        // Fallback to Clerk metadata
+        const meta = (user?.publicMetadata ?? {}) as Record<string, unknown>;
+        if (meta.isStudent === true) setIsStudent(true);
+      });
+  }, [userId, user]);
 
   const [step, setStep] = useState(serviceId ? 1 : 0);
   const [service, setService] = useState<Service | null>(null);

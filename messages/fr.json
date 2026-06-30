@@ -10,6 +10,7 @@
     "bookNow": "Réserver",
     "myBookings": "Mes Réservations",
     "subscriptions": "Abonnements",
+    "studentNav": "Réduction étudiant",
     "signIn": "Se connecter",
     "createAccount": "Créer un compte"
   },
@@ -204,7 +205,9 @@
     "validationTime": "Choisissez un créneau horaire.",
     "validationAddress": "L'adresse est requise.",
     "validationDescription": "Veuillez décrire vos besoins de nettoyage.",
-    "bookedLabel": "{count} réservé(s)"
+    "bookedLabel": "{count} réservé(s)",
+    "studentDiscount": "Réduction étudiant de 10% appliquée",
+    "studentDiscountNote": "Votre réduction étudiant sera reflétée dans le devis final."
   },
   "services": {
     "getQuote": "Obtenir un devis",
@@ -327,6 +330,26 @@
     "light": "Clair",
     "switchToDark": "Passer en mode sombre",
     "switchToLight": "Passer en mode clair"
+  },
+  "student": {
+    "eyebrow": "Réduction étudiant",
+    "title": "Êtes-vous étudiant ?",
+    "subtitle": "Les étudiants des universités de Kigali bénéficient de 10% de réduction sur chaque service. Vérifiez une fois, économisez à chaque fois.",
+    "discountLabel": "Réduction étudiant",
+    "discountNote": "Appliquée automatiquement à chaque réservation après vérification.",
+    "universityLabel": "Nom de votre université / école",
+    "universityPlaceholder": "ex: AUCA, UR, Carnegie Mellon Africa, INES...",
+    "agreeText": "Je confirme que je suis actuellement inscrit(e) comme étudiant(e) dans une université ou école à Kigali.",
+    "verifyButton": "Activer ma réduction étudiant",
+    "verifying": "Vérification…",
+    "alreadyVerified": "Statut étudiant vérifié",
+    "discountActive": "Votre réduction étudiant de 10% est active sur toutes les réservations.",
+    "bookNow": "Réserver un service",
+    "skipLink": "Ignorer — Je ne suis pas étudiant(e)",
+    "errorUniversity": "Veuillez entrer le nom de votre université.",
+    "errorAgree": "Veuillez confirmer votre statut d'étudiant.",
+    "errorGeneral": "Une erreur est survenue. Veuillez réessayer.",
+    "disclaimer": "Nous faisons confiance à votre honnêteté. Les fausses déclarations peuvent entraîner la suspension du compte."
   },
   "about": {
     "eyebrow": "À propos",

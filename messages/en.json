@@ -10,6 +10,7 @@
     "bookNow": "Book Now",
     "myBookings": "My Bookings",
     "subscriptions": "Subscriptions",
+    "studentNav": "Student Discount",
     "signIn": "Sign In",
     "createAccount": "Create Account"
   },
@@ -204,7 +205,9 @@
     "validationTime": "Choose a time slot.",
     "validationAddress": "Address is required.",
     "validationDescription": "Please describe your cleaning needs.",
-    "bookedLabel": "{count} booked"
+    "bookedLabel": "{count} booked",
+    "studentDiscount": "10% Student Discount Applied",
+    "studentDiscountNote": "Your student discount will be reflected in the final quote."
   },
   "services": {
     "getQuote": "Get a Request",
@@ -327,6 +330,26 @@
     "light": "Light",
     "switchToDark": "Switch to dark mode",
     "switchToLight": "Switch to light mode"
+  },
+  "student": {
+    "eyebrow": "Student Discount",
+    "title": "Are You a Student?",
+    "subtitle": "Students at Kigali universities get 10% off every cleaning service. Verify once, save every time.",
+    "discountLabel": "Student Discount",
+    "discountNote": "Applied automatically to every booking after verification.",
+    "universityLabel": "Your University / School Name",
+    "universityPlaceholder": "e.g., AUCA, UR, Carnegie Mellon Africa, INES...",
+    "agreeText": "I confirm that I am currently enrolled as a student at a university or school in Kigali.",
+    "verifyButton": "Activate My Student Discount",
+    "verifying": "Verifying…",
+    "alreadyVerified": "Student Status Verified",
+    "discountActive": "Your 10% student discount is active on all bookings.",
+    "bookNow": "Book a Service",
+    "skipLink": "Skip — I am not a student",
+    "errorUniversity": "Please enter your university name.",
+    "errorAgree": "Please confirm your student status.",
+    "errorGeneral": "Something went wrong. Please try again.",
+    "disclaimer": "We trust your honesty. False claims may result in account suspension."
   },
   "about": {
     "eyebrow": "About Us",

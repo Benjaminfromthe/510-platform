@@ -10,6 +10,7 @@
     "bookNow": "Yandikisha",
     "myBookings": "Ibyegeranyo",
     "subscriptions": "Gahunda z'ubwishyu",
+    "studentNav": "Inguzanyo y'umunyeshuri",
     "signIn": "Injira",
     "createAccount": "Fungura konti"
   },
@@ -204,7 +205,9 @@
     "validationTime": "Hitamo igihe cyo gukora.",
     "validationAddress": "Aho uherereye birakenewe.",
     "validationDescription": "Sobanura ibyo ukeneye gusukura.",
-    "bookedLabel": "{count} yanditswe"
+    "bookedLabel": "{count} yanditswe",
+    "studentDiscount": "Inguzanyo ya 10% y'umunyeshuri yahawe",
+    "studentDiscountNote": "Inguzanyo yawe y'umunyeshuri izagaragarira mu cyegeranyo cya nyuma."
   },
   "services": {
     "getQuote": "Shaka icyegeranyo",
@@ -327,6 +330,26 @@
     "light": "Urumuri",
     "switchToDark": "Hindura ubururu bwijima",
     "switchToLight": "Hindura ubururu bwumucyo"
+  },
+  "student": {
+    "eyebrow": "Isomo ry'umunyeshuri",
+    "title": "Uri umunyeshuri?",
+    "subtitle": "Abanyeshuri b'amashuri makuru i Kigali bahabwa inguzanyo ya 10% kuri buri serivisi. Emeza rimwe, uzigore buri gihe.",
+    "discountLabel": "Inguzanyo y'umunyeshuri",
+    "discountNote": "Ishyirwaho ku buryo bwikora kuri buri busabe nyuma yo kwemezwa.",
+    "universityLabel": "Izina ry'amashuri makuru / ishuri ryawe",
+    "universityPlaceholder": "urugero: AUCA, UR, Carnegie Mellon Africa, INES...",
+    "agreeText": "Nemeza ko ndandikishije nk'umunyeshuri mu ishuri makuru cyangwa amashuri i Kigali.",
+    "verifyButton": "Shyiraho inguzanyo yanjye y'umunyeshuri",
+    "verifying": "Kwemeza…",
+    "alreadyVerified": "Imiterere y'umunyeshuri yemejwe",
+    "discountActive": "Inguzanyo yawe y'umunyeshuri ya 10% ikora ku busabe bwose.",
+    "bookNow": "Teganya serivisi",
+    "skipLink": "Kurenza — Si umunyeshuri",
+    "errorUniversity": "Injiza izina ry'amashuri makuru yawe.",
+    "errorAgree": "Emeza imiterere yawe y'umunyeshuri.",
+    "errorGeneral": "Habaye ikosa. Ongera ugerageze.",
+    "disclaimer": "Twizera ubuziranenge bwawe. Amakuru y'ibinyoma bishobora gutera guhagarikwa kw'konti."
   },
   "about": {
     "eyebrow": "Ibyerekeye twe",

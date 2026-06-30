@@ -61,12 +61,13 @@ export async function sendBookingNotificationToAdmin(booking: {
   quoteDescription?: string | null;
   urgency?: string | null;
   propertySize?: string | null;
+  isStudent?: boolean;
 }) {
   try {
     const serviceName = await getServiceName(booking.serviceId);
 
     // Free WhatsApp notification to admin via CallMeBot
-    const waMessage = `🔔 New 510 Booking #${booking.id}\n👤 ${booking.customerName || "Unknown"}\n📞 ${booking.phone || "N/A"}\n🧹 ${serviceName}\n📅 ${formatDate(booking.scheduledDate)} ${formatTime(booking.scheduledTime)}\n📍 ${booking.address}`;
+    const waMessage = `🔔 New 510 Booking #${booking.id}\n👤 ${booking.customerName || "Unknown"}\n📞 ${booking.phone || "N/A"}\n🧹 ${serviceName}${booking.isStudent ? "\n🎓 STUDENT — 10% discount applies" : ""}\n📅 ${formatDate(booking.scheduledDate)} ${formatTime(booking.scheduledTime)}\n📍 ${booking.address}`;
     void notifyAdminWhatsApp(waMessage);
 
     await resend.emails.send({
@@ -87,6 +88,7 @@ export async function sendBookingNotificationToAdmin(booking: {
             <tr style="background:#f8fafc;"><td style="padding:8px; font-weight:bold; color:#475569;">Address</td><td style="padding:8px;">${booking.address}</td></tr>
             <tr><td style="padding:8px; font-weight:bold; color:#475569;">Items to Clean</td><td style="padding:8px;">${booking.propertySize || "Not specified"}</td></tr>
             <tr style="background:#f8fafc;"><td style="padding:8px; font-weight:bold; color:#475569;">Description</td><td style="padding:8px;">${booking.quoteDescription || "No description provided."}</td></tr>
+            ${booking.isStudent ? `<tr style="background:#d1fae5;"><td style="padding:8px; font-weight:bold; color:#065f46;">🎓 Student Discount</td><td style="padding:8px; font-weight:bold; color:#065f46;">10% discount applies to this booking</td></tr>` : ""}
           </table>
           <p style="margin-top:16px; color:#0891b2; font-weight:bold;">Contact the customer within 2 hours.</p>
         </div>

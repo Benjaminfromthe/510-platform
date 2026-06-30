@@ -26,6 +26,7 @@ const bookingSchema = z.object({
   quotedPrice: z.coerce.number().nonnegative().optional().nullable(),
   // Client-side Clerk userId passed as fallback when server-side auth() fails
   clerkUserId: z.string().optional(),
+  isStudent: z.boolean().optional().default(false),
 });
 
 function toBookingDate(date: string, time: string) {
@@ -109,7 +110,7 @@ export async function POST(request: Request) {
     });
 
     await Promise.all([
-      sendBookingNotificationToAdmin(booking),
+      sendBookingNotificationToAdmin({ ...booking, isStudent: parsed.data.isStudent }),
       sendBookingConfirmationToCustomer(booking, parsed.data.email),
     ]);
 

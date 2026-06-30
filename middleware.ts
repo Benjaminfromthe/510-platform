@@ -9,12 +9,12 @@ export default authMiddleware({
   publicRoutes: [
     "/",
     "/services",
-    "/book",
     "/subscriptions",
     "/about",
     "/contact",
     "/privacy",
     "/terms",
+    "/student",
     "/sign-in(.*)",
     "/sign-up(.*)",
     "/api/webhooks/clerk",
@@ -23,7 +23,13 @@ export default authMiddleware({
     "/api/ai/chat",
   ],
   afterAuth(auth, req) {
-    if (!auth.userId && isProtectedRoute(req)) {
+    // /book and /dashboard and /admin require authentication
+    const isProtected =
+      req.nextUrl.pathname.startsWith("/dashboard") ||
+      req.nextUrl.pathname.startsWith("/admin") ||
+      req.nextUrl.pathname.startsWith("/book");
+
+    if (!auth.userId && isProtected) {
       const signInUrl = new URL("/sign-in", req.url);
       signInUrl.searchParams.set("redirect_url", req.url);
       return NextResponse.redirect(signInUrl);

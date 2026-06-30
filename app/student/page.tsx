@@ -54,6 +54,8 @@ export default function StudentPage() {
       await user?.reload();
       setAlreadyVerified(true);
       setVerifiedUniversity(university.trim());
+      // Redirect to book after 1.5s
+      setTimeout(() => router.push("/book"), 1500);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("errorGeneral"));
     } finally {

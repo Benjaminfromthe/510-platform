@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from "next/server";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 
 const schema = z.object({
@@ -23,7 +23,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
     }
 
-    // Set student metadata on the Clerk user — gives 10% discount on all bookings
+    // Use dynamic import to avoid build-time issues with clerkClient
+    const { clerkClient } = await import("@clerk/nextjs/server");
+
     await clerkClient.users.updateUserMetadata(userId, {
       publicMetadata: {
         isStudent: true,
@@ -46,6 +48,7 @@ export async function GET() {
       return NextResponse.json({ isStudent: false }, { status: 200 });
     }
 
+    const { clerkClient } = await import("@clerk/nextjs/server");
     const user = await clerkClient.users.getUser(userId);
     const meta = (user.publicMetadata ?? {}) as Record<string, unknown>;
 
@@ -53,7 +56,7 @@ export async function GET() {
       isStudent: meta.isStudent === true,
       university: meta.university ?? null,
     }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ isStudent: false }, { status: 200 });
   }
 }

@@ -33,14 +33,14 @@ function statusTone(status: string) {
   switch (status) {
     case "PENDING":
     case "PENDING_QUOTE":
-      return "bg-amber-500/10 text-amber-100 border-amber-500/30";
+      return "bg-amber-500/10 text-amber-700 dark:text-amber-100 border-amber-500/30";
     case "CONFIRMED":
     case "IN_PROGRESS":
-      return "bg-cyan-500/10 text-cyan-100 border-cyan-500/30";
+      return "bg-cyan-500/10 text-cyan-700 dark:text-cyan-100 border-cyan-500/30";
     case "COMPLETED":
-      return "bg-emerald-500/10 text-emerald-100 border-emerald-500/30";
+      return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-100 border-emerald-500/30";
     case "CANCELLED":
-      return "bg-rose-500/10 text-rose-100 border-rose-500/30";
+      return "bg-rose-500/10 text-rose-700 dark:text-rose-100 border-rose-500/30";
     default:
       return "bg-slate-500/10 text-[var(--text-primary)] border-slate-500/30";
   }
@@ -304,8 +304,8 @@ export default function AdminPage() {
             </div>
 
             <div className="mt-5 overflow-x-auto">
-              <table className="min-w-[720px] divide-y divide-slate-800 text-left text-sm text-[var(--text-secondary)]">
-                <thead className="bg-[var(--bg-primary)]/80 text-[var(--text-secondary)]">
+              <table className="min-w-[720px] divide-y divide-[var(--border-color)] text-left text-sm text-[var(--text-secondary)]">
+                <thead className="bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                   <tr>
                     <th className="px-3 py-3">Customer</th>
                     <th className="px-3 py-3">Service</th>
@@ -315,7 +315,7 @@ export default function AdminPage() {
                     <th className="px-3 py-3">Quoted Price (RWF)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800">
+                <tbody className="divide-y divide-[var(--border-color)]">
                   {filteredBookings.map((booking) => (
                     <tr key={booking.id} className="hover:bg-[var(--bg-secondary)]/40">
                       <td className="px-3 py-4 text-[var(--text-primary)]">{booking.customerName || booking.email || `Booking ${booking.id}`}</td>

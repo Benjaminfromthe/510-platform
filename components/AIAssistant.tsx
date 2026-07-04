@@ -105,14 +105,14 @@ export default function AIAssistant() {
           <aside className="animate-fade-up fixed inset-x-0 bottom-0 z-[60] flex h-[60vh] w-full flex-col rounded-t-[28px] border border-[var(--border-color)] bg-[var(--bg-card)] shadow-2xl shadow-black/40 md:bottom-20 md:right-5 md:left-auto md:h-[500px] md:w-[380px] md:rounded-3xl md:shadow-2xl md:shadow-black/30">
             <div className="flex items-start justify-between border-b border-[var(--border-color)] px-4 py-3">
               <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{t("title")}</p>
+                <p className="text-xs uppercase tracking-[0.35em] text-cyan-600 dark:text-cyan-300">{t("title")}</p>
                 <h2 className="text-base font-semibold text-[var(--text-primary)]">{t("subtitle")}</h2>
               </div>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label={t("close")}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-secondary)] transition hover:border-rose-400 hover:bg-rose-500/10 hover:text-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-400/40"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-secondary)] transition hover:border-rose-400 hover:bg-rose-500/10 hover:text-rose-600 dark:hover:text-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-400/40"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -125,7 +125,7 @@ export default function AIAssistant() {
                   key={reply}
                   type="button"
                   onClick={() => handleQuickReply(reply)}
-                  className="rounded-full border border-cyan-400/40 bg-cyan-400/10 px-3 py-1.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-400/20"
+                  className="rounded-full border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-700 dark:text-cyan-200 transition hover:bg-cyan-400/20"
                 >
                   {reply}
                 </button>
@@ -187,7 +187,7 @@ export default function AIAssistant() {
       <button
         type="button"
         onClick={openChat}
-        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-slate-900/80 backdrop-blur-md border border-gray-800 px-4 py-2 text-sm font-semibold text-slate-100 shadow-2xl transition hover:bg-slate-800 md:right-5 md:bottom-20"
+        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-[var(--bg-card)] border border-[var(--border-color)] px-4 py-2 text-sm font-semibold text-[var(--text-primary)] shadow-2xl transition hover:border-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-300 md:right-5 md:bottom-20"
       >
         <span className="text-base">🤖</span>
         <span className="whitespace-nowrap">{t("askAi")}</span>

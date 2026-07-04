@@ -494,18 +494,18 @@ export default function BookForm() {
         ) : null}
 
         {submitted ? (
-          <section className="rounded-2xl border border-emerald-500/30 bg-[#0b1329] p-8 shadow-2xl shadow-emerald-950/20">
+          <section className="rounded-2xl border border-emerald-500/30 bg-[var(--bg-card)] p-8 shadow-2xl shadow-black/10">
             <div className="mb-5 flex items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 p-4">
               <CheckCircle2 className="h-12 w-12 text-emerald-400" aria-hidden="true" />
             </div>
-            <p className="text-sm uppercase tracking-[0.35em] text-emerald-100">{bookingT("successEyebrow")}</p>
+            <p className="text-sm uppercase tracking-[0.35em] text-emerald-600 dark:text-emerald-200">{bookingT("successEyebrow")}</p>
             <h2 className="mt-3 text-3xl font-semibold text-[var(--text-primary)]">{bookingT("successTitle")}</h2>
             <p className="mt-3 text-[var(--text-secondary)]">{bookingT("successText")}</p>
             <div className="mt-5 rounded-2xl border border-emerald-400/30 bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-primary)]">
               <p className="text-[var(--text-secondary)]">{bookingT("referenceLabel")}</p>
               <p className="mt-1 text-2xl font-semibold text-emerald-200">#{bookingReference}</p>
             </div>
-            <p className="mt-4 text-sm text-emerald-100">{bookingT("contactWithin")}</p>
+            <p className="mt-4 text-sm text-emerald-700 dark:text-emerald-200">{bookingT("contactWithin")}</p>
             <div className="mt-5 pl-16 sm:pl-0 sm:ml-4 flex flex-col sm:flex-row gap-4 mb-8">
               <a href="https://wa.me/250787769046?text=Hi%20510%20Cleaning%2C%20I%20would%20like%20to%20follow%20up%20on%20my%20quote%20request%20reference%20%23%23" target="_blank" rel="noreferrer" className="rounded-xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950">{bookingT("whatsappFollowUp")}</a>
               <a href="/dashboard" className="rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 text-center">{bookingT("viewDashboard")}</a>

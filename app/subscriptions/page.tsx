@@ -62,14 +62,14 @@ export default function SubscriptionsPage() {
             const Icon = plan.icon;
             const isPopular = plan.key === "MONTHLY";
             const cardClasses = isPopular
-              ? "relative z-10 rounded-3xl border-2 border-cyan-400/60 bg-[#0d1630] p-6 shadow-[0_0_24px_rgba(34,211,238,0.15)] scale-100 lg:scale-[1.03]"
-              : "bg-slate-900/50 border border-gray-800/80 rounded-2xl p-6 shadow-xl transition-all hover:border-gray-700";
+              ? "relative z-10 rounded-3xl border-2 border-cyan-500 bg-[var(--bg-card)] p-6 shadow-[0_0_24px_rgba(34,211,238,0.12)] scale-100 lg:scale-[1.03]"
+              : "bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl p-6 shadow-xl transition-all hover:border-cyan-400/50";
 
             return (
               <article key={plan.key} className={cardClasses}>
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.35em] text-cyan-100">{t(plan.badgeKey)}</p>
+                    <p className="text-xs uppercase tracking-[0.35em] text-cyan-600 dark:text-cyan-200">{t(plan.badgeKey)}</p>
                     <h2 className="mt-3 text-2xl font-semibold text-[var(--text-primary)]">{t(plan.nameKey)}</h2>
                   </div>
                   <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-[var(--bg-primary)]/80 text-cyan-100">

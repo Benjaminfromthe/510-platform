@@ -19,15 +19,15 @@ type ServiceRecord = {
 function statusClass(status: string) {
   switch (status) {
     case "COMPLETED":
-      return "bg-emerald-500/10 text-emerald-200 border-emerald-500/30";
+      return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-200 border-emerald-500/30";
     case "CONFIRMED":
     case "IN_PROGRESS":
-      return "bg-cyan-500/10 text-cyan-100 border-cyan-500/30";
+      return "bg-cyan-500/10 text-cyan-700 dark:text-cyan-100 border-cyan-500/30";
     case "PENDING":
     case "PENDING_QUOTE":
-      return "bg-amber-500/10 text-amber-100 border-amber-500/30";
+      return "bg-amber-500/10 text-amber-700 dark:text-amber-100 border-amber-500/30";
     case "CANCELLED":
-      return "bg-rose-500/10 text-rose-100 border-rose-500/30";
+      return "bg-rose-500/10 text-rose-700 dark:text-rose-100 border-rose-500/30";
     default:
       return "bg-slate-500/10 text-[var(--text-primary)] border-slate-500/30";
   }
@@ -191,7 +191,7 @@ export default function DashboardPage() {
             { label: t("statPending"), value: stats.pending },
             { label: t("statCompleted"), value: stats.completed },
           ].map((item) => (
-            <article key={item.label} className="bg-slate-900/60 border border-gray-800/80 rounded-xl p-5 shadow-lg shadow-black/20">
+            <article key={item.label} className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl p-5 shadow-lg">
               <p className="text-sm text-[var(--text-secondary)]">{item.label}</p>
               <p className="mt-3 text-3xl font-semibold text-[var(--text-primary)]">{item.value}</p>
             </article>
@@ -204,8 +204,8 @@ export default function DashboardPage() {
             <p className="text-sm text-[var(--text-secondary)]">{t("manageText")}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={() => setActiveTab("bookings")} className={`rounded-full px-4 py-2 text-sm ${activeTab === "bookings" ? "font-semibold bg-cyan-400 text-slate-950" : "font-medium text-gray-400 hover:text-white transition-colors cursor-pointer"}`}>{t("tabBookings")}</button>
-            <button type="button" onClick={() => setActiveTab("subscription")} className={`rounded-full px-4 py-2 text-sm ${activeTab === "subscription" ? "font-semibold bg-cyan-400 text-slate-950" : "font-medium text-gray-400 hover:text-white transition-colors cursor-pointer"}`}>{t("tabSubscription")}</button>
+            <button type="button" onClick={() => setActiveTab("bookings")} className={`rounded-full px-4 py-2 text-sm ${activeTab === "bookings" ? "font-semibold bg-cyan-400 text-slate-950" : "font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"}`}>{t("tabBookings")}</button>
+            <button type="button" onClick={() => setActiveTab("subscription")} className={`rounded-full px-4 py-2 text-sm ${activeTab === "subscription" ? "font-semibold bg-cyan-400 text-slate-950" : "font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"}`}>{t("tabSubscription")}</button>
           </div>
         </div>
 
@@ -261,7 +261,7 @@ export default function DashboardPage() {
               </section>
             ) : bookings.length === 0 ? (
               <section className="rounded-3xl border border-dashed border-[var(--border-color)] bg-[var(--bg-card)]/70 p-8 text-[var(--text-secondary)] shadow-2xl shadow-black/20 text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-100"><CalendarCheck2 className="h-7 w-7" /></div>
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-600 dark:text-cyan-100"><CalendarCheck2 className="h-7 w-7" /></div>
                 <h3 className="mt-4 text-xl font-semibold text-[var(--text-primary)]">{t("emptyTitle")}</h3>
                 <p className="mt-2 text-sm text-[var(--text-secondary)]">{t("emptyText")}</p>
                 <Link href="/services" className="mt-5 inline-flex rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950">{t("emptyAction")}</Link>
@@ -269,8 +269,8 @@ export default function DashboardPage() {
             ) : (
               <>
                 <div className="hidden overflow-x-auto rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] shadow-2xl shadow-black/20 lg:block">
-              <table className="min-w-full divide-y divide-slate-800 text-left text-sm text-[var(--text-secondary)]">
-                <thead className="bg-[var(--bg-primary)]/80 text-[var(--text-secondary)]">
+              <table className="min-w-full divide-y divide-[var(--border-color)] text-left text-sm text-[var(--text-secondary)]">
+                <thead className="bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                   <tr>
                     <th className="px-4 py-3">{t("colService")}</th>
                     <th className="px-4 py-3">{t("colDate")}</th>
@@ -280,7 +280,7 @@ export default function DashboardPage() {
                     <th className="px-4 py-3">{t("colActions")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800">
+                <tbody className="divide-y divide-[var(--border-color)]">
                   {bookings.map((booking) => (
                     <tr key={booking.id} className="hover:bg-[var(--bg-secondary)]/50">
                       <td className="px-4 py-4 text-[var(--text-primary)]">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</td>

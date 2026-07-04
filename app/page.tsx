@@ -170,7 +170,7 @@ export default function HomePage() {
                   <Info size={14} className="text-cyan-200" />
                 </button>
                 {showSafetyTooltip && (
-                  <div className="absolute bottom-full mb-2 w-64 p-2 bg-gray-950 border border-gray-800 text-xs text-gray-200 rounded-md shadow-lg z-50 transition-all">
+                  <div className="absolute bottom-full mb-2 w-64 p-2 bg-[var(--bg-card)] border border-[var(--border-color)] text-xs text-[var(--text-primary)] rounded-md shadow-lg z-50 transition-all">
                     {t("home.badgeSafeTooltip")}
                   </div>
                 )}
@@ -185,7 +185,7 @@ export default function HomePage() {
           <div data-reveal className="grid grid-cols-2 gap-4 rounded-3xl border border-white/10 bg-[var(--bg-primary)]/70 p-4 backdrop-blur-xl md:grid-cols-4">
             {statItems.map((item) => (
               <article key={item.label} className="soft-card rounded-2xl p-4 text-center">
-                <p className="text-xl font-semibold text-cyan-200">{t(item.valueKey)}</p>
+                <p className="text-xl font-semibold text-cyan-600 dark:text-cyan-200">{t(item.valueKey)}</p>
                 <p className="mt-1 text-xs uppercase tracking-[0.25em] text-[var(--text-secondary)]">{t(item.label)}</p>
               </article>
             ))}
@@ -235,9 +235,9 @@ export default function HomePage() {
                 {cleanItems.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <article key={item.label} className="bg-slate-900/40 border border-gray-800/80 rounded-xl p-4 transition-all duration-300 hover:border-cyan-400/50">
+                    <article key={item.label} className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl p-4 transition-all duration-300 hover:border-cyan-400/50">
                       <div className="flex items-center gap-3">
-                        <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-100"><Icon className="h-5 w-5" /></span>
+                        <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-600 dark:text-cyan-100"><Icon className="h-5 w-5" /></span>
                         <h3 className="text-base font-semibold text-[var(--text-primary)]">{item.label}</h3>
                       </div>
                     </article>
@@ -253,9 +253,9 @@ export default function HomePage() {
                 {steps.map((step, index) => {
                   const Icon = step.icon;
                   return (
-                    <div key={step.title} className="bg-[#0b1329] border border-gray-800 p-5 rounded-xl shadow-xl mb-4 relative overflow-hidden">
+                    <div key={step.title} className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-5 rounded-xl mb-4 relative overflow-hidden">
                       <div className="flex items-start gap-4">
-                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-100"><Icon className="h-5 w-5" /></span>
+                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-600 dark:text-cyan-100"><Icon className="h-5 w-5" /></span>
                         <div>
                           <p className="text-xs uppercase tracking-[0.3em] text-cyan-300">{t("home.processLabel")}{index + 1}</p>
                           <h3 className="text-lg font-semibold text-[var(--text-primary)]">{step.title}</h3>

@@ -143,8 +143,8 @@ export default function HomePage() {
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[var(--hero-bg)] animate-gradient" />
-        <div className="hero-grid absolute inset-0 opacity-60" />
-        <div className="absolute inset-0 overflow-hidden opacity-70">
+        <div className="hero-grid absolute inset-0 opacity-30" />
+        <div className="absolute inset-0 overflow-hidden opacity-30">
           {Array.from({ length: 12 }).map((_, index) => (
             <span key={index} className="animate-float absolute rounded-full bg-cyan-400/20 blur-xl" style={{ left: `${8 + (index * 7) % 84}%`, top: `${10 + (index * 5) % 70}%`, width: `${18 + (index % 4) * 6}px`, height: `${18 + (index % 4) * 6}px` }} />
           ))}

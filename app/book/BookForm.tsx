@@ -97,20 +97,6 @@ export default function BookForm() {
   const serviceId = Number(searchParams.get("serviceId") || 0);
   const { userId } = useAuth(); // get Clerk userId client-side — reliable on all platforms
   const { user } = useUser();
-  const [isStudent, setIsStudent] = useState(false);
-
-  // Check student status from API — works even when Clerk metadata update used DB fallback
-  useEffect(() => {
-    if (!userId) return;
-    fetch("/api/student")
-      .then((r) => r.json())
-      .then((data) => { if (data.isStudent) setIsStudent(true); })
-      .catch(() => {
-        // Fallback to Clerk metadata
-        const meta = (user?.publicMetadata ?? {}) as Record<string, unknown>;
-        if (meta.isStudent === true) setIsStudent(true);
-      });
-  }, [userId, user]);
 
   const [step, setStep] = useState(serviceId ? 1 : 0);
   const [service, setService] = useState<Service | null>(null);
@@ -356,7 +342,6 @@ export default function BookForm() {
           time: scheduledTime,
           description: quoteDescription.trim(),
           clerkUserId: userId ?? undefined,
-          isStudent: isStudent ?? false,
         }),
       });
 
@@ -802,17 +787,6 @@ export default function BookForm() {
               <p className="text-sm font-medium text-cyan-700 dark:text-cyan-200">{bookingT("quoteStatus")}</p>
               <p className="mt-1 text-xl font-semibold text-[var(--text-primary)]">{bookingT("quotePending")}</p>
             </div>
-
-            {/* Student discount badge */}
-            {isStudent && (
-              <div className="rounded-2xl border border-emerald-400/40 bg-emerald-400/10 p-4 flex items-center gap-3">
-                <span className="text-2xl">🎓</span>
-                <div>
-                  <p className="font-semibold text-emerald-700 dark:text-emerald-300">{bookingT("studentDiscount")}</p>
-                  <p className="text-xs text-[var(--text-secondary)]">{bookingT("studentDiscountNote")}</p>
-                </div>
-              </div>
-            )}
 
             <div className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)] space-y-2">
               <p><strong>{t("summaryDate")}:</strong> {scheduledDate ? formatDateLabel(locale, scheduledDate) : "—"}</p>

@@ -25,7 +25,6 @@ export default function PageNav() {
     { href: '/book', label: t('bookNow') },
     { href: '/dashboard', label: t('myBookings') },
     { href: '/subscriptions', label: t('subscriptions') },
-    { href: '/student', label: '🎓 ' + t('studentNav') },
   ];
 
   return (

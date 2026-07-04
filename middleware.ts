@@ -14,7 +14,6 @@ export default authMiddleware({
     "/contact",
     "/privacy",
     "/terms",
-    "/student",
     "/sign-in(.*)",
     "/sign-up(.*)",
     "/api/webhooks/clerk",

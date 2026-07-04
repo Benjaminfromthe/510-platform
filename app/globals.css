@@ -3,31 +3,31 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #F8FAFC;
-  --bg-card: #FFFFFF;
+  --bg-primary: rgba(248, 250, 252, 0.85);
+  --bg-secondary: rgba(241, 245, 249, 0.90);
+  --bg-card: rgba(255, 255, 255, 0.88);
   --text-primary: #0F172A;
   --text-secondary: #475569;
   --border-color: #E2E8F0;
-  --hero-bg: #F1F5F9;
-  --background: #FFFFFF;
+  --hero-bg: rgba(241, 245, 249, 0.80);
+  --background: rgba(248, 250, 252, 0.85);
   --foreground: #0F172A;
-  --card: #FFFFFF;
+  --card: rgba(255, 255, 255, 0.88);
   --border: #E2E8F0;
   --primary: #0891B2;
 }
 
 .dark {
-  --bg-primary: #0A0F1E;
-  --bg-secondary: #111827;
-  --bg-card: #111827;
+  --bg-primary: rgba(10, 15, 30, 0.85);
+  --bg-secondary: rgba(17, 24, 39, 0.90);
+  --bg-card: rgba(17, 24, 39, 0.88);
   --text-primary: #F8FAFC;
   --text-secondary: #94A3B8;
   --border-color: #1F2937;
-  --hero-bg: #0F172A;
-  --background: #0A0F1E;
+  --hero-bg: rgba(15, 23, 42, 0.80);
+  --background: rgba(10, 15, 30, 0.85);
   --foreground: #F8FAFC;
-  --card: #111827;
+  --card: rgba(17, 24, 39, 0.88);
   --border: #1F2937;
   --primary: #06B6D4;
 }
@@ -45,7 +45,7 @@ html {
 }
 
 body {
-  background-color: var(--bg-primary);
+  background-color: transparent;
   color: var(--text-primary);
   font-family: var(--font-inter), Arial, sans-serif;
 }

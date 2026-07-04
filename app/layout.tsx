@@ -49,6 +49,23 @@ export default function RootLayout({
           <ClerkProvider>
             <ToastProvider>
               <Providers>
+                {/* Global background — clean modern interior, specific to cleaning business */}
+                <div
+                  className="fixed inset-0 -z-10"
+                  aria-hidden="true"
+                  style={{
+                    backgroundImage: `url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=60')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundAttachment: 'fixed',
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                >
+                  {/* Dark mode overlay — deep navy tint */}
+                  <div className="absolute inset-0 hidden dark:block" style={{ backgroundColor: 'rgba(10,15,30,0.93)' }} />
+                  {/* Light mode overlay — clean white tint */}
+                  <div className="absolute inset-0 dark:hidden" style={{ backgroundColor: 'rgba(248,250,252,0.93)' }} />
+                </div>
                 <MoMoTicker />
                 <PageNav />
                 {children}

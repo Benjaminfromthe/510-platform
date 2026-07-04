@@ -3,32 +3,32 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: rgba(248, 250, 252, 0.65);
-  --bg-secondary: rgba(241, 245, 249, 0.75);
-  --bg-card: rgba(255, 255, 255, 0.80);
+  --bg-primary: transparent;
+  --bg-secondary: rgba(255, 255, 255, 0.15);
+  --bg-card: rgba(255, 255, 255, 0.85);
   --text-primary: #0F172A;
   --text-secondary: #475569;
-  --border-color: rgba(226, 232, 240, 0.90);
+  --border-color: rgba(226, 232, 240, 0.70);
   --hero-bg: transparent;
-  --background: rgba(248, 250, 252, 0.65);
+  --background: transparent;
   --foreground: #0F172A;
-  --card: rgba(255, 255, 255, 0.80);
-  --border: rgba(226, 232, 240, 0.90);
+  --card: rgba(255, 255, 255, 0.85);
+  --border: rgba(226, 232, 240, 0.70);
   --primary: #0891B2;
 }
 
 .dark {
-  --bg-primary: rgba(10, 15, 30, 0.65);
-  --bg-secondary: rgba(17, 24, 39, 0.75);
-  --bg-card: rgba(17, 24, 39, 0.80);
+  --bg-primary: transparent;
+  --bg-secondary: rgba(0, 0, 0, 0.20);
+  --bg-card: rgba(10, 15, 30, 0.80);
   --text-primary: #F8FAFC;
   --text-secondary: #94A3B8;
-  --border-color: rgba(31, 41, 55, 0.90);
+  --border-color: rgba(31, 41, 55, 0.70);
   --hero-bg: transparent;
-  --background: rgba(10, 15, 30, 0.65);
+  --background: transparent;
   --foreground: #F8FAFC;
-  --card: rgba(17, 24, 39, 0.80);
-  --border: rgba(31, 41, 55, 0.90);
+  --card: rgba(10, 15, 30, 0.80);
+  --border: rgba(31, 41, 55, 0.70);
   --primary: #06B6D4;
 }
 

@@ -330,6 +330,14 @@
     "switchToDark": "Passer en mode sombre",
     "switchToLight": "Passer en mode clair"
   },
+  "auth": {
+    "bookingGateTitle": "Connectez-vous pour réserver",
+    "bookingGateText": "Créez un compte gratuit ou connectez-vous pour suivre vos réservations, recevoir des confirmations par e-mail et gérer vos demandes.",
+    "signInToContinue": "Se connecter pour continuer",
+    "createAccountToContinue": "Créer un compte gratuit",
+    "bookingGateNote": "Cela prend moins d'une minute. Aucune carte bancaire requise.",
+    "backToServices": "Retour aux services"
+  },
   "student": {
     "eyebrow": "Réduction étudiant",
     "title": "Êtes-vous étudiant ?",

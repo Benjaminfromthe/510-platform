@@ -96,7 +96,7 @@ export default function BookForm() {
   const searchParams = useSearchParams();
   const serviceId = Number(searchParams.get("serviceId") || 0);
   const { userId } = useAuth(); // get Clerk userId client-side — reliable on all platforms
-  const { user } = useUser();
+  const { user, isLoaded: isUserLoaded } = useUser();
 
   const [step, setStep] = useState(serviceId ? 1 : 0);
   const [service, setService] = useState<Service | null>(null);
@@ -364,6 +364,46 @@ export default function BookForm() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     await submitBooking();
+  }
+
+  // Auth gate — show sign-in prompt if not authenticated
+  if (isUserLoaded && !userId) {
+    const currentUrl = typeof window !== "undefined" ? window.location.href : "/book";
+    const signInUrl = `/sign-in?redirect_url=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname + window.location.search : "/book")}`;
+    const signUpUrl = `/sign-up?redirect_url=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname + window.location.search : "/book")}`;
+
+    return (
+      <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex items-center justify-center px-4">
+        <div className="w-full max-w-md space-y-6 text-center">
+          <div className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-8 shadow-2xl shadow-black/20">
+            <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-500 mx-auto text-3xl">🔐</span>
+            <h1 className="mt-5 text-2xl font-black text-[var(--text-primary)]">{globalT("auth.bookingGateTitle")}</h1>
+            <p className="mt-3 text-[var(--text-secondary)]">{globalT("auth.bookingGateText")}</p>
+
+            <div className="mt-6 flex flex-col gap-3">
+              <a
+                href={signInUrl}
+                className="w-full rounded-xl bg-cyan-400 py-3 text-sm font-semibold text-slate-950 hover:bg-cyan-300 transition text-center"
+              >
+                {globalT("auth.signInToContinue")}
+              </a>
+              <a
+                href={signUpUrl}
+                className="w-full rounded-xl border border-[var(--border-color)] py-3 text-sm font-semibold text-[var(--text-primary)] hover:border-cyan-400 hover:bg-[var(--bg-secondary)] transition text-center"
+              >
+                {globalT("auth.createAccountToContinue")}
+              </a>
+            </div>
+
+            <p className="mt-5 text-xs text-[var(--text-secondary)]">{globalT("auth.bookingGateNote")}</p>
+          </div>
+
+          <a href="/services" className="text-sm text-[var(--text-secondary)] hover:text-cyan-500 transition">
+            ← {globalT("auth.backToServices")}
+          </a>
+        </div>
+      </main>
+    );
   }
 
   const totalTrackerSteps = 3;

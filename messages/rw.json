@@ -330,6 +330,14 @@
     "switchToDark": "Hindura ubururu bwijima",
     "switchToLight": "Hindura ubururu bwumucyo"
   },
+  "auth": {
+    "bookingGateTitle": "Injira kugira ngo uteganya serivisi",
+    "bookingGateText": "Fungura konti y'ubusa cyangwa injira kugira ngo ukurikire ubusabe bwawe, ubone imeyili z'inyemeza, no genzura ibyifuzo byawe.",
+    "signInToContinue": "Injira ukomeze",
+    "createAccountToContinue": "Fungura konti y'ubusa",
+    "bookingGateNote": "Bitwara munsi ya minuta imwe. Nta karita y'amafaranga ikenewe.",
+    "backToServices": "Subira ku serivisi"
+  },
   "student": {
     "eyebrow": "Isomo ry'umunyeshuri",
     "title": "Uri umunyeshuri?",

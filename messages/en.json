@@ -330,6 +330,14 @@
     "switchToDark": "Switch to dark mode",
     "switchToLight": "Switch to light mode"
   },
+  "auth": {
+    "bookingGateTitle": "Sign in to book a service",
+    "bookingGateText": "Create a free account or sign in to track your bookings, get email confirmations, and manage your service requests.",
+    "signInToContinue": "Sign In to Continue",
+    "createAccountToContinue": "Create Free Account",
+    "bookingGateNote": "It takes less than 1 minute. No credit card required.",
+    "backToServices": "Back to services"
+  },
   "student": {
     "eyebrow": "Student Discount",
     "title": "Are You a Student?",

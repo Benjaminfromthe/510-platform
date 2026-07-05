@@ -2,47 +2,52 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-// ALL images: zero people, zero hands, zero body parts
+// CAMPUS VERSION — electronics + campus furniture only
 const services = [
   {
     id: 1,
-    name: 'Deep Home Cleaning',
-    description: 'Detailed cleaning for kitchens, bathrooms, floors, and living areas.',
-    price: 18000,
-    duration: 120,
-    category: 'OTHER',
-    // Empty modern office/room interior — no people
-    imageUrl: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80',
+    name: 'Laptop & Computer Cleaning',
+    description: 'Deep foam cleaning for laptops, keyboards, screens, and desktop computers.',
+    price: 500,
+    duration: 30,
+    category: 'ELECTRONICS',
+    imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 2,
-    name: 'Office Sanitization',
-    description: 'Professional sanitization for desks, meeting rooms, and common areas.',
-    price: 22000,
-    duration: 90,
-    category: 'OTHER',
-    // Empty modern office workstations with chairs — no people
-    imageUrl: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80',
+    name: 'Phone & Tablet Cleaning',
+    description: 'Safe professional cleaning for smartphones, tablets, and accessories.',
+    price: 500,
+    duration: 20,
+    category: 'ELECTRONICS',
+    imageUrl: 'https://images.unsplash.com/photo-1512054502232-10a0a035d672?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 3,
-    name: 'Furniture Dusting & Polishing',
-    description: 'Gentle furniture cleaning, polishing, and stain care for wooden and fabric pieces.',
-    price: 15000,
-    duration: 60,
-    category: 'FURNITURE',
-    // Clean white dressing table with plants and mirror — no people
-    imageUrl: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80',
+    name: 'TV & Screen Cleaning',
+    description: 'Professional cleaning for TVs, monitors, and display screens of all sizes.',
+    price: 500,
+    duration: 25,
+    category: 'ELECTRONICS',
+    imageUrl: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 4,
-    name: 'Electronics Surface Care',
-    description: 'Safe cleaning for screens, keyboards, and electronic surfaces.',
-    price: 12000,
-    duration: 45,
-    category: 'ELECTRONICS',
-    // Electronics display: laptops, monitors, camera, headphones — no people
-    imageUrl: 'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?auto=format&fit=crop&w=800&q=80',
+    name: 'Campus Desk & Table Cleaning',
+    description: 'Foam cleaning for study desks, tables, and workstations on campus.',
+    price: 500,
+    duration: 30,
+    category: 'FURNITURE',
+    imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 5,
+    name: 'Campus Chair Cleaning',
+    description: 'Thorough cleaning for lecture hall chairs, office chairs, and study seats.',
+    price: 500,
+    duration: 25,
+    category: 'FURNITURE',
+    imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80',
   },
 ];
 
@@ -55,7 +60,7 @@ async function main() {
     });
   }
 
-  console.log(`Seeded ${services.length} services.`);
+  console.log(`Campus services seeded: ${services.length}`);
 }
 
 main()

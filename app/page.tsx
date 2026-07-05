@@ -177,7 +177,7 @@ export default function HomePage() {
             </div>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               <Link href="/services" onClick={() => showToast(t("home.toastBook"), "success")} className="w-full sm:w-auto rounded-full bg-cyan-400 px-6 py-3 text-center text-base font-semibold text-slate-950 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] hover:bg-cyan-300">{t("home.bookQuote")}</Link>
-              <Link href="/subscriptions" onClick={() => showToast(t("home.toastPlans"), "info")} className="w-full sm:w-auto rounded-full border border-white/10 bg-white/5 px-6 py-3 text-center text-base font-semibold text-[var(--text-primary)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] hover:border-cyan-400 hover:bg-cyan-400/10">{t("home.explorePlans")}</Link>
+              <a href="https://wa.me/250787769046?text=Hello%20510%20Cleaning%20Services!" target="_blank" rel="noreferrer" className="w-full sm:w-auto rounded-full border border-white/10 bg-white/5 px-6 py-3 text-center text-base font-semibold text-[var(--text-primary)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] hover:border-cyan-400 hover:bg-cyan-400/10">{t("home.explorePlans")}</a>
             </div>
           </div>
 

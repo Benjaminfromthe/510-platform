@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
-// Campus services — triggered once to update the DB
+// Campus services — electronics/devices only, no furniture
 const campusServices = [
   {
     id: 1,
@@ -32,34 +32,15 @@ const campusServices = [
     category: 'ELECTRONICS' as const,
     imageUrl: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=800&q=80',
   },
-  {
-    id: 4,
-    name: 'Campus Desk & Table Cleaning',
-    description: 'Foam cleaning for study desks, tables, and workstations on campus.',
-    price: 500,
-    duration: 30,
-    category: 'FURNITURE' as const,
-    imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 5,
-    name: 'Campus Chair Cleaning',
-    description: 'Thorough cleaning for lecture hall chairs, office chairs, and study seats.',
-    price: 500,
-    duration: 25,
-    category: 'FURNITURE' as const,
-    imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80',
-  },
 ];
 
 export async function GET(request: Request) {
-  // Protect with a secret key — set SEED_SECRET in Vercel environment variables
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get("secret");
   const expectedSecret = process.env.SEED_SECRET;
 
   if (!expectedSecret) {
-    return NextResponse.json({ error: "SEED_SECRET environment variable not configured." }, { status: 500 });
+    return NextResponse.json({ error: "SEED_SECRET not configured." }, { status: 500 });
   }
 
   if (secret !== expectedSecret) {
@@ -78,14 +59,14 @@ export async function GET(request: Request) {
       results.push(upserted.name);
     }
 
-    // Delete any old services with IDs higher than 5 (non-campus services)
+    // Remove old non-campus services
     await prisma.service.deleteMany({
-      where: { id: { gt: 5 } },
+      where: { id: { gt: 3 } },
     });
 
     return NextResponse.json({
       success: true,
-      message: `Campus services seeded successfully.`,
+      message: `Campus services seeded.`,
       services: results,
     }, { status: 200 });
   } catch (error) {

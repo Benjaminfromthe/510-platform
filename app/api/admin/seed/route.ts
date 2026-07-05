@@ -3,12 +3,12 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
-// Campus services — electronics/devices only, no furniture
+// Campus: Laptop + Phone only
 const campusServices = [
   {
     id: 1,
     name: 'Laptop & Computer Cleaning',
-    description: 'Deep foam cleaning for laptops, keyboards, screens, and desktop computers.',
+    description: 'Deep foam cleaning for laptops, keyboards, and screens. Safe for all brands.',
     price: 500,
     duration: 30,
     category: 'ELECTRONICS' as const,
@@ -22,15 +22,6 @@ const campusServices = [
     duration: 20,
     category: 'ELECTRONICS' as const,
     imageUrl: 'https://images.unsplash.com/photo-1512054502232-10a0a035d672?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 3,
-    name: 'TV & Screen Cleaning',
-    description: 'Professional cleaning for TVs, monitors, and display screens of all sizes.',
-    price: 500,
-    duration: 25,
-    category: 'ELECTRONICS' as const,
-    imageUrl: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=800&q=80',
   },
 ];
 
@@ -59,14 +50,14 @@ export async function GET(request: Request) {
       results.push(upserted.name);
     }
 
-    // Remove old non-campus services
+    // Remove everything except Laptop (1) and Phone (2)
     await prisma.service.deleteMany({
-      where: { id: { gt: 3 } },
+      where: { id: { gt: 2 } },
     });
 
     return NextResponse.json({
       success: true,
-      message: `Campus services seeded.`,
+      message: 'Campus services seeded — Laptop & Phone only.',
       services: results,
     }, { status: 200 });
   } catch (error) {

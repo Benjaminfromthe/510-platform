@@ -2,12 +2,12 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-// CAMPUS VERSION — electronics/devices only. No furniture.
+// CAMPUS VERSION — only what students need: Laptop + Phone
 const services = [
   {
     id: 1,
     name: 'Laptop & Computer Cleaning',
-    description: 'Deep foam cleaning for laptops, keyboards, screens, and desktop computers.',
+    description: 'Deep foam cleaning for laptops, keyboards, and screens. Safe for all brands.',
     price: 500,
     duration: 30,
     category: 'ELECTRONICS',
@@ -22,15 +22,6 @@ const services = [
     category: 'ELECTRONICS',
     imageUrl: 'https://images.unsplash.com/photo-1512054502232-10a0a035d672?auto=format&fit=crop&w=800&q=80',
   },
-  {
-    id: 3,
-    name: 'TV & Screen Cleaning',
-    description: 'Professional cleaning for TVs, monitors, and display screens of all sizes.',
-    price: 500,
-    duration: 25,
-    category: 'ELECTRONICS',
-    imageUrl: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=800&q=80',
-  },
 ];
 
 async function main() {
@@ -42,9 +33,9 @@ async function main() {
     });
   }
 
-  // Remove old non-campus services (IDs 4 and above)
+  // Remove all other services — only Laptop and Phone for campus
   await prisma.service.deleteMany({
-    where: { id: { gt: 3 } },
+    where: { id: { gt: 2 } },
   });
 
   console.log(`Campus services seeded: ${services.length}`);

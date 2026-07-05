@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-// CAMPUS VERSION — electronics + campus furniture only
+// CAMPUS VERSION — electronics/devices only. No furniture.
 const services = [
   {
     id: 1,
@@ -31,24 +31,6 @@ const services = [
     category: 'ELECTRONICS',
     imageUrl: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=800&q=80',
   },
-  {
-    id: 4,
-    name: 'Campus Desk & Table Cleaning',
-    description: 'Foam cleaning for study desks, tables, and workstations on campus.',
-    price: 500,
-    duration: 30,
-    category: 'FURNITURE',
-    imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 5,
-    name: 'Campus Chair Cleaning',
-    description: 'Thorough cleaning for lecture hall chairs, office chairs, and study seats.',
-    price: 500,
-    duration: 25,
-    category: 'FURNITURE',
-    imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80',
-  },
 ];
 
 async function main() {
@@ -59,6 +41,11 @@ async function main() {
       create: service,
     });
   }
+
+  // Remove old non-campus services (IDs 4 and above)
+  await prisma.service.deleteMany({
+    where: { id: { gt: 3 } },
+  });
 
   console.log(`Campus services seeded: ${services.length}`);
 }

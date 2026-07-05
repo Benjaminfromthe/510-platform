@@ -1,10 +1,14 @@
 import { Suspense } from "react";
-import BookForm from "./BookForm";
+import CampusBookForm from "./CampusBookForm";
 
 export default function BookPage() {
   return (
-    <Suspense fallback={<main className="min-h-screen bg-slate-950 text-slate-100 p-8">Loading booking form...</main>}>
-      <BookForm />
+    <Suspense fallback={
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-[var(--text-secondary)]">Loading…</p>
+      </main>
+    }>
+      <CampusBookForm />
     </Suspense>
   );
 }

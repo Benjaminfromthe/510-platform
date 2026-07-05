@@ -3,7 +3,7 @@
 // NO HARDCODED STRINGS - use t('key') always
 
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
-import { Calendar, Menu, Sparkles, Truck, X, Laptop, Smartphone, BedDouble, BadgeCheck, CheckCircle2, Globe, MessageCircleMore, Send, Monitor, Armchair, Sofa, Info } from "lucide-react";
+import { Calendar, Menu, Sparkles, Truck, X, Laptop, Smartphone, BedDouble, BadgeCheck, CheckCircle2, Globe, MessageCircleMore, Send, Armchair, Sofa, Info } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -24,19 +24,18 @@ const statItems = [
 // Service image URLs — NO people, NO hands, NO body parts
 const serviceImages = {
   electronics: {
-    // Array of electronics: laptops, monitors, cameras, headphones — no people
-    url: "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=800&q=80",
+    // Laptop on desk — no people
+    url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80",
     altKey: "category.electronicsAlt",
   },
   furniture: {
-    // Clean white interior furniture, table and plants — no people
-    url: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80",
+    // Phone flat lay — no people
+    url: "https://images.unsplash.com/photo-1512054502232-10a0a035d672?w=800&q=80",
     altKey: "category.furnitureAlt",
   },
   deep: {
-    // Empty modern office workstations with chairs — no people
-    url: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80",
-    altKey: "category.deepCleanAlt",
+    url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80",
+    altKey: "category.electronicsAlt",
   },
 };
 
@@ -57,7 +56,6 @@ export default function HomePage() {
   ];
 
   const cleanItems = [
-    { icon: Monitor, label: t("home.cleanTv") },
     { icon: Laptop, label: t("home.cleanLaptop") },
     { icon: Smartphone, label: t("home.cleanPhone") },
     { icon: Sofa, label: t("home.cleanSofa") },
@@ -190,11 +188,10 @@ export default function HomePage() {
             ))}
           </div>
 
-          <section data-reveal className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <section data-reveal className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {[
               { key: "electronics", title: t("home.electronicsTitle"), description: t("home.electronicsDescription"), href: "/services", image: serviceImages.electronics },
               { key: "furniture", title: t("home.furnitureTitle"), description: t("home.furnitureDescription"), href: "/services", image: serviceImages.furniture },
-              { key: "deep", title: t("home.deepTitle"), description: t("home.deepDescription"), href: "/services", image: serviceImages.deep },
             ].map((service) => (
               <article key={service.key} className="group soft-card rounded-3xl overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-cyan-400/5">
                 <div className="relative h-48 overflow-hidden rounded-t-3xl">

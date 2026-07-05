@@ -20,6 +20,7 @@ export default authMiddleware({
     "/api/services",
     "/api/availability",
     "/api/ai/chat",
+    "/api/admin/seed",
   ],
   afterAuth(auth, req) {
     // /book and /dashboard and /admin require authentication

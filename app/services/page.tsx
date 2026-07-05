@@ -1,197 +1,103 @@
 "use client";
 
-// NO HARDCODED STRINGS - use t('key') always
+// Campus version — static services, no DB dependency
+// Only Laptop and Phone cleaning at 500 RWF
 
-import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
-type ServiceCategory = "ELECTRONICS" | "FURNITURE" | "OTHER";
-
-type Service = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  duration: number;
-  category: ServiceCategory;
-  imageUrl: string;
-};
-
-const tabs = ["All", "ELECTRONICS", "FURNITURE", "OTHER"] as const;
-
-// Service image URLs — NO people, NO hands. Using verified people-free Unsplash photos.
-const serviceImages: Record<ServiceCategory, { url: string; altKey: string }> = {
-  ELECTRONICS: {
-    // Array of electronics: laptops, monitors, cameras, headphones — no people
-    url: "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=800&q=80",
-    altKey: "category.electronicsAlt",
+const CAMPUS_SERVICES = [
+  {
+    id: 1,
+    name: "Laptop & Computer Cleaning",
+    description: "Deep foam cleaning for your laptop, keyboard, and screen. Safe for all brands. Results in 30 minutes.",
+    price: 500,
+    duration: 30,
+    emoji: "💻",
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80",
+    badge: null,
   },
-  FURNITURE: {
-    // Clean white interior furniture, table and plants — no people
-    url: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80",
-    altKey: "category.furnitureAlt",
+  {
+    id: 2,
+    name: "Phone & Tablet Cleaning",
+    description: "Safe professional foam cleaning for smartphones, tablets, and accessories. Done in 20 minutes.",
+    price: 500,
+    duration: 20,
+    emoji: "📱",
+    image: "https://images.unsplash.com/photo-1512054502232-10a0a035d672?w=800&q=80",
+    badge: "Most popular",
   },
-  OTHER: {
-    // Empty modern office workstations with chairs — no people
-    url: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80",
-    altKey: "category.deepCleanAlt",
-  },
-};
-
-function categoryLabel(category: ServiceCategory, t: ReturnType<typeof useTranslations>) {
-  return t(`category.${category.toLowerCase() as Lowercase<ServiceCategory>}`);
-}
+];
 
 export default function ServicesPage() {
   const t = useTranslations();
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("All");
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadServices() {
-      setLoading(true);
-
-      try {
-        const response = await fetch("/api/services", { cache: "force-cache" });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch services");
-        }
-
-        const data = await response.json();
-
-        if (isMounted) {
-          setServices(Array.isArray(data.services) ? data.services : []);
-        }
-      } catch (error) {
-        console.error("Error loading services", error);
-
-        if (isMounted) {
-          setServices([]);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    }
-
-    loadServices();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const filteredServices = useMemo(() => {
-    if (activeTab === "All") {
-      return services;
-    }
-
-    return services.filter((service) => service.category === activeTab);
-  }, [activeTab, services]);
 
   return (
-    <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      <section className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
-        <header className="space-y-3">
-          <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">{t("servicesPage.eyebrow")}</p>
-          <h1 className="text-4xl font-semibold text-[var(--text-primary)] sm:text-5xl">{t("servicesPage.title")}</h1>
-          <p className="max-w-2xl text-[var(--text-secondary)]">{t("servicesPage.subtitle")}</p>
+    <main className="min-h-screen text-[var(--text-primary)]">
+      <section className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-10 sm:px-6">
+
+        <header className="space-y-2">
+          <p className="text-sm uppercase tracking-[0.35em] text-cyan-600 dark:text-cyan-300">Services</p>
+          <h1 className="text-3xl font-black text-[var(--text-primary)]">What do you need cleaned?</h1>
+          <p className="text-[var(--text-secondary)]">500 RWF per device · We come to you on campus</p>
         </header>
 
-        <nav className="flex flex-wrap gap-3 mb-12">
-          {tabs.map((tab) => {
-            const isActive = tab === activeTab;
+        <div className="grid gap-5 sm:grid-cols-2">
+          {CAMPUS_SERVICES.map((service) => (
+            <article
+              key={service.id}
+              className="overflow-hidden rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] shadow-xl transition hover:-translate-y-1 hover:border-cyan-400/50"
+            >
+              <div className="relative h-48 overflow-hidden">
+                <Image
+                  src={service.image}
+                  alt={service.name}
+                  width={400}
+                  height={200}
+                  className="w-full h-48 object-cover"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                {/* Price badge */}
+                <span className="absolute top-3 right-3 rounded-full bg-cyan-400 px-3 py-1 text-xs font-black text-slate-950">
+                  500 RWF
+                </span>
+                {service.badge && (
+                  <span className="absolute top-3 left-3 rounded-full bg-emerald-400 px-3 py-1 text-xs font-bold text-slate-950">
+                    {service.badge}
+                  </span>
+                )}
+              </div>
 
-            return (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveTab(tab)}
-                className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                  isActive
-                    ? "border-cyan-400 bg-cyan-400/10 text-cyan-100"
-                    : "border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-cyan-400/70 hover:text-[var(--text-primary)]"
-                }`}
-              >
-                {tab === "All" ? t("servicesPage.all") : categoryLabel(tab as ServiceCategory, t)}
-              </button>
-            );
-          })}
-        </nav>
-
-        {loading ? (
-          <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <article
-                key={`skeleton-${index}`}
-                className="animate-pulse rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-2xl shadow-black/20"
-              >
-                <div className="h-40 rounded-2xl bg-[var(--bg-secondary)]" />
-                <div className="mt-4 h-5 w-2/3 rounded bg-[var(--bg-secondary)]" />
-                <div className="mt-3 h-4 w-full rounded bg-[var(--bg-secondary)]" />
-                <div className="mt-2 h-4 w-5/6 rounded bg-[var(--bg-secondary)]" />
-                <div className="mt-4 h-10 rounded-xl bg-[var(--bg-secondary)]" />
-              </article>
-            ))}
-          </section>
-        ) : (
-          <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {filteredServices.length === 0 ? (
-              <article className="rounded-3xl border border-dashed border-[var(--border-color)] bg-[var(--bg-card)]/70 p-8 text-[var(--text-secondary)] md:col-span-2 xl:col-span-3">
-                {t("ui.noServicesAvailable") || "No services are available in this category yet."}
-              </article>
-            ) : (
-              filteredServices.map((service) => (
-                <article
-                  key={service.id}
-                  className="overflow-hidden rounded-2xl bg-[var(--bg-card)] border border-[var(--border-color)] shadow-xl transition-all hover:border-cyan-400/50 hover:-translate-y-1"
+              <div className="p-5 space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">{service.emoji}</span>
+                  <h2 className="text-xl font-bold text-[var(--text-primary)]">{service.name}</h2>
+                </div>
+                <p className="text-sm text-[var(--text-secondary)]">{service.description}</p>
+                <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
+                  <span>⏱ {service.duration} minutes</span>
+                  <span className="font-semibold text-cyan-600 dark:text-cyan-300">500 RWF</span>
+                </div>
+                <Link
+                  href={`/book?serviceId=${service.id}`}
+                  className="block w-full rounded-xl bg-cyan-400 py-3 text-center text-sm font-black text-slate-950 hover:bg-cyan-300 transition"
                 >
-                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-[var(--bg-secondary)] via-[var(--bg-card)] to-[var(--bg-primary)]">
-                    <Image
-                      src={serviceImages[service.category].url}
-                      alt={t(serviceImages[service.category].altKey)}
-                      width={400}
-                      height={200}
-                      className="w-full h-48 object-cover"
-                      priority={false}
-                      placeholder="blur"
-                      blurDataURL="data:image/jpeg,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  </div>
-                  <div className="flex flex-col gap-4 p-5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.3em] text-cyan-300">{categoryLabel(service.category, t)}</p>
-                        <h2 className="mt-1 text-xl font-semibold text-[var(--text-primary)]">{service.name}</h2>
-                      </div>
-                    </div>
+                  Book Now — 500 RWF 🚀
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
 
-                    <p className="text-sm text-[var(--text-secondary)]">{service.description}</p>
+        {/* Trust strip */}
+        <div className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 text-center">
+          <p className="text-sm font-medium text-[var(--text-primary)]">
+            ✓ Safe for all devices &nbsp;·&nbsp; ✓ We come to you &nbsp;·&nbsp; ✓ 500 RWF flat price &nbsp;·&nbsp; ✓ Results guaranteed
+          </p>
+        </div>
 
-                    <div className="flex items-center justify-between text-sm text-[var(--text-secondary)]">
-                      <span>{t("servicesPage.durationLabel")} : {service.duration} {t("common.minutes")}</span>
-                      <span>{t("servicesPage.categoryLabel")} : {categoryLabel(service.category, t)}</span>
-                    </div>
-
-                    <a
-                      href={`/book?serviceId=${service.id}`}
-                      className="w-full block rounded-lg bg-cyan-400 py-2.5 text-center text-base font-semibold text-slate-900 shadow-md transition-all hover:bg-cyan-300"
-                    >
-                      {t("services.bookNow")}
-                    </a>
-                  </div>
-                </article>
-              ))
-            )}
-          </section>
-        )}
       </section>
     </main>
   );

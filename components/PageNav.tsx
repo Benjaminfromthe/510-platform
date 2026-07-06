@@ -27,7 +27,7 @@ export default function PageNav() {
 
   return (
     <>
-      <nav className="sticky top-0 z-40 border-b border-[var(--border-color)] bg-[var(--bg-primary)]/95 backdrop-blur-md">
+      <nav className="sticky top-0 z-40 border-b border-white/10 bg-[rgba(10,15,30,0.90)] backdrop-blur-md">
         <div className="flex items-center justify-between px-3 py-2 sm:px-6">
 
           {/* Left — back + logo only on mobile */}
@@ -114,7 +114,7 @@ export default function PageNav() {
 
         {/* Mobile dropdown */}
         {menuOpen && (
-          <div className="border-t border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 lg:hidden">
+          <div className="border-t border-white/10 bg-[rgba(10,15,30,0.95)] px-3 py-3 lg:hidden">
             {/* Language switcher in mobile menu */}
             <div className="mb-2 xs:hidden">
               <LanguageSwitcher />

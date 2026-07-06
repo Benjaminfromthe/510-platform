@@ -10,7 +10,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "../components/LanguageSwitcher";
-import ThemeToggle from "../components/ThemeToggle";
 import UserButtonWithTheme from "../components/UserButtonWithTheme";
 import { useToast } from "../components/ToastProvider";
 
@@ -111,7 +110,6 @@ export default function HomePage() {
               </SignedIn>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <ThemeToggle />
               <LanguageSwitcher />
             </div>
             <button type="button" aria-label="Toggle menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((prev) => !prev)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-primary)] xl:hidden">

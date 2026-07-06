@@ -61,8 +61,8 @@ export default function RootLayout({
                     backgroundRepeat: 'no-repeat',
                   }}
                 >
-                  {/* Strong dark overlay — makes ALL text readable while bg image shows subtly */}
-                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(10,15,30,0.82)' }} />
+                  {/* Dark overlay — content readable, bg image visible */}
+                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(10,15,30,0.65)' }} />
                 </div>
                 <MoMoTicker />
                 <PageNav />

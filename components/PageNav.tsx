@@ -27,7 +27,7 @@ export default function PageNav() {
 
   return (
     <>
-      <nav className="sticky top-0 z-40 border-b border-white/10 bg-[rgba(10,15,30,0.92)] backdrop-blur-md">
+      <nav className="sticky top-0 z-40 border-b border-white/10 bg-[rgba(10,15,30,0.90)] backdrop-blur-md">
         <div className="flex items-center justify-between px-3 py-2 sm:px-6">
 
           {/* Left — back + logo only on mobile */}

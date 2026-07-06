@@ -302,7 +302,10 @@ export default function DashboardPage() {
                             {t("viewDetails")}
                           </button>
                           {booking.status === "COMPLETED" && (
-                            <Link href="/services" className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-100 hover:bg-emerald-400/20">{t("bookAgain")}</Link>
+                            <>
+                              <Link href="/services" className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-100 hover:bg-emerald-400/20">{t("bookAgain")}</Link>
+                              <Link href="/review" className="rounded-full border border-yellow-400/40 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200 hover:bg-yellow-400/20">⭐ Review</Link>
+                            </>
                           )}
                           {booking.status === "PENDING" && (
                             <button
@@ -344,7 +347,10 @@ export default function DashboardPage() {
                           {t("viewDetails")}
                         </button>
                         {booking.status === "COMPLETED" && (
-                          <Link href="/services" className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-100 hover:bg-emerald-400/20">{t("bookAgain")}</Link>
+                          <>
+                            <Link href="/services" className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-100 hover:bg-emerald-400/20">{t("bookAgain")}</Link>
+                            <Link href="/review" className="rounded-full border border-yellow-400/40 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200 hover:bg-yellow-400/20">⭐ Review</Link>
+                          </>
                         )}
                         {booking.status === "PENDING" && (
                           <button

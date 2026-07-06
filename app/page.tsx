@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import UserButtonWithTheme from "../components/UserButtonWithTheme";
 import { useToast } from "../components/ToastProvider";
+import ReviewsSection from "../components/ReviewsSection";
 
 const statItems = [
   { valueKey: "home.statAvailableValue", label: "home.statAvailable" },
@@ -86,7 +87,7 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      <header className={`sticky top-0 z-30 border-b border-white/10 transition-all duration-300 ${scrolled ? "bg-[rgba(10,15,30,0.92)] shadow-sm backdrop-blur-md" : "bg-[rgba(10,15,30,0.80)] backdrop-blur-md"}`}>
+      <header className={`sticky top-0 z-30 border-b border-white/10 transition-all duration-300 ${scrolled ? "bg-[rgba(10,15,30,0.90)] shadow-sm backdrop-blur-md" : "bg-[rgba(10,15,30,0.70)] backdrop-blur-md"}`}>
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-1.5 text-3xl font-black tracking-tight text-cyan-300">
             <span>510</span>
@@ -283,6 +284,12 @@ export default function HomePage() {
               <p className="mt-3 text-sm text-[var(--text-secondary)]">{t("home.firstCustomersSubtext")}</p>
               <Link href="/book" className="mt-5 inline-flex rounded-full bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-cyan-300">{t("home.bookFirstClean")}</Link>
             </article>
+          </section>
+
+          <ReviewsSection />
+
+          <section data-reveal className="w-full">
+            <ReviewsSection />
           </section>
 
           <footer className="mt-6 rounded-3xl border border-white/10 bg-[var(--bg-primary)]/80 p-6 pb-24 pt-12">

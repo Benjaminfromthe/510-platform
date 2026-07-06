@@ -14,12 +14,15 @@ export default authMiddleware({
     "/contact",
     "/privacy",
     "/terms",
+    "/review",
     "/sign-in(.*)",
     "/sign-up(.*)",
     "/api/webhooks/clerk",
     "/api/services",
     "/api/availability",
     "/api/ai/chat",
+    "/api/reviews",
+    "/api/admin/seed",
   ],
   afterAuth(auth, req) {
     // /book and /dashboard and /admin require authentication

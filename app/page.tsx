@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import UserButtonWithTheme from "../components/UserButtonWithTheme";
 import { useToast } from "../components/ToastProvider";
+import ReviewsSection from "../components/ReviewsSection";
 
 const statItems = [
   { valueKey: "home.statAvailableValue", label: "home.statAvailable" },
@@ -283,6 +284,12 @@ export default function HomePage() {
               <p className="mt-3 text-sm text-[var(--text-secondary)]">{t("home.firstCustomersSubtext")}</p>
               <Link href="/book" className="mt-5 inline-flex rounded-full bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-cyan-300">{t("home.bookFirstClean")}</Link>
             </article>
+          </section>
+
+          <ReviewsSection />
+
+          <section data-reveal className="w-full">
+            <ReviewsSection />
           </section>
 
           <footer className="mt-6 rounded-3xl border border-white/10 bg-[var(--bg-primary)]/80 p-6 pb-24 pt-12">

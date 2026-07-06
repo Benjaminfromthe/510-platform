@@ -86,9 +86,9 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      <header className={`sticky top-0 z-30 border-b border-[var(--border-color)] transition-all duration-300 ${scrolled ? "bg-[var(--bg-primary)]/80 shadow-2xl shadow-cyan-500/10 backdrop-blur-md" : "bg-[var(--bg-primary)]/60 backdrop-blur-md"}`}>
+      <header className={`sticky top-0 z-30 border-b border-black/10 transition-all duration-300 ${scrolled ? "bg-white/95 shadow-sm backdrop-blur-md" : "bg-white/90 backdrop-blur-md"}`}>
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-1.5 text-3xl font-black tracking-tight text-slate-900 dark:text-cyan-300">
+          <Link href="/" className="flex items-center gap-1.5 text-3xl font-black tracking-tight text-cyan-600">
             <span>510</span>
           </Link>
           <div className="flex items-center gap-2">

@@ -4,7 +4,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { ArrowLeft, RotateCw, Home, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import UserButtonWithTheme from './UserButtonWithTheme';
 import { SignedIn, SignedOut, SignInButton } from '@clerk/nextjs';
@@ -84,8 +83,7 @@ export default function PageNav() {
 
           {/* Right — compact on mobile */}
           <div className="flex items-center gap-1.5">
-            {/* Theme + language always visible but compact */}
-            <ThemeToggle />
+            {/* Language switcher */}
             <div className="hidden xs:block">
               <LanguageSwitcher />
             </div>

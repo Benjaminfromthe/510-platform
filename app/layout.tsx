@@ -43,9 +43,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} dark`} suppressHydrationWarning>
       <body className="bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased" style={{ fontFamily: 'var(--font-inter), Arial, sans-serif' }}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
           <ClerkProvider>
             <ToastProvider>
               <Providers>
@@ -60,7 +60,10 @@ export default function RootLayout({
                     backgroundAttachment: 'fixed',
                     backgroundRepeat: 'no-repeat',
                   }}
-                />
+                >
+                  {/* Strong dark overlay — makes ALL text readable while bg image shows subtly */}
+                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(10,15,30,0.82)' }} />
+                </div>
                 <MoMoTicker />
                 <PageNav />
                 {children}

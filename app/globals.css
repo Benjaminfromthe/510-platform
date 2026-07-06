@@ -3,31 +3,31 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: #0A0F1E;
-  --bg-secondary: #111827;
-  --bg-card: rgba(17, 24, 39, 0.92);
+  --bg-primary: transparent;
+  --bg-secondary: rgba(255,255,255,0.05);
+  --bg-card: rgba(15, 23, 42, 0.75);
   --text-primary: #F8FAFC;
   --text-secondary: #94A3B8;
   --border-color: rgba(255,255,255,0.12);
   --hero-bg: transparent;
-  --background: #0A0F1E;
+  --background: transparent;
   --foreground: #F8FAFC;
-  --card: rgba(17, 24, 39, 0.92);
+  --card: rgba(15, 23, 42, 0.75);
   --border: rgba(255,255,255,0.12);
   --primary: #06B6D4;
 }
 
 .dark {
-  --bg-primary: #0A0F1E;
-  --bg-secondary: #111827;
-  --bg-card: rgba(17, 24, 39, 0.92);
+  --bg-primary: transparent;
+  --bg-secondary: rgba(255,255,255,0.05);
+  --bg-card: rgba(15, 23, 42, 0.75);
   --text-primary: #F8FAFC;
   --text-secondary: #94A3B8;
   --border-color: rgba(255,255,255,0.12);
   --hero-bg: transparent;
-  --background: #0A0F1E;
+  --background: transparent;
   --foreground: #F8FAFC;
-  --card: rgba(17, 24, 39, 0.92);
+  --card: rgba(15, 23, 42, 0.75);
   --border: rgba(255,255,255,0.12);
   --primary: #06B6D4;
 }

@@ -39,8 +39,22 @@ export async function GET(request: Request) {
   }
 
   try {
-    const results = [];
+    // Create Review table if it doesn't exist (safe to run multiple times)
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS "Review" (
+        "id" SERIAL NOT NULL,
+        "userId" TEXT,
+        "customerName" TEXT NOT NULL,
+        "rating" INTEGER NOT NULL,
+        "comment" TEXT NOT NULL,
+        "serviceName" TEXT NOT NULL DEFAULT 'Cleaning Service',
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "approved" BOOLEAN NOT NULL DEFAULT true,
+        CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
+      )
+    `);
 
+    const results = [];
     for (const service of campusServices) {
       const upserted = await prisma.service.upsert({
         where: { id: service.id },
@@ -57,7 +71,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Campus services seeded — Laptop & Phone only.',
+      message: 'Campus services seeded + Review table created.',
       services: results,
     }, { status: 200 });
   } catch (error) {

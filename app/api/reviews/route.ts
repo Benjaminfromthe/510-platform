@@ -22,6 +22,7 @@ export async function GET() {
     });
     return NextResponse.json({ reviews }, { status: 200 });
   } catch (error) {
+    // Table might not exist yet — return empty instead of crashing
     console.error("Reviews GET error:", error);
     return NextResponse.json({ reviews: [] }, { status: 200 });
   }
@@ -37,7 +38,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
     }
 
-    // Try to get userId from Clerk session
     let userId: string | null = parsed.data.clerkUserId ?? null;
     try {
       const { auth } = await import("@clerk/nextjs/server");
@@ -61,6 +61,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ review }, { status: 201 });
   } catch (error) {
     console.error("Reviews POST error:", error);
-    return NextResponse.json({ error: "Unable to submit review." }, { status: 500 });
+    return NextResponse.json({
+      error: "Unable to submit review. Please try again.",
+    }, { status: 500 });
   }
 }

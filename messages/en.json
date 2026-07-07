@@ -513,7 +513,15 @@
     "quotePendingLabel": "Quote pending",
     "allCaughtUp": "All caught up!",
     "allCaughtUpText": "No active bookings right now. Check your history below or book a new service.",
-    "bookingHistory": "Booking History"
+    "bookingHistory": "Booking History",
+    "loyaltyTitle": "Loyalty Stamp Card",
+    "loyaltySubtitle": "Complete 5 cleans to earn 1 FREE clean",
+    "loyaltyProgress": "{current}/5 — {remaining} more to go!",
+    "loyaltyFree": "🎉 You've earned a FREE clean!",
+    "loyaltyFreeNote": "Show this to your cleaner on your next visit.",
+    "loyaltyFreeCount": "{count} free clean(s) earned so far",
+    "loyaltyFirstClean": "Book your first clean to start collecting stamps!",
+    "loyaltyStamp": "Stamp"
   },
   "reviews": {
     "eyebrow": "Reviews",

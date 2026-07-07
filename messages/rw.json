@@ -513,7 +513,15 @@
     "quotePendingLabel": "Icyegeranyo kirasubizwa",
     "allCaughtUp": "Byose byarangiye!",
     "allCaughtUpText": "Nta busabe buhari ubu. Reba amateka yawe hepfo cyangwa utegane serivisi nshya.",
-    "bookingHistory": "Amateka y'ubusabe"
+    "bookingHistory": "Amateka y'ubusabe",
+    "loyaltyTitle": "Ikarita y'Ubudahemuka",
+    "loyaltySubtitle": "Suka inshuro 5 ubone isuku 1 UBUNTU",
+    "loyaltyProgress": "{current}/5 — {remaining} zisigaye!",
+    "loyaltyFree": "🎉 Waronse isuku UBUNTU!",
+    "loyaltyFreeNote": "Erekana iyi kuri umukoresha wawe mu rugendo rwawe rukurikira.",
+    "loyaltyFreeCount": "Isuku {count} ubuntu yatanzwe kugeza ubu",
+    "loyaltyFirstClean": "Teganya isuku ya mbere utangire gukusanya sitampu!",
+    "loyaltyStamp": "Sitampu"
   },
   "reviews": {
     "eyebrow": "Ibitekerezo",

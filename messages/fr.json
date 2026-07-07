@@ -513,7 +513,15 @@
     "quotePendingLabel": "Devis en attente",
     "allCaughtUp": "Tout est à jour !",
     "allCaughtUpText": "Aucune réservation active pour le moment. Consultez votre historique ci-dessous ou réservez un nouveau service.",
-    "bookingHistory": "Historique des réservations"
+    "bookingHistory": "Historique des réservations",
+    "loyaltyTitle": "Carte de fidélité",
+    "loyaltySubtitle": "Effectuez 5 nettoyages pour obtenir 1 nettoyage GRATUIT",
+    "loyaltyProgress": "{current}/5 — encore {remaining} !",
+    "loyaltyFree": "🎉 Vous avez gagné un nettoyage GRATUIT !",
+    "loyaltyFreeNote": "Montrez ceci à votre nettoyeur lors de votre prochaine visite.",
+    "loyaltyFreeCount": "{count} nettoyage(s) gratuit(s) gagné(s) jusqu'à présent",
+    "loyaltyFirstClean": "Réservez votre premier nettoyage pour commencer à collecter des tampons !",
+    "loyaltyStamp": "Tampon"
   },
   "reviews": {
     "eyebrow": "Avis",

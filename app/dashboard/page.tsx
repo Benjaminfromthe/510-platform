@@ -207,6 +207,85 @@ export default function DashboardPage() {
           ))}
         </div>
 
+        {/* ── Loyalty Stamp Card ── */}
+        {(() => {
+          const totalCompleted = stats.completed;
+          const progress = totalCompleted % 5;          // 0–4 stamps on current card
+          const freeCleansEarned = Math.floor(totalCompleted / 5);
+          const isReady = progress === 0 && totalCompleted > 0; // just hit a multiple of 5
+          const remaining = 5 - progress;
+
+          return (
+            <article className="relative overflow-hidden rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-6 shadow-2xl shadow-black/20">
+              {/* Glow when free clean earned */}
+              {isReady && (
+                <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-br from-cyan-400/10 via-transparent to-yellow-400/10 animate-pulse" />
+              )}
+
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.35em] text-cyan-400">🧹 510</p>
+                  <h2 className="mt-1 text-xl font-semibold text-[var(--text-primary)]">{t("loyaltyTitle")}</h2>
+                  <p className="mt-0.5 text-sm text-[var(--text-secondary)]">{t("loyaltySubtitle")}</p>
+                </div>
+                {freeCleansEarned > 0 && (
+                  <span className="rounded-full bg-cyan-400/10 border border-cyan-400/30 px-3 py-1 text-xs font-semibold text-cyan-400">
+                    {t("loyaltyFreeCount", { count: freeCleansEarned })}
+                  </span>
+                )}
+              </div>
+
+              {/* Stamp circles */}
+              <div className="mt-5 flex items-center gap-3">
+                {[1, 2, 3, 4, 5].map((i) => {
+                  const filled = isReady ? true : i <= progress;
+                  return (
+                    <div
+                      key={i}
+                      className={`relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 text-lg font-bold transition-all duration-300 ${
+                        filled
+                          ? "border-cyan-400 bg-cyan-400/20 text-cyan-400 scale-110 shadow-lg shadow-cyan-400/20"
+                          : "border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] opacity-50"
+                      }`}
+                    >
+                      {filled ? "✓" : i}
+                    </div>
+                  );
+                })}
+
+                {/* Progress bar */}
+                <div className="ml-2 flex-1">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg-secondary)]">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-cyan-300 transition-all duration-700"
+                      style={{ width: isReady ? "100%" : `${(progress / 5) * 100}%` }}
+                    />
+                  </div>
+                  <p className="mt-1.5 text-xs text-[var(--text-secondary)]">
+                    {totalCompleted === 0
+                      ? t("loyaltyFirstClean")
+                      : isReady
+                      ? t("loyaltyFree")
+                      : t("loyaltyProgress", { current: progress, remaining })}
+                  </p>
+                </div>
+              </div>
+
+              {/* Free clean celebration banner */}
+              {isReady && (
+                <div className="mt-4 flex items-center gap-3 rounded-2xl border border-yellow-400/30 bg-yellow-400/10 px-4 py-3">
+                  <span className="text-2xl">🎁</span>
+                  <div>
+                    <p className="text-sm font-semibold text-yellow-400">{t("loyaltyFree")}</p>
+                    <p className="text-xs text-[var(--text-secondary)]">{t("loyaltyFreeNote")}</p>
+                  </div>
+                </div>
+              )}
+            </article>
+          );
+        })()}
+
+
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-2xl shadow-black/20">
           <div>
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">{t("manageTitle")}</h2>

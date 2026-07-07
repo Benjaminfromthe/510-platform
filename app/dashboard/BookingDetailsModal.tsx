@@ -17,6 +17,9 @@ export type BookingRecord = {
   phone?: string | null;
   email?: string | null;
   addOns?: string[] | null;
+  beforePhotoUrl?: string | null;
+  afterPhotoUrl?: string | null;
+  reportNote?: string | null;
 };
 
 type BookingDetailsModalProps = {
@@ -202,6 +205,57 @@ export default function BookingDetailsModal({ booking, serviceName, onClose }: B
             <article className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-sm text-[var(--text-secondary)] md:col-span-2">
               <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-secondary)]">{t("addOns")}</p>
               <p className="mt-2 text-[var(--text-secondary)]">{booking.addOns.join(", ")}</p>
+            </article>
+          ) : null}
+
+          {/* ── Cleaning Report ── */}
+          {(booking.beforePhotoUrl || booking.afterPhotoUrl || booking.reportNote) ? (
+            <article className="rounded-2xl border border-cyan-400/30 bg-cyan-400/5 p-4 md:col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-lg">📸</span>
+                <p className="text-sm font-semibold text-cyan-400">{t("reportTitle")}</p>
+                <span className="ml-auto rounded-full bg-cyan-400/10 border border-cyan-400/30 px-2.5 py-0.5 text-xs font-semibold text-cyan-400">{t("reportBadge")}</span>
+              </div>
+
+              {/* Before / After photos */}
+              {(booking.beforePhotoUrl || booking.afterPhotoUrl) && (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {booking.beforePhotoUrl && (
+                    <div className="space-y-2">
+                      <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-secondary)]">{t("reportBefore")}</p>
+                      <a href={booking.beforePhotoUrl} target="_blank" rel="noopener noreferrer" className="block">
+                        <img
+                          src={booking.beforePhotoUrl}
+                          alt="Before cleaning"
+                          className="w-full rounded-xl object-cover border border-[var(--border-color)] hover:opacity-80 transition max-h-48"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        />
+                      </a>
+                    </div>
+                  )}
+                  {booking.afterPhotoUrl && (
+                    <div className="space-y-2">
+                      <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-secondary)]">{t("reportAfter")}</p>
+                      <a href={booking.afterPhotoUrl} target="_blank" rel="noopener noreferrer" className="block">
+                        <img
+                          src={booking.afterPhotoUrl}
+                          alt="After cleaning"
+                          className="w-full rounded-xl object-cover border border-cyan-400/30 hover:opacity-80 transition max-h-48"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        />
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Technician note */}
+              {booking.reportNote && (
+                <div className="mt-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] px-4 py-3">
+                  <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-secondary)] mb-1">{t("reportNote")}</p>
+                  <p className="text-sm text-[var(--text-primary)]">&ldquo;{booking.reportNote}&rdquo;</p>
+                </div>
+              )}
             </article>
           ) : null}
         </div>

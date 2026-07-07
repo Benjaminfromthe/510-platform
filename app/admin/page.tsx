@@ -26,6 +26,9 @@ type BookingRecord = {
   email?: string | null;
   address?: string | null;
   staffId?: number | null;
+  beforePhotoUrl?: string | null;
+  afterPhotoUrl?: string | null;
+  reportNote?: string | null;
 };
 
 type ServiceRecord = { id: number; name: string };
@@ -104,6 +107,12 @@ export default function AdminPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [roleReady, setRoleReady] = useState(false);
+  const [reportPanelId, setReportPanelId] = useState<number | null>(null);
+  const [reportDraft, setReportDraft] = useState<{ beforePhotoUrl: string; afterPhotoUrl: string; reportNote: string }>({
+    beforePhotoUrl: "",
+    afterPhotoUrl: "",
+    reportNote: "",
+  });
 
   // Force-reload the Clerk user on mount so publicMetadata is always fresh.
   // Without this, a stale JWT can cause the ADMIN role to appear missing
@@ -286,6 +295,36 @@ export default function AdminPage() {
     setBookings((current) => current.filter((b) => b.id !== bookingId));
   }
 
+  async function saveReport(bookingId: number) {
+    setUpdatingId(bookingId);
+    try {
+      const body: Record<string, string | null> = {};
+      if (reportDraft.beforePhotoUrl) body.beforePhotoUrl = reportDraft.beforePhotoUrl;
+      if (reportDraft.afterPhotoUrl) body.afterPhotoUrl = reportDraft.afterPhotoUrl;
+      if (reportDraft.reportNote) body.reportNote = reportDraft.reportNote;
+      const response = await fetch(`/api/bookings/${bookingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Unable to save report");
+      setBookings((current) =>
+        current.map((b) =>
+          b.id === bookingId
+            ? { ...b, beforePhotoUrl: reportDraft.beforePhotoUrl || null, afterPhotoUrl: reportDraft.afterPhotoUrl || null, reportNote: reportDraft.reportNote || null }
+            : b
+        )
+      );
+      setReportPanelId(null);
+    } catch (error) {
+      console.error("Save report failed", error);
+      alert(error instanceof Error ? error.message : "Unable to save report");
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
   function exportCsv() {
     const rows = [
       ["Booking ID", "Customer", "Service", "Date", "Time", "Status", "Price", "Staff ID"],
@@ -390,6 +429,7 @@ export default function AdminPage() {
                 </thead>
                 <tbody className="divide-y divide-[var(--border-color)]">
                   {filteredBookings.map((booking) => (
+                    <>
                     <tr key={booking.id} className="hover:bg-[var(--bg-secondary)]/40">
                       <td className="px-3 py-4 text-[var(--text-primary)]">{booking.customerName || booking.email || `Booking ${booking.id}`}</td>
                       <td className="px-3 py-4">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</td>
@@ -431,6 +471,31 @@ export default function AdminPage() {
                               {updatingId === booking.id ? "Saving…" : "✓ Mark Served"}
                             </button>
                           )}
+                          {/* Photo Report button — only for COMPLETED bookings */}
+                          {booking.status === "COMPLETED" && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (reportPanelId === booking.id) {
+                                  setReportPanelId(null);
+                                } else {
+                                  setReportPanelId(booking.id);
+                                  setReportDraft({
+                                    beforePhotoUrl: booking.beforePhotoUrl || "",
+                                    afterPhotoUrl: booking.afterPhotoUrl || "",
+                                    reportNote: booking.reportNote || "",
+                                  });
+                                }
+                              }}
+                              className={`rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+                                booking.beforePhotoUrl || booking.afterPhotoUrl
+                                  ? "border-cyan-400/40 bg-cyan-400/10 text-cyan-400 hover:bg-cyan-400/20"
+                                  : "border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-cyan-400/40 hover:text-cyan-400"
+                              }`}
+                            >
+                              {booking.beforePhotoUrl || booking.afterPhotoUrl ? "📸 Report ✓" : "📸 Add Report"}
+                            </button>
+                          )}
                           {/* WhatsApp quick-send button */}
                           {(() => {
                             const link = buildWhatsAppLink(booking, serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`);
@@ -462,6 +527,72 @@ export default function AdminPage() {
                         </div>
                       </td>
                     </tr>
+                    {/* Inline photo report form */}
+                    {reportPanelId === booking.id && (
+                      <tr key={`report-${booking.id}`}>
+                        <td colSpan={7} className="px-3 pb-4">
+                          <div className="rounded-2xl border border-cyan-400/30 bg-cyan-400/5 p-4 space-y-3">
+                            <p className="text-sm font-semibold text-cyan-400">📸 Cleaning Report for {booking.customerName || `#${booking.id}`}</p>
+                            <div className="grid gap-3 md:grid-cols-2">
+                              <div className="space-y-1">
+                                <label className="text-xs uppercase tracking-[0.25em] text-[var(--text-secondary)]">Before photo URL</label>
+                                <input
+                                  type="url"
+                                  placeholder="https://..."
+                                  value={reportDraft.beforePhotoUrl}
+                                  onChange={(e) => setReportDraft((d) => ({ ...d, beforePhotoUrl: e.target.value }))}
+                                  className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-cyan-400 focus:outline-none"
+                                />
+                                {reportDraft.beforePhotoUrl && (
+                                  <img src={reportDraft.beforePhotoUrl} alt="before" className="mt-1 h-24 w-full rounded-xl object-cover border border-[var(--border-color)]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                                )}
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-xs uppercase tracking-[0.25em] text-[var(--text-secondary)]">After photo URL</label>
+                                <input
+                                  type="url"
+                                  placeholder="https://..."
+                                  value={reportDraft.afterPhotoUrl}
+                                  onChange={(e) => setReportDraft((d) => ({ ...d, afterPhotoUrl: e.target.value }))}
+                                  className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-cyan-400 focus:outline-none"
+                                />
+                                {reportDraft.afterPhotoUrl && (
+                                  <img src={reportDraft.afterPhotoUrl} alt="after" className="mt-1 h-24 w-full rounded-xl object-cover border border-cyan-400/30" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                                )}
+                              </div>
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-xs uppercase tracking-[0.25em] text-[var(--text-secondary)]">Technician note (optional)</label>
+                              <textarea
+                                placeholder="e.g. Screen was dusty, keyboard cleaned thoroughly..."
+                                value={reportDraft.reportNote}
+                                onChange={(e) => setReportDraft((d) => ({ ...d, reportNote: e.target.value }))}
+                                rows={2}
+                                className="w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-cyan-400 focus:outline-none resize-none"
+                              />
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => void saveReport(booking.id)}
+                                disabled={updatingId === booking.id}
+                                className="rounded-xl bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-300 disabled:opacity-50 transition-colors"
+                              >
+                                {updatingId === booking.id ? "Saving…" : "✓ Save Report"}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setReportPanelId(null)}
+                                className="rounded-xl border border-[var(--border-color)] px-4 py-2 text-sm text-[var(--text-secondary)] hover:border-cyan-400 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    </>
                   ))}
                 </tbody>
               </table>

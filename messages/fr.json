@@ -468,7 +468,13 @@
     "trackerStep5": "Terminé ! ✨",
     "trackerStep5Sub": "Appareil propre et frais",
     "trackerCancelled": "Réservation annulée",
-    "trackerCancelledSub": "Cette réservation a été annulée"
+    "trackerCancelledSub": "Cette réservation a été annulée",
+    "reportTitle": "Rapport de nettoyage",
+    "reportBefore": "Avant",
+    "reportAfter": "Après",
+    "reportNote": "Note du technicien",
+    "reportBadge": "Rapport disponible",
+    "reportNone": "Pas encore de rapport"
   },
   "momo": {
     "label": "Paiement via MoMo — Code :",

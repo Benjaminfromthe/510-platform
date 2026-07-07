@@ -468,7 +468,13 @@
     "trackerStep5": "Byarangiye! ✨",
     "trackerStep5Sub": "Igikoresho cyawe gisukuye",
     "trackerCancelled": "Ubusabe bwaguye",
-    "trackerCancelledSub": "Ubusabe bwaguye bwateguriwe"
+    "trackerCancelledSub": "Ubusabe bwaguye bwateguriwe",
+    "reportTitle": "Raporo y'isuku",
+    "reportBefore": "Mbere",
+    "reportAfter": "Nyuma",
+    "reportNote": "Icyitonderwa cy'umukozi",
+    "reportBadge": "Raporo iboneka",
+    "reportNone": "Nta raporo irahari"
   },
   "momo": {
     "label": "Ishyura ukoresheje MoMo — Kode:",

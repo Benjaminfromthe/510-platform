@@ -46,6 +46,9 @@ model Booking {
   quoteDescription String
   quotedPrice      Float?
   urgency          String
+  beforePhotoUrl   String?
+  afterPhotoUrl    String?
+  reportNote       String?
   staff            Staff?        @relation(fields: [staffId], references: [id])
 }
 

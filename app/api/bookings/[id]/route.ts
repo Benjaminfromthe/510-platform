@@ -10,6 +10,9 @@ const updateBookingSchema = z.object({
   status: statusSchema.optional(),
   staffId: z.coerce.number().int().positive().optional().nullable(),
   quotedPrice: z.coerce.number().nonnegative().optional().nullable(),
+  beforePhotoUrl: z.string().url().optional().nullable(),
+  afterPhotoUrl: z.string().url().optional().nullable(),
+  reportNote: z.string().max(600).optional().nullable(),
 });
 
 function getRole(sessionClaims: Record<string, unknown>): string {
@@ -82,8 +85,11 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       data: {
         ...(parsed.data.status ? { status: parsed.data.status } : {}),
         ...(parsed.data.staffId !== undefined ? { staffId: parsed.data.staffId } : {}),
-        // Only admin can set quoted price
+        // Admin-only fields
         ...(isAdmin && parsed.data.quotedPrice !== undefined ? { quotedPrice: parsed.data.quotedPrice } : {}),
+        ...(isAdmin && parsed.data.beforePhotoUrl !== undefined ? { beforePhotoUrl: parsed.data.beforePhotoUrl } : {}),
+        ...(isAdmin && parsed.data.afterPhotoUrl !== undefined ? { afterPhotoUrl: parsed.data.afterPhotoUrl } : {}),
+        ...(isAdmin && parsed.data.reportNote !== undefined ? { reportNote: parsed.data.reportNote } : {}),
       },
     });
 

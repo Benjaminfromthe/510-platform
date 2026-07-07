@@ -65,15 +65,24 @@ export default function AdminPage() {
   const [dateFilter, setDateFilter] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [roleReady, setRoleReady] = useState(false);
+
+  // Force-reload the Clerk user on mount so publicMetadata is always fresh.
+  // Without this, a stale JWT can cause the ADMIN role to appear missing
+  // right after it's set in the Clerk dashboard.
+  useEffect(() => {
+    if (!isLoaded || !user) return;
+    user.reload().finally(() => setRoleReady(true));
+  }, [isLoaded, user]);
 
   const role = String(user?.publicMetadata?.role || user?.unsafeMetadata?.role || "").toUpperCase();
 
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!isLoaded || !roleReady) return;
     if (role !== "ADMIN") {
       router.replace("/dashboard");
     }
-  }, [isLoaded, role, router]);
+  }, [isLoaded, roleReady, role, router]);
 
   useEffect(() => {
     async function loadData() {
@@ -267,7 +276,7 @@ export default function AdminPage() {
     URL.revokeObjectURL(url);
   }
 
-  if (!isLoaded) {
+  if (!isLoaded || !roleReady) {
     return <main className="min-h-screen bg-[var(--bg-primary)] p-8 text-[var(--text-primary)]">Loading admin access…</main>;
   }
 

@@ -141,14 +141,14 @@ export default function PageNav() {
                   onClick={() => { router.refresh(); setMenuOpen(false); }}
                   className="flex-1 rounded-xl border border-[var(--border-color)] py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center justify-center gap-2"
                 >
-                  <RotateCw className="h-4 w-4" /> Refresh
+                  <RotateCw className="h-4 w-4" /> {t('refresh')}
                 </button>
                 <Link
                   href="/"
                   onClick={() => setMenuOpen(false)}
                   className="flex-1 rounded-xl border border-[var(--border-color)] py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center justify-center gap-2"
                 >
-                  <Home className="h-4 w-4" /> Home
+                  <Home className="h-4 w-4" /> {t('home')}
                 </Link>
               </div>
             </div>

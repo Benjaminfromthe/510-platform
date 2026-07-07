@@ -281,8 +281,8 @@ export default function DashboardPage() {
                 {activeBookings.length === 0 ? (
                   <section className="rounded-3xl border border-dashed border-[var(--border-color)] bg-[var(--bg-card)]/70 p-8 text-[var(--text-secondary)] shadow-2xl shadow-black/20 text-center">
                     <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-400"><Sparkles className="h-7 w-7" /></div>
-                    <h3 className="mt-4 text-xl font-semibold text-[var(--text-primary)]">All caught up!</h3>
-                    <p className="mt-2 text-sm text-[var(--text-secondary)]">No active bookings right now. Check your history below or book a new service.</p>
+                    <h3 className="mt-4 text-xl font-semibold text-[var(--text-primary)]">{t("allCaughtUp")}</h3>
+                    <p className="mt-2 text-sm text-[var(--text-secondary)]">{t("allCaughtUpText")}</p>
                     <Link href="/services" className="mt-5 inline-flex rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950">{t("emptyAction")}</Link>
                   </section>
                 ) : (
@@ -342,7 +342,7 @@ export default function DashboardPage() {
                               {booking.status}
                             </span>
                           </div>
-                          <p className="mt-3 text-sm text-[var(--text-secondary)]">{booking.totalPrice != null ? booking.totalPrice.toLocaleString("en-US") + " RWF" : "Quote pending"}</p>
+                          <p className="mt-3 text-sm text-[var(--text-secondary)]">{booking.totalPrice != null ? booking.totalPrice.toLocaleString("en-US") + " RWF" : t("quotePendingLabel")}</p>
                           <div className="mt-4 flex flex-wrap gap-2">
                             <button type="button" onClick={() => setSelectedBooking(booking)} className="rounded-full border border-[var(--border-color)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:border-cyan-400">
                               {t("viewDetails")}
@@ -368,7 +368,7 @@ export default function DashboardPage() {
                       className="flex w-full items-center justify-between px-6 py-4 text-left hover:bg-[var(--bg-secondary)]/40 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-semibold text-[var(--text-primary)]">Booking History</span>
+                        <span className="text-sm font-semibold text-[var(--text-primary)]">{t("bookingHistory")}</span>
                         <span className="rounded-full bg-[var(--bg-secondary)] px-2.5 py-0.5 text-xs font-semibold text-[var(--text-secondary)]">
                           {historyBookings.length}
                         </span>

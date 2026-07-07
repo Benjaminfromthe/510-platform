@@ -11,7 +11,9 @@
     "myBookings": "My Bookings",
     "subscriptions": "Subscriptions",
     "signIn": "Sign In",
-    "createAccount": "Create Account"
+    "createAccount": "Create Account",
+    "refresh": "Refresh",
+    "home": "Home"
   },
   "services": "Services",
   "bookNow": "Book now",
@@ -508,6 +510,23 @@
     "colStatus": "Status",
     "colPrice": "Price",
     "colActions": "Actions",
-    "quotePendingLabel": "Quote pending"
+    "quotePendingLabel": "Quote pending",
+    "allCaughtUp": "All caught up!",
+    "allCaughtUpText": "No active bookings right now. Check your history below or book a new service.",
+    "bookingHistory": "Booking History"
+  },
+  "reviews": {
+    "eyebrow": "Reviews",
+    "title": "What students say",
+    "leaveReview": "Leave a Review ✍️",
+    "noReviews": "No reviews yet. Be the first!",
+    "writeReview": "Write a Review",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo": "{days} days ago",
+    "weekAgo": "1 week ago",
+    "weeksAgo": "{weeks} weeks ago",
+    "monthAgo": "1 month ago",
+    "monthsAgo": "{months} months ago"
   }
 }

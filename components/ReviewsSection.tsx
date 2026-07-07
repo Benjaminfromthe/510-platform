@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 type Review = {
   id: number;
@@ -26,17 +27,8 @@ function StarDisplay({ rating }: { rating: number }) {
   );
 }
 
-function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const days = Math.floor(diff / 86400000);
-  if (days === 0) return "Today";
-  if (days === 1) return "Yesterday";
-  if (days < 7) return `${days} days ago`;
-  if (days < 30) return `${Math.floor(days / 7)} week${Math.floor(days / 7) > 1 ? "s" : ""} ago`;
-  return `${Math.floor(days / 30)} month${Math.floor(days / 30) > 1 ? "s" : ""} ago`;
-}
-
 export default function ReviewsSection() {
+  const t = useTranslations("reviews");
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -48,6 +40,20 @@ export default function ReviewsSection() {
       .finally(() => setLoading(false));
   }, []);
 
+  function timeAgo(dateStr: string): string {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const days = Math.floor(diff / 86400000);
+    if (days === 0) return t("today");
+    if (days === 1) return t("yesterday");
+    if (days < 7) return t("daysAgo", { days });
+    const weeks = Math.floor(days / 7);
+    if (weeks === 1) return t("weekAgo");
+    if (weeks < 5) return t("weeksAgo", { weeks });
+    const months = Math.floor(days / 30);
+    if (months === 1) return t("monthAgo");
+    return t("monthsAgo", { months });
+  }
+
   const avgRating = reviews.length
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
     : null;
@@ -57,9 +63,9 @@ export default function ReviewsSection() {
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.35em] text-cyan-400">Reviews</p>
+          <p className="text-xs uppercase tracking-[0.35em] text-cyan-400">{t("eyebrow")}</p>
           <h2 className="mt-1 text-2xl font-black text-[var(--text-primary)]">
-            What students say
+            {t("title")}
             {avgRating && (
               <span className="ml-3 text-lg font-bold text-yellow-400">⭐ {avgRating}</span>
             )}
@@ -69,7 +75,7 @@ export default function ReviewsSection() {
           href="/review"
           className="rounded-full bg-cyan-400 px-5 py-2.5 text-sm font-bold text-slate-950 hover:bg-cyan-300 transition"
         >
-          Leave a Review ✍️
+          {t("leaveReview")}
         </Link>
       </div>
 
@@ -86,9 +92,9 @@ export default function ReviewsSection() {
         </div>
       ) : reviews.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--border-color)] bg-[var(--bg-card)] p-8 text-center">
-          <p className="text-[var(--text-secondary)]">No reviews yet. Be the first!</p>
+          <p className="text-[var(--text-secondary)]">{t("noReviews")}</p>
           <Link href="/review" className="mt-3 inline-flex rounded-full bg-cyan-400 px-5 py-2 text-sm font-bold text-slate-950 hover:bg-cyan-300 transition">
-            Write a Review
+            {t("writeReview")}
           </Link>
         </div>
       ) : (

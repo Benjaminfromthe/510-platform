@@ -318,8 +318,6 @@ export default function HomePage() {
                 <ul className="mt-3 space-y-2 text-sm text-[var(--text-secondary)]">
                   <li className="flex items-center gap-2"><MessageCircleMore className="h-4 w-4 text-cyan-300" />{t("footer.contactWhatsApp")}</li>
                   <li className="flex items-center gap-2"><a href="https://wa.me/250787769046?text=Hello%20510%20Cleaning%20Services!%20I%20would%20like%20to%20book%20a%20cleaning%20service." target="_blank" rel="noreferrer" className="text-cyan-200 underline decoration-cyan-400/40 underline-offset-4 hover:text-cyan-100">{t("ui.whatsappLabel")}</a></li>
-                  <li className="flex items-center gap-2"><Globe className="h-4 w-4 text-cyan-300" />{t("footer.contactFacebook")}</li>
-                  <li className="flex items-center gap-2"><Send className="h-4 w-4 text-cyan-300" />{t("footer.contactInstagram")}</li>
                 </ul>
               </div>
             </div>

@@ -63,8 +63,6 @@ export default function ContactPage() {
             </span>
             <h2 className="mt-4 text-xl font-semibold text-[var(--text-primary)]">{t("socialTitle")}</h2>
             <div className="mt-3 space-y-2 text-sm text-[var(--text-secondary)]">
-              <p>Facebook: <span className="font-medium text-[var(--text-primary)]">510 Cleaning Services</span></p>
-              <p>Instagram: <span className="font-medium text-[var(--text-primary)]">@510cleaning</span></p>
               <p>WhatsApp: <span className="font-medium text-[var(--text-primary)]">+250 787 769 046</span></p>
             </div>
           </article>

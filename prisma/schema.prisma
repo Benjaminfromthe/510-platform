@@ -76,6 +76,17 @@ model Subscription {
   updatedAt        DateTime @updatedAt
 }
 
+model Review {
+  id           Int      @id @default(autoincrement())
+  userId       String?
+  customerName String
+  rating       Int      // 1-5 stars
+  comment      String
+  serviceName  String   @default("Cleaning Service")
+  createdAt    DateTime @default(now())
+  approved     Boolean  @default(true)
+}
+
 enum UserRole {
   CUSTOMER
   ADMIN

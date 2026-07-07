@@ -246,25 +246,27 @@ export default function DashboardPage() {
               </div>
 
               {/* Stamp circles */}
-              <div className="mt-5 flex items-center gap-3">
-                {[1, 2, 3, 4, 5].map((i) => {
-                  const filled = isReady ? true : i <= progress;
-                  return (
-                    <div
-                      key={i}
-                      className={`relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 text-lg font-bold transition-all duration-300 ${
-                        filled
-                          ? "border-cyan-400 bg-cyan-400/20 text-cyan-400 scale-110 shadow-lg shadow-cyan-400/20"
-                          : "border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] opacity-50"
-                      }`}
-                    >
-                      {filled ? "✓" : i}
-                    </div>
-                  );
-                })}
+              <div className="mt-5">
+                <div className="flex items-center justify-between gap-1.5">
+                  {[1, 2, 3, 4, 5].map((i) => {
+                    const filled = isReady ? true : i <= progress;
+                    return (
+                      <div
+                        key={i}
+                        className={`flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-full border-2 text-base sm:text-lg font-bold transition-all duration-300 ${
+                          filled
+                            ? "border-cyan-400 bg-cyan-400/20 text-cyan-400 scale-110 shadow-lg shadow-cyan-400/20"
+                            : "border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] opacity-50"
+                        }`}
+                      >
+                        {filled ? "✓" : i}
+                      </div>
+                    );
+                  })}
+                </div>
 
-                {/* Progress bar */}
-                <div className="ml-2 flex-1">
+                {/* Progress bar — full width below circles */}
+                <div className="mt-3">
                   <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg-secondary)]">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-cyan-300 transition-all duration-700"
@@ -280,6 +282,7 @@ export default function DashboardPage() {
                   </p>
                 </div>
               </div>
+
 
               {/* Free clean celebration banner */}
               {isReady && (

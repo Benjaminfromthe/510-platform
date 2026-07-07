@@ -454,7 +454,21 @@
     "noNotes": "Aucune note fournie.",
     "addOns": "Suppléments",
     "noAddOns": "Aucun supplément sélectionné",
-    "close": "Fermer"
+    "close": "Fermer",
+    "trackerTitle": "Suivi en direct",
+    "trackerRefresh": "Actualisation auto",
+    "trackerStep1": "Réservation reçue",
+    "trackerStep1Sub": "Nous avons reçu votre demande",
+    "trackerStep2": "Confirmée",
+    "trackerStep2Sub": "Votre créneau est réservé",
+    "trackerStep3": "En chemin",
+    "trackerStep3Sub": "Le nettoyeur arrive vers vous",
+    "trackerStep4": "Nettoyage",
+    "trackerStep4Sub": "Votre appareil est en cours de nettoyage",
+    "trackerStep5": "Terminé ! ✨",
+    "trackerStep5Sub": "Appareil propre et frais",
+    "trackerCancelled": "Réservation annulée",
+    "trackerCancelledSub": "Cette réservation a été annulée"
   },
   "momo": {
     "label": "Paiement via MoMo — Code :",

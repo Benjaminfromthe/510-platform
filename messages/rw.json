@@ -454,7 +454,21 @@
     "noNotes": "Nta manotisi atanzwe.",
     "addOns": "Inyongera",
     "noAddOns": "Nta nyongera zahisemo",
-    "close": "Gufunga"
+    "close": "Gufunga",
+    "trackerTitle": "Gukurikira ubusabe",
+    "trackerRefresh": "Bivugururwa bwite",
+    "trackerStep1": "Ubusabe bwarakiriwe",
+    "trackerStep1Sub": "Twabonye ubusabe bwawe",
+    "trackerStep2": "Byemejwe",
+    "trackerStep2Sub": "Isaha yawe yafunzwe",
+    "trackerStep3": "Tuza iwanyu",
+    "trackerStep3Sub": "Umukozi aza iwanyu",
+    "trackerStep4": "Gusukura",
+    "trackerStep4Sub": "Igikoresho cyawe kirasukurwa",
+    "trackerStep5": "Byarangiye! ✨",
+    "trackerStep5Sub": "Igikoresho cyawe gisukuye",
+    "trackerCancelled": "Ubusabe bwaguye",
+    "trackerCancelledSub": "Ubusabe bwaguye bwateguriwe"
   },
   "momo": {
     "label": "Ishyura ukoresheje MoMo — Kode:",

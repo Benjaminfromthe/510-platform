@@ -145,6 +145,16 @@ export default function DashboardPage() {
     [bookings]
   );
 
+  // Auto-refresh every 30 s while any booking is still active so the tracker stays live
+  useEffect(() => {
+    const hasActive = bookings.some(
+      (b) => b.status === "PENDING" || b.status === "PENDING_QUOTE" || b.status === "CONFIRMED" || b.status === "IN_PROGRESS"
+    );
+    if (!hasActive) return;
+    const interval = setInterval(() => void loadDashboardData(), 30_000);
+    return () => clearInterval(interval);
+  }, [bookings, loadDashboardData]);
+
   const handleSubscriptionStatus = async (status: "PAUSED" | "CANCELLED") => {
     try {
       setBusySubscription(true);

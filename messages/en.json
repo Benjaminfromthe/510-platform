@@ -454,7 +454,21 @@
     "noNotes": "No notes provided.",
     "addOns": "Add-ons",
     "noAddOns": "No add-ons selected",
-    "close": "Close"
+    "close": "Close",
+    "trackerTitle": "Live Booking Tracker",
+    "trackerRefresh": "Auto-refreshing",
+    "trackerStep1": "Booking Received",
+    "trackerStep1Sub": "We got your request",
+    "trackerStep2": "Confirmed",
+    "trackerStep2Sub": "Your slot is locked in",
+    "trackerStep3": "On the Way",
+    "trackerStep3Sub": "Cleaner is heading to you",
+    "trackerStep4": "Cleaning",
+    "trackerStep4Sub": "Your device is being cleaned",
+    "trackerStep5": "Done! ✨",
+    "trackerStep5Sub": "Device is fresh and clean",
+    "trackerCancelled": "Booking Cancelled",
+    "trackerCancelledSub": "This booking was cancelled"
   },
   "momo": {
     "label": "Pay via MoMo — Code:",

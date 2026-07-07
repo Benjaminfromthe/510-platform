@@ -288,9 +288,7 @@ export default function HomePage() {
 
           <ReviewsSection />
 
-          <section data-reveal className="w-full">
-            <ReviewsSection />
-          </section>
+
 
           <footer className="mt-6 rounded-3xl border border-white/10 bg-[var(--bg-primary)]/80 p-6 pb-24 pt-12">
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">

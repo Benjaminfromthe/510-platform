@@ -214,6 +214,31 @@ export default function AdminPage() {
     }
   }
 
+  async function markAsServed(bookingId: number) {
+    setUpdatingId(bookingId);
+    try {
+      const response = await fetch(`/api/bookings/${bookingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "COMPLETED" }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Unable to mark booking as served");
+      setBookings((current) =>
+        current.map((b) => b.id === bookingId ? { ...b, status: "COMPLETED" } : b)
+      );
+    } catch (error) {
+      console.error("Mark served failed", error);
+      alert(error instanceof Error ? error.message : "Unable to mark booking as served");
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
+  function removeFromView(bookingId: number) {
+    setBookings((current) => current.filter((b) => b.id !== bookingId));
+  }
+
   function exportCsv() {
     const rows = [
       ["Booking ID", "Customer", "Service", "Date", "Time", "Status", "Price", "Staff ID"],
@@ -313,6 +338,7 @@ export default function AdminPage() {
                     <th className="px-3 py-3">Status</th>
                     <th className="px-3 py-3">Staff</th>
                     <th className="px-3 py-3">Quoted Price (RWF)</th>
+                    <th className="px-3 py-3">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-color)]">
@@ -345,6 +371,29 @@ export default function AdminPage() {
                         {booking.quotedPrice != null && (
                           <p className="mt-1 text-xs text-cyan-400">{booking.quotedPrice.toLocaleString()} RWF</p>
                         )}
+                      </td>
+                      <td className="px-3 py-4">
+                        <div className="flex gap-2">
+                          {booking.status !== "COMPLETED" && booking.status !== "CANCELLED" && (
+                            <button
+                              type="button"
+                              onClick={() => void markAsServed(booking.id)}
+                              disabled={updatingId === booking.id}
+                              className="rounded-xl bg-emerald-500/20 border border-emerald-500/40 px-3 py-2 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+                            >
+                              {updatingId === booking.id ? "Saving…" : "✓ Mark Served"}
+                            </button>
+                          )}
+                          {(booking.status === "COMPLETED" || booking.status === "CANCELLED") && (
+                            <button
+                              type="button"
+                              onClick={() => removeFromView(booking.id)}
+                              className="rounded-xl bg-rose-500/10 border border-rose-500/30 px-3 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/20 transition-colors"
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}

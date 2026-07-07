@@ -64,6 +64,7 @@ export default function DashboardPage() {
   const [selectedBooking, setSelectedBooking] = useState<BookingRecord | null>(null);
   const [busyBookingId, setBusyBookingId] = useState<number | null>(null);
   const [busySubscription, setBusySubscription] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const loadDashboardData = useCallback(async () => {
     setLoading(true);
@@ -127,14 +128,22 @@ export default function DashboardPage() {
   }, [services]);
 
   const stats = useMemo(() => {
-    const now = new Date();
-
     return {
       total: bookings.length,
       pending: bookings.filter((booking) => booking.status === "PENDING" || booking.status === "PENDING_QUOTE").length,
       completed: bookings.filter((booking) => booking.status === "COMPLETED").length,
     };
   }, [bookings]);
+
+  const activeBookings = useMemo(
+    () => bookings.filter((b) => b.status !== "COMPLETED" && b.status !== "CANCELLED"),
+    [bookings]
+  );
+
+  const historyBookings = useMemo(
+    () => bookings.filter((b) => b.status === "COMPLETED" || b.status === "CANCELLED"),
+    [bookings]
+  );
 
   const handleSubscriptionStatus = async (status: "PAUSED" | "CANCELLED") => {
     try {
@@ -268,104 +277,178 @@ export default function DashboardPage() {
               </section>
             ) : (
               <>
-                <div className="hidden overflow-x-auto rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] shadow-2xl shadow-black/20 lg:block">
-              <table className="min-w-full divide-y divide-[var(--border-color)] text-left text-sm text-[var(--text-secondary)]">
-                <thead className="bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
-                  <tr>
-                    <th className="px-4 py-3">{t("colService")}</th>
-                    <th className="px-4 py-3">{t("colDate")}</th>
-                    <th className="px-4 py-3">{t("colTime")}</th>
-                    <th className="px-4 py-3">{t("colStatus")}</th>
-                    <th className="px-4 py-3">{t("colPrice")}</th>
-                    <th className="px-4 py-3">{t("colActions")}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--border-color)]">
-                  {bookings.map((booking) => (
-                    <tr key={booking.id} className="hover:bg-[var(--bg-secondary)]/50">
-                      <td className="px-4 py-4 text-[var(--text-primary)]">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</td>
-                      <td className="px-4 py-4">{formatDate(booking.scheduledDate)}</td>
-                      <td className="px-4 py-4">{formatTime(booking.scheduledTime)}</td>
-                      <td className="px-4 py-4">
-                        <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] ${statusClass(booking.status)}`}>
-                          {booking.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4">{booking.totalPrice != null ? booking.totalPrice.toLocaleString("en-US") + " RWF" : t("quotePendingLabel")}</td>
-                      <td className="px-4 py-4">
-                        <div className="flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            onClick={() => setSelectedBooking(booking)}
-                            className="rounded-full border border-[var(--border-color)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"
-                          >
-                            {t("viewDetails")}
-                          </button>
-                          {booking.status === "COMPLETED" && (
-                            <>
-                              <Link href="/services" className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-100 hover:bg-emerald-400/20">{t("bookAgain")}</Link>
-                              <Link href="/review" className="rounded-full border border-yellow-400/40 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200 hover:bg-yellow-400/20">⭐ Review</Link>
-                            </>
-                          )}
-                          {booking.status === "PENDING" && (
-                            <button
-                              type="button"
-                              onClick={() => void handleCancel(booking.id)}
-                              disabled={busyBookingId === booking.id}
-                              className="rounded-full border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-100 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                              {busyBookingId === booking.id ? t("cancelling") : t("cancel")}
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                {/* ── Active bookings table (desktop) ── */}
+                {activeBookings.length === 0 ? (
+                  <section className="rounded-3xl border border-dashed border-[var(--border-color)] bg-[var(--bg-card)]/70 p-8 text-[var(--text-secondary)] shadow-2xl shadow-black/20 text-center">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-400"><Sparkles className="h-7 w-7" /></div>
+                    <h3 className="mt-4 text-xl font-semibold text-[var(--text-primary)]">All caught up!</h3>
+                    <p className="mt-2 text-sm text-[var(--text-secondary)]">No active bookings right now. Check your history below or book a new service.</p>
+                    <Link href="/services" className="mt-5 inline-flex rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950">{t("emptyAction")}</Link>
+                  </section>
+                ) : (
+                  <>
+                    <div className="hidden overflow-x-auto rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] shadow-2xl shadow-black/20 lg:block">
+                      <table className="min-w-full divide-y divide-[var(--border-color)] text-left text-sm text-[var(--text-secondary)]">
+                        <thead className="bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+                          <tr>
+                            <th className="px-4 py-3">{t("colService")}</th>
+                            <th className="px-4 py-3">{t("colDate")}</th>
+                            <th className="px-4 py-3">{t("colTime")}</th>
+                            <th className="px-4 py-3">{t("colStatus")}</th>
+                            <th className="px-4 py-3">{t("colPrice")}</th>
+                            <th className="px-4 py-3">{t("colActions")}</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[var(--border-color)]">
+                          {activeBookings.map((booking) => (
+                            <tr key={booking.id} className="hover:bg-[var(--bg-secondary)]/50">
+                              <td className="px-4 py-4 text-[var(--text-primary)]">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</td>
+                              <td className="px-4 py-4">{formatDate(booking.scheduledDate)}</td>
+                              <td className="px-4 py-4">{formatTime(booking.scheduledTime)}</td>
+                              <td className="px-4 py-4">
+                                <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] ${statusClass(booking.status)}`}>
+                                  {booking.status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-4">{booking.totalPrice != null ? booking.totalPrice.toLocaleString("en-US") + " RWF" : t("quotePendingLabel")}</td>
+                              <td className="px-4 py-4">
+                                <div className="flex flex-wrap gap-2">
+                                  <button type="button" onClick={() => setSelectedBooking(booking)} className="rounded-full border border-[var(--border-color)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:border-cyan-400 hover:text-[var(--text-primary)]">
+                                    {t("viewDetails")}
+                                  </button>
+                                  {booking.status === "PENDING" && (
+                                    <button type="button" onClick={() => void handleCancel(booking.id)} disabled={busyBookingId === booking.id} className="rounded-full border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-100 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-60">
+                                      {busyBookingId === booking.id ? t("cancelling") : t("cancel")}
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
 
-                <div className="grid gap-4 lg:hidden">
-                  {bookings.map((booking) => (
-                    <article key={booking.id} className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-2xl shadow-black/20">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</p>
-                          <p className="mt-1 text-lg font-semibold text-[var(--text-primary)]">{formatDate(booking.scheduledDate)} · {formatTime(booking.scheduledTime)}</p>
-                        </div>
-                        <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] ${statusClass(booking.status)}`}>
-                          {booking.status}
+                    {/* Mobile cards — active */}
+                    <div className="grid gap-4 lg:hidden">
+                      {activeBookings.map((booking) => (
+                        <article key={booking.id} className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-2xl shadow-black/20">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</p>
+                              <p className="mt-1 text-lg font-semibold text-[var(--text-primary)]">{formatDate(booking.scheduledDate)} · {formatTime(booking.scheduledTime)}</p>
+                            </div>
+                            <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] ${statusClass(booking.status)}`}>
+                              {booking.status}
+                            </span>
+                          </div>
+                          <p className="mt-3 text-sm text-[var(--text-secondary)]">{booking.totalPrice != null ? booking.totalPrice.toLocaleString("en-US") + " RWF" : "Quote pending"}</p>
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <button type="button" onClick={() => setSelectedBooking(booking)} className="rounded-full border border-[var(--border-color)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:border-cyan-400">
+                              {t("viewDetails")}
+                            </button>
+                            {booking.status === "PENDING" && (
+                              <button type="button" onClick={() => void handleCancel(booking.id)} disabled={busyBookingId === booking.id} className="rounded-full border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-100 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-60">
+                                {busyBookingId === booking.id ? t("cancelling") : t("cancel")}
+                              </button>
+                            )}
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* ── History (completed / cancelled) ── */}
+                {historyBookings.length > 0 && (
+                  <div className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] shadow-2xl shadow-black/20 overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setHistoryOpen((prev) => !prev)}
+                      className="flex w-full items-center justify-between px-6 py-4 text-left hover:bg-[var(--bg-secondary)]/40 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-semibold text-[var(--text-primary)]">Booking History</span>
+                        <span className="rounded-full bg-[var(--bg-secondary)] px-2.5 py-0.5 text-xs font-semibold text-[var(--text-secondary)]">
+                          {historyBookings.length}
                         </span>
                       </div>
-                      <p className="mt-3 text-sm text-[var(--text-secondary)]">{booking.totalPrice != null ? booking.totalPrice.toLocaleString("en-US") + " RWF" : "Quote pending"}</p>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedBooking(booking)}
-                          className="rounded-full border border-[var(--border-color)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:border-cyan-400 hover:text-[var(--text-primary)]"
-                        >
-                          {t("viewDetails")}
-                        </button>
-                        {booking.status === "COMPLETED" && (
-                          <>
-                            <Link href="/services" className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-100 hover:bg-emerald-400/20">{t("bookAgain")}</Link>
-                            <Link href="/review" className="rounded-full border border-yellow-400/40 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200 hover:bg-yellow-400/20">⭐ Review</Link>
-                          </>
-                        )}
-                        {booking.status === "PENDING" && (
-                          <button
-                            type="button"
-                            onClick={() => void handleCancel(booking.id)}
-                            disabled={busyBookingId === booking.id}
-                            className="rounded-full border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-100 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-60"
-                          >
-                            {busyBookingId === booking.id ? t("cancelling") : t("cancel")}
-                          </button>
-                        )}
-                      </div>
-                    </article>
-                  ))}
-                </div>
+                      <span className={`text-[var(--text-secondary)] text-sm transition-transform duration-200 ${historyOpen ? "rotate-180" : ""}`}>▼</span>
+                    </button>
+
+                    {historyOpen && (
+                      <>
+                        {/* Desktop history table */}
+                        <div className="hidden overflow-x-auto lg:block border-t border-[var(--border-color)]">
+                          <table className="min-w-full divide-y divide-[var(--border-color)] text-left text-sm text-[var(--text-secondary)]">
+                            <thead className="bg-[var(--bg-secondary)]/60">
+                              <tr>
+                                <th className="px-4 py-3">{t("colService")}</th>
+                                <th className="px-4 py-3">{t("colDate")}</th>
+                                <th className="px-4 py-3">{t("colStatus")}</th>
+                                <th className="px-4 py-3">{t("colPrice")}</th>
+                                <th className="px-4 py-3">{t("colActions")}</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-[var(--border-color)]">
+                              {historyBookings.map((booking) => (
+                                <tr key={booking.id} className="hover:bg-[var(--bg-secondary)]/30 opacity-80">
+                                  <td className="px-4 py-4 text-[var(--text-primary)]">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</td>
+                                  <td className="px-4 py-4">{formatDate(booking.scheduledDate)}</td>
+                                  <td className="px-4 py-4">
+                                    <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] ${statusClass(booking.status)}`}>
+                                      {booking.status}
+                                    </span>
+                                  </td>
+                                  <td className="px-4 py-4">{booking.totalPrice != null ? booking.totalPrice.toLocaleString("en-US") + " RWF" : "—"}</td>
+                                  <td className="px-4 py-4">
+                                    <div className="flex flex-wrap gap-2">
+                                      <button type="button" onClick={() => setSelectedBooking(booking)} className="rounded-full border border-[var(--border-color)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:border-cyan-400">
+                                        {t("viewDetails")}
+                                      </button>
+                                      {booking.status === "COMPLETED" && (
+                                        <>
+                                          <Link href="/services" className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-100 hover:bg-emerald-400/20">{t("bookAgain")}</Link>
+                                          <Link href="/review" className="rounded-full border border-yellow-400/40 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200 hover:bg-yellow-400/20">⭐ Review</Link>
+                                        </>
+                                      )}
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* Mobile history cards */}
+                        <div className="grid gap-3 p-4 lg:hidden border-t border-[var(--border-color)]">
+                          {historyBookings.map((booking) => (
+                            <article key={booking.id} className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)]/60 p-4 opacity-80">
+                              <div className="flex items-start justify-between gap-3">
+                                <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">{serviceMap.get(booking.serviceId) || `Service ${booking.serviceId}`}</p>
+                                <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] ${statusClass(booking.status)}`}>
+                                  {booking.status}
+                                </span>
+                              </div>
+                              <p className="mt-2 text-sm text-[var(--text-secondary)]">{formatDate(booking.scheduledDate)}</p>
+                              <div className="mt-3 flex flex-wrap gap-2">
+                                <button type="button" onClick={() => setSelectedBooking(booking)} className="rounded-full border border-[var(--border-color)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:border-cyan-400">
+                                  {t("viewDetails")}
+                                </button>
+                                {booking.status === "COMPLETED" && (
+                                  <>
+                                    <Link href="/services" className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-100">{t("bookAgain")}</Link>
+                                    <Link href="/review" className="rounded-full border border-yellow-400/40 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200">⭐ Review</Link>
+                                  </>
+                                )}
+                              </div>
+                            </article>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
               </>
             )}
           </>
